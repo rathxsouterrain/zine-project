@@ -7,7 +7,7 @@
 <style>
 
 body{
-background:#000;
+background:white;
 display:flex;
 justify-content:center;
 align-items:center;
@@ -15,55 +15,33 @@ height:100vh;
 overflow:hidden;
 }
 
-/* gerakan sepeda /
-
 #bike{
 animation:ride 6s linear infinite;
 }
-
-/ roda berputar /
 
 #wheel1,#wheel2{
 transform-origin:center;
 animation:spin 1s linear infinite;
 }
 
-/ efek naik turun */
-
 #frog{
 animation:bounce 0.35s ease-in-out infinite;
 }
 
 @keyframes ride{
-
-0%{
-transform:translateX(-400px);
-}
-
-100%{
-transform:translateX(120vw);
-}
-
+0%{transform:translateX(-400px);}
+100%{transform:translateX(120vw);}
 }
 
 @keyframes spin{
-
-from{
-transform:rotate(0deg);
-}
-
-to{
-transform:rotate(360deg);
-}
-
+from{transform:rotate(0deg);}
+to{transform:rotate(360deg);}
 }
 
 @keyframes bounce{
-
-0%{transform:translateY(0)}
-50%{transform:translateY(-5px)}
-100%{transform:translateY(0)}
-
+0%{transform:translateY(0);}
+50%{transform:translateY(-5px);}
+100%{transform:translateY(0);}
 }
 
 </style>
@@ -73,28 +51,18 @@ transform:rotate(360deg);
 
 <svg width="500" viewBox="0 0 800 400">
 
-<!-- SELURUH SEPEDA -->
 <g id="bike">
 
-<!-- KATAK -->
 <g id="frog">
-
-<!-- PASTE SVG BODY KATAK DI SINI -->
-
+<!-- SVG KATAK -->
 </g>
 
-<!-- RODA DEPAN -->
 <g id="wheel1">
-
-<!-- PASTE SVG RODA DEPAN DI SINI -->
-
+<!-- RODA DEPAN -->
 </g>
 
-<!-- RODA BELAKANG -->
 <g id="wheel2">
-
-<!-- PASTE SVG RODA BELAKANG DI SINI -->
-
+<!-- RODA BELAKANG -->
 </g>
 
 </g>
