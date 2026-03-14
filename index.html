@@ -1,14 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Cassette Generator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>VHS Cover Generator</title>
 
 <style>
 
 body{
-background:#0b0b0b;
-font-family:Arial;
+background:#0f0f0f;
+font-family:Arial, sans-serif;
 color:white;
 display:flex;
 flex-direction:column;
@@ -16,75 +18,46 @@ align-items:center;
 padding:40px;
 }
 
-/* glass panel */
-
-.panel{
-background:rgba(255,255,255,0.06);
-backdrop-filter:blur(16px);
-border:1px solid rgba(255,255,255,0.15);
-padding:25px;
-border-radius:16px;
-width:520px;
-text-align:center;
-box-shadow:0 10px 40px rgba(0,0,0,0.7);
-}
-
-/* glass buttons */
-
-button{
-padding:10px 16px;
-margin:5px;
-border-radius:10px;
-border:1px solid rgba(255,255,255,0.2);
-background:rgba(255,255,255,0.08);
-color:white;
-cursor:pointer;
-transition:0.25s;
-}
-
-button:hover{
-background:rgba(255,255,255,0.2);
-transform:translateY(-2px);
+h1{
+margin-bottom:20px;
 }
 
 input{
-width:100%;
-padding:10px;
-border-radius:10px;
-border:1px solid rgba(255,255,255,0.2);
-background:rgba(255,255,255,0.08);
-color:white;
-margin-bottom:10px;
+margin-bottom:20px;
 }
 
-/* cassette preview */
-
-.cassette{
-margin-top:20px;
-width:320px;
-height:200px;
+.preview{
+width:600px;
+height:350px;
 background:#222;
-border-radius:12px;
-transform:perspective(800px) rotateX(10deg);
+border-radius:10px;
+overflow:hidden;
 position:relative;
-box-shadow:0 20px 40px rgba(0,0,0,0.6);
 }
 
-.cassette img{
-position:absolute;
-top:30px;
-left:30px;
-width:120px;
-height:120px;
+.preview img{
+width:100%;
+height:100%;
 object-fit:cover;
 }
 
-/* canvas */
-
-canvas{
+.controls{
 margin-top:20px;
-background:white;
-border-radius:8px;
+display:flex;
+gap:10px;
+}
+
+button{
+padding:10px 20px;
+border:none;
+border-radius:6px;
+background:#ffffff;
+cursor:pointer;
+font-weight:bold;
+}
+
+button:hover{
+background:#ddd;
 }
 
 </style>
@@ -92,228 +65,72 @@ border-radius:8px;
 
 <body>
 
-<div class="panel">
-
-<h2>Cassette Cover Generator</h2>
-
-<input id="link" placeholder="Paste Spotify / Bandcamp album link">
-
-<input id="token" placeholder="Spotify Access Token (only if Spotify link)">
+<h1>VHS Cover Generator</h1>
 
 <input type="file" id="upload">
 
-<button onclick="loadAlbum()">Load Album</button>
+<div class="preview" id="preview">
+<img id="cover">
+</div>
 
-<button onclick="render()">Generate J-Card</button>
-
+<div class="controls">
 <button onclick="downloadPNG()">Download PNG</button>
-
 <button onclick="downloadPDF()">Download PDF</button>
-
 </div>
 
-<div class="cassette">
-<img id="preview">
-</div>
-
-<canvas id="canvas" width="1200" height="450"></canvas>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <script>
 
-let tracks=[]
-let cover=""
-let title="Album Title"
-let textX=380
-let textY=60
-
-/* upload custom cover */
+let upload = document.getElementById("upload")
+let cover = document.getElementById("cover")
 
 upload.onchange = e =>{
 
+let file = e.target.files[0]
+
 let reader = new FileReader()
 
-reader.onload = ev =>{
+reader.onload = function(event){
 
-cover = ev.target.result
-preview.src = cover
-
-}
-
-reader.readAsDataURL(e.target.files[0])
+cover.src = event.target.result
 
 }
 
-/* detect link */
-
-async function loadAlbum(){
-
-let url = link.value
-
-if(url.includes("spotify")){
-
-loadSpotify(url)
+reader.readAsDataURL(file)
 
 }
-
-else if(url.includes("bandcamp")){
-
-loadBandcamp(url)
-
-}
-
-}
-
-/* spotify parser */
-
-async function loadSpotify(url){
-
-let id = url.split("/album/")[1].split("?")[0]
-
-let tokenValue = token.value
-
-let res = await fetch(
-
-"https://api.spotify.com/v1/albums/"+id,
-
-{
-headers:{
-Authorization:"Bearer "+tokenValue
-}
-}
-
-)
-
-let data = await res.json()
-
-title = data.name
-
-cover = data.images[0].url
-
-preview.src = cover
-
-tracks = data.tracks.items.map(t=>t.name)
-
-}
-
-/* bandcamp parser */
-
-async function loadBandcamp(url){
-
-let proxy = "https://api.allorigins.win/raw?url="
-
-let res = await fetch(proxy+encodeURIComponent(url))
-
-let html = await res.text()
-
-let doc = new DOMParser().parseFromString(html,"text/html")
-
-cover = doc.querySelector("meta[property='og:image']").content
-
-title = doc.querySelector("meta[property='og:title']").content
-
-preview.src = cover
-
-tracks = [...doc.querySelectorAll(".track-title")].map(t=>t.innerText)
-
-}
-
-/* render jcard */
-
-function render(){
-
-let canvas = document.getElementById("canvas")
-
-let ctx = canvas.getContext("2d")
-
-ctx.fillStyle="#fff"
-
-ctx.fillRect(0,0,1200,450)
-
-let img = new Image()
-
-img.crossOrigin="anonymous"
-
-img.onload = ()=>{
-
-ctx.drawImage(img,0,0,350,350)
-
-ctx.fillStyle="#000"
-
-ctx.font="bold 26px Arial"
-
-ctx.fillText(title,textX,textY)
-
-let half = Math.ceil(tracks.length/2)
-
-let sideA = tracks.slice(0,half)
-
-let sideB = tracks.slice(half)
-
-ctx.font="16px Arial"
-
-ctx.fillText("SIDE A",380,100)
-
-sideA.forEach((t,i)=>{
-
-ctx.fillText((i+1)+". "+t,380,130+i*18)
-
-})
-
-ctx.fillText("SIDE B",750,100)
-
-sideB.forEach((t,i)=>{
-
-ctx.fillText((i+1)+". "+t,750,130+i*18)
-
-})
-
-}
-
-img.src = cover
-
-}
-
-/* drag title */
-
-canvas.onmousedown=()=>drag=true
-canvas.onmouseup=()=>drag=false
-
-canvas.onmousemove=e=>{
-
-if(drag){
-
-textX=e.offsetX
-textY=e.offsetY
-
-render()
-
-}
-
-}
-
-/* download png */
 
 function downloadPNG(){
 
+html2canvas(document.getElementById("preview")).then(canvas=>{
+
 let link=document.createElement("a")
 
-link.download="cassette.png"
+link.download="vhs-cover.png"
 
 link.href=canvas.toDataURL()
 
 link.click()
 
-}
+})
 
-/* pdf */
+}
 
 function downloadPDF(){
 
-let img = canvas.toDataURL("image/png")
+html2canvas(document.getElementById("preview")).then(canvas=>{
 
-let w = window.open()
+let img=canvas.toDataURL("image/png")
 
-w.document.write("<img src='"+img+"' style='width:100%'>")
+let pdf=new jspdf.jsPDF()
+
+pdf.addImage(img,'PNG',10,10,180,100)
+
+pdf.save("vhs-cover.pdf")
+
+})
 
 }
 
