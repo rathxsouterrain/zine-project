@@ -2,14 +2,14 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Cassette Cover Generator</title>
+<title>Cassette Generator</title>
 
 <style>
 
 body{
-background:#070707;
-color:white;
+background:#0b0b0b;
 font-family:Arial;
+color:white;
 display:flex;
 flex-direction:column;
 align-items:center;
@@ -20,18 +20,19 @@ padding:40px;
 
 .panel{
 background:rgba(255,255,255,0.06);
-backdrop-filter:blur(14px);
+backdrop-filter:blur(16px);
 border:1px solid rgba(255,255,255,0.15);
-border-radius:16px;
 padding:25px;
-width:500px;
+border-radius:16px;
+width:520px;
 text-align:center;
+box-shadow:0 10px 40px rgba(0,0,0,0.7);
 }
 
-/* glass button */
+/* glass buttons */
 
 button{
-padding:10px 18px;
+padding:10px 16px;
 margin:5px;
 border-radius:10px;
 border:1px solid rgba(255,255,255,0.2);
@@ -42,7 +43,7 @@ transition:0.25s;
 }
 
 button:hover{
-background:rgba(255,255,255,0.18);
+background:rgba(255,255,255,0.2);
 transform:translateY(-2px);
 }
 
@@ -56,12 +57,6 @@ color:white;
 margin-bottom:10px;
 }
 
-canvas{
-margin-top:20px;
-background:white;
-border-radius:8px;
-}
-
 /* cassette preview */
 
 .cassette{
@@ -70,158 +65,255 @@ width:320px;
 height:200px;
 background:#222;
 border-radius:12px;
-position:relative;
 transform:perspective(800px) rotateX(10deg);
+position:relative;
 box-shadow:0 20px 40px rgba(0,0,0,0.6);
 }
 
 .cassette img{
 position:absolute;
-top:20px;
-left:20px;
+top:30px;
+left:30px;
 width:120px;
 height:120px;
 object-fit:cover;
 }
 
-</style>
+/* canvas */
 
+canvas{
+margin-top:20px;
+background:white;
+border-radius:8px;
+}
+
+</style>
 </head>
+
 <body>
 
 <div class="panel">
 
-<h2>Cassette Generator</h2>
+<h2>Cassette Cover Generator</h2>
 
 <input id="link" placeholder="Paste Spotify / Bandcamp album link">
 
-<button onclick="fetchAlbum()">Load Album</button>
+<input id="token" placeholder="Spotify Access Token (only if Spotify link)">
 
-<input type="file" id="uploadCover">
+<input type="file" id="upload">
 
-<button onclick="generate()">Generate J-Card</button>
+<button onclick="loadAlbum()">Load Album</button>
+
+<button onclick="render()">Generate J-Card</button>
 
 <button onclick="downloadPNG()">Download PNG</button>
+
 <button onclick="downloadPDF()">Download PDF</button>
 
 </div>
 
 <div class="cassette">
-<img id="previewCover">
+<img id="preview">
 </div>
 
-<canvas id="jcard" width="1200" height="450"></canvas>
+<canvas id="canvas" width="1200" height="450"></canvas>
 
 <script>
 
 let tracks=[]
 let cover=""
-let textX=400
-let textY=80
-let dragging=false
+let title="Album Title"
+let textX=380
+let textY=60
 
-document.getElementById("uploadCover").addEventListener("change",function(e){
+/* upload custom cover */
 
-let reader=new FileReader()
+upload.onchange = e =>{
 
-reader.onload=function(ev){
-cover=ev.target.result
-document.getElementById("previewCover").src=cover
+let reader = new FileReader()
+
+reader.onload = ev =>{
+
+cover = ev.target.result
+preview.src = cover
+
 }
 
 reader.readAsDataURL(e.target.files[0])
 
-})
+}
 
-async function fetchAlbum(){
+/* detect link */
 
-let url=document.getElementById("link").value
+async function loadAlbum(){
 
-alert("Spotify/Bandcamp API parser bisa ditambahkan di sini")
+let url = link.value
+
+if(url.includes("spotify")){
+
+loadSpotify(url)
 
 }
 
-function generate(){
+else if(url.includes("bandcamp")){
 
-let canvas=document.getElementById("jcard")
-let ctx=canvas.getContext("2d")
+loadBandcamp(url)
+
+}
+
+}
+
+/* spotify parser */
+
+async function loadSpotify(url){
+
+let id = url.split("/album/")[1].split("?")[0]
+
+let tokenValue = token.value
+
+let res = await fetch(
+
+"https://api.spotify.com/v1/albums/"+id,
+
+{
+headers:{
+Authorization:"Bearer "+tokenValue
+}
+}
+
+)
+
+let data = await res.json()
+
+title = data.name
+
+cover = data.images[0].url
+
+preview.src = cover
+
+tracks = data.tracks.items.map(t=>t.name)
+
+}
+
+/* bandcamp parser */
+
+async function loadBandcamp(url){
+
+let proxy = "https://api.allorigins.win/raw?url="
+
+let res = await fetch(proxy+encodeURIComponent(url))
+
+let html = await res.text()
+
+let doc = new DOMParser().parseFromString(html,"text/html")
+
+cover = doc.querySelector("meta[property='og:image']").content
+
+title = doc.querySelector("meta[property='og:title']").content
+
+preview.src = cover
+
+tracks = [...doc.querySelectorAll(".track-title")].map(t=>t.innerText)
+
+}
+
+/* render jcard */
+
+function render(){
+
+let canvas = document.getElementById("canvas")
+
+let ctx = canvas.getContext("2d")
 
 ctx.fillStyle="#fff"
-ctx.fillRect(0,0,canvas.width,canvas.height)
 
-let img=new Image()
+ctx.fillRect(0,0,1200,450)
 
-img.onload=function(){
+let img = new Image()
+
+img.crossOrigin="anonymous"
+
+img.onload = ()=>{
 
 ctx.drawImage(img,0,0,350,350)
 
 ctx.fillStyle="#000"
-ctx.font="bold 24px Arial"
-ctx.fillText("ALBUM TITLE",textX,textY)
 
-let sideA=tracks.slice(0,Math.ceil(tracks.length/2))
-let sideB=tracks.slice(Math.ceil(tracks.length/2))
+ctx.font="bold 26px Arial"
+
+ctx.fillText(title,textX,textY)
+
+let half = Math.ceil(tracks.length/2)
+
+let sideA = tracks.slice(0,half)
+
+let sideB = tracks.slice(half)
 
 ctx.font="16px Arial"
 
+ctx.fillText("SIDE A",380,100)
+
 sideA.forEach((t,i)=>{
-ctx.fillText((i+1)+". "+t,380,120+i*20)
+
+ctx.fillText((i+1)+". "+t,380,130+i*18)
+
 })
+
+ctx.fillText("SIDE B",750,100)
 
 sideB.forEach((t,i)=>{
-ctx.fillText((i+1)+". "+t,700,120+i*20)
+
+ctx.fillText((i+1)+". "+t,750,130+i*18)
+
 })
 
 }
 
-img.src=cover
+img.src = cover
 
 }
 
-let canvas=document.getElementById("jcard")
+/* drag title */
 
-canvas.addEventListener("mousedown",function(e){
-dragging=true
-})
+canvas.onmousedown=()=>drag=true
+canvas.onmouseup=()=>drag=false
 
-canvas.addEventListener("mouseup",function(){
-dragging=false
-})
+canvas.onmousemove=e=>{
 
-canvas.addEventListener("mousemove",function(e){
-
-if(dragging){
+if(drag){
 
 textX=e.offsetX
 textY=e.offsetY
 
-generate()
+render()
 
 }
 
-})
+}
+
+/* download png */
 
 function downloadPNG(){
 
-let canvas=document.getElementById("jcard")
-
 let link=document.createElement("a")
+
 link.download="cassette.png"
+
 link.href=canvas.toDataURL()
 
 link.click()
 
 }
 
+/* pdf */
+
 function downloadPDF(){
 
-let canvas=document.getElementById("jcard")
+let img = canvas.toDataURL("image/png")
 
-let img=canvas.toDataURL("image/png")
+let w = window.open()
 
-let win=window.open("")
-
-win.document.write("<img src='"+img+"' style='width:100%'>")
+w.document.write("<img src='"+img+"' style='width:100%'>")
 
 }
 
