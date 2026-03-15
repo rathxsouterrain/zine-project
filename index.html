@@ -1,288 +1,384 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DIY Cassette J-Card Generator</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Oswald&family=Courier+Prime&display=swap" rel="stylesheet">
+<title>Cassette J-Card Mobile</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;900&family=Archivo+Black&family=Bebas+Neue&family=Anton&family=Oswald&family=Montserrat:wght@400;700&family=Orbitron&family=Russo+One&family=Teko:wght@700&family=Rajdhani:wght@700&family=Kanit:wght@700&family=Manrope:wght@800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
+:root{ --glass: rgba(255,255,255,0.1); --glass-border: rgba(255,255,255,0.2); --backColor:white; }
+body{ background:#000; color:white; font-family:'Inter',sans-serif; margin:0; padding:10px; display:flex; flex-direction:column; align-items:center; }
+.app-header{ text-align:center; margin-bottom:10px; }
+.controls{ background:var(--glass); backdrop-filter:blur(15px); border:1px solid var(--glass-border); padding:6px; border-radius:15px; width:100%; max-width:500px; display:flex; flex-direction:column; gap:10px; margin-bottom:15px; }
+input,select{ background:rgba(0,0,0,0.5); border:1px solid var(--glass-border); padding:10px; color:white; border-radius:8px; }
+button{ background:white; color:black; border:none; padding:12px; border-radius:8px; font-weight:900; cursor:pointer; }
 
-body{
-background:#0f0f0f;
-color:white;
-font-family:Montserrat;
-text-align:center;
-padding:40px;
+/* CSS TOMBOL PAS DI BAWAH COVER */
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    max-width: 500px;
+    margin-top: 5px;
+    margin-bottom: 50px;
+    
+    /* Efek Glassmorphism */
+    background: var(--glass);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px); /* Support Safari */
+    border: 1px solid var(--glass-border);
+    padding: 15px;
+    border-radius: 15px;
+    box-sizing: border-box;
+    z-index: 100;
 }
 
-.controls{
-display:flex;
-flex-wrap:wrap;
-gap:10px;
-justify-content:center;
-margin-bottom:25px;
+/* Penyesuaian tombol di dalam tab glass */
+.action-buttons button {
+    margin: 0;
+    width: 100%;
 }
 
-input, textarea, select{
-padding:8px;
-border-radius:6px;
-border:none;
+.btn-reset {
+    background: rgba(255, 68, 68, 0.2) !important; /* Merah transparan */
+    color: #ff4444 !important;
+    border: 1px solid rgba(255, 68, 68, 0.4) !important;
 }
 
-textarea{
-width:220px;
-height:90px;
+.btn-reset:hover {
+    background: rgba(255, 68, 68, 0.4) !important;
 }
 
-button{
-padding:10px 20px;
-border:none;
-border-radius:8px;
-background:white;
-cursor:pointer;
+
+.btn-save { background: #ffffff !important; color: #000 !important; }
+.btn-reset { background: #ff4444 !important; color: white !important; font-size: 12px; padding: 8px !important; }
+
+.canvas-viewport {
+    width: 100%;
+    /* Mengunci tinggi tampilan agar tidak ada sisa ruang kosong */
+    height: 380px; 
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 10px; /* Jarak kecil ke tombol */
 }
 
-/* ===== J CARD CANVAS ===== /
-
-#jcard{
-
-width:1747px;
-height:1100px;
-
-display:grid;
-grid-template-columns:
-144px
-763px
-90px
-750px;
-
-margin:auto;
-position:relative;
-
-background:#222;
-border:3px solid #aaa;
-
+/* Khusus layar besar, sesuaikan tingginya */
+@media (min-width: 600px) {
+    .canvas-viewport { height: 620px; }
+}
+@media (min-width: 1100px) {
+    .canvas-viewport { height: 1050px; }
 }
 
-/ panel /
-
-.panel{
-position:relative;
-overflow:hidden;
-border-right:2px dashed #777;
+#jcard-canvas {
+    width: 1031px;
+    height: 1020px;
+    background: white;
+    display: flex;
+    color: black;
+    transform-origin: top left;
+    transform: scale(0.35); /* Skala mobile */
+    position: absolute; /* Ubah ke absolute agar tidak makan space luar */
+    top: 0;
+    left: 0;
 }
 
-.panel img{
-width:100%;
-height:100%;
-object-fit:cover;
+
+.section{ height:100%; box-sizing:border-box; border-right:2px dashed #444; position:relative; background:var(--backColor); }
+.back-flap{ width:254px; padding:40px 20px; }
+.spine{ width:127px; display:flex; justify-content:center; align-items:center; }
+.front-cover{ width:650px; background-size:cover; background-position:center; display:flex; align-items:center; padding-left:30px; }
+
+.transform-box { position: absolute; border: 2px solid transparent; padding: 5px; z-index: 10; display: inline-block; }
+.transform-box.active { border-color: #007bff; background: rgba(0, 123, 255, 0.05); }
+.handle-move { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); width: 30px; height: 30px; background: #007bff; color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; cursor: move; font-weight: bold; z-index: 20; }
+.handle-resize { position: absolute; bottom: -10px; right: -10px; width: 20px; height: 20px; background: white; border: 3px solid #007bff; border-radius: 50%; display: none; cursor: nwse-resize; z-index: 20; }
+.transform-box.active .handle-move, .transform-box.active .handle-resize { display: flex; }
+
+.editable-content { outline: none; }
+.back-flap h3{ font-family:'Orbitron',sans-serif; font-size:30px; margin-bottom:15px; }
+.tracklist{ font-family:'Orbitron',sans-serif; font-size:20px; font-weight:700; line-height:1.4; }
+/* Update CSS Spine */
+/* Update CSS Spine agar Box Vertikal tapi Font Tetap Aman */
+.spine .transform-box {
+    transform: rotate(90deg);
+    transform-origin: center;
+    display: inline-flex; /* Gunakan inline-flex agar box pas seukuran teks */
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    width: auto;         /* Jangan dipaksa 100% */
+    height: auto;        /* Biarkan mengikuti tinggi font */
 }
 
-/ text /
-
-#frontText{
-
-position:absolute;
-bottom:40px;
-left:40px;
-font-size:48px;
-
+.spine .editable-content.spine-text {
+    /* Matikan semua rotasi individu pada teks agar tidak konflik */
+    transform: none !important; 
+    display: inline-block;
+    
+    /* Pastikan font mengikuti variabel global atau setelan menu */
+    font-family: "Orbitron"; 
+    font-size: 55px; /* Ukuran standar awal, nanti bisa di-resize */
+    color: inherit;
+    line-height: 1;
 }
 
-#trackText{
-
-position:absolute;
-top:40px;
-left:40px;
-font-size:30px;
-white-space:pre-line;
-text-align:left;
-
+/* Pastikan Handle tidak ikut gepeng saat box diputar */
+.spine .handle-move, .spine .handle-resize {
+    transform: rotate(-90deg); /* Putar balik handle agar tetap terlihat tegak */
 }
 
-#spineText{
 
-writing-mode:vertical-rl;
-text-orientation:mixed;
+.front-overlay h1{ font-family:'Orbitron',sans-serif; font-size:110px; margin:0; line-height:0.8; }
 
-font-size:40px;
-font-weight:bold;
-
-position:absolute;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-
+.exporting .transform-box { border: none !important; background: transparent !important; }
+.exporting .handle-move, .exporting .handle-resize { display: none !important; }
+.color-row {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+.color-group {
+    flex: 1; /* Membuat kedua input punya lebar yang sama */
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.color-group input[type="color"] {
+    width: 100%;
+    height: 40px;
+    padding: 2px; /* Membuat tampilan picker warna lebih rapi */
+    cursor: pointer;
+}
+/* Menghilangkan garis pembatas saat proses export/simpan */
+.exporting .section {
+    border-right: none !important;
 }
 
-/ guides /
-
-.fold{
-
-position:absolute;
-top:0;
-bottom:0;
-width:3px;
-background:yellow;
-opacity:.7;
-
+.exporting .section::after {
+    display: none !important;
+    content: none !important;
+}
+.web-info-tab {
+    background: var(--glass);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    
+    width: 92%;
+    max-width: 360px; /* Samakan dengan lebar kontrol lainnya */
+    padding: 45px;
+    margin-bottom: 35px; /* Jarak ke tab berikutnya */
+    box-sizing: border-box;
+    text-align: center;
 }
 
-.cut{
-
-position:absolute;
-left:0;
-right:0;
-height:3px;
-background:red;
-opacity:.6;
-
+.info-content h2 {
+    margin: 0 0 5px 0;
+    font-size: 17px;
+    letter-spacing: 4px;
+    font-weight: 900;
+    color: #ffffff;
+    text-transform: uppercase;
 }
 
-.topCut{
-top:-3px;
+.info-content p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.4;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 400;
 }
 
-.bottomCut{
-bottom:-3px;
-}
 
 </style>
 </head>
-
 <body>
 
-<h2>DIY Cassette J-Card Generator</h2>
-
+<div class="app-header"><h1>J-CARD MAKER</h1></div>
+<div class="web-info-tab">
+    <div class="info-content">
+        <h2>J-CARD CASSETTE</h2>
+        <p>Ini adalah J-Card Cassette Maker, tempat gambar biasa menjadi cover kaset yang unik dan tak terduga. Cukup drop gambar, atur posisinya, dan dalam sekejap, covermu siap dipakai.</p>
+    </div>
+</div>
 <div class="controls">
+        <button onclick="document.getElementById('imageUpload').click()">Upload Front Cover</button>
+        <input type="file" id="imageUpload" accept="image/*" style="display:none" onchange="handleUpload(this, 'front')">
+    
+        <button onclick="document.getElementById('backUpload').click()">Upload Back Cover</button>
+        <input type="file" id="backUpload" accept="image/*" style="display:none" onchange="handleUpload(this, 'back')">
+        
+    
+    <div class="color-row">
+        <div class="color-group">
+            <label>Back Color</label>
+            <input type="color" id="coverColor" value="#ffffff" onchange="changeBackColor()">
+        </div>
+        <div class="color-group">
+            <label>Font Color</label>
+            <input type="color" id="fontColor" value="#000000" onchange="changeFontColor()">
+        </div>
+    </div>
 
-<input type="file" id="frontUpload">
-<input type="file" id="backUpload">
-<input type="file" id="insideUpload">
-
-<input type="text" id="bandName" placeholder="Band Name">
-
-<textarea id="tracklist" placeholder="Tracklist"></textarea>
-
-<select id="fontSelect">
-<option value="Montserrat">Montserrat</option>
-<option value="Oswald">Oswald</option>
-<option value="Courier Prime">Courier</option>
-</select>
-
-<input type="color" id="fontColor" value="#ffffff">
-
-<button id="downloadBtn">Download PNG</button>
-
+    <label>Font Family</label>
+    <select id="fontSelector" onchange="changeFont()">
+        <option value="'Archivo Black',sans-serif">Archivo Black</option>
+        <option value="'Bebas Neue',sans-serif">Bebas Neue</option>
+        <option value="'Anton',sans-serif">Anton</option>
+        <option value="'Oswald',sans-serif">Oswald</option>
+        <option value="'Montserrat',sans-serif">Montserrat</option>
+        <option value="'Orbitron',sans-serif">Orbitron</option>
+        <option value="'Russo One',sans-serif">Russo One</option>
+        <option value="'Teko',sans-serif">Teko</option>
+        <option value="'Rajdhani',sans-serif">Rajdhani</option>
+        <option value="'Kanit',sans-serif">Kanit</option>
+        <option value="'Manrope',sans-serif">Manrope</option>
+    </select>
+</div>
+</div>
+<div class="web-info-tab">
+    <div class="info-content">
+        <h3>UKURAN IDEAL COVER</h3>
+        <p>Front Cover: 650 x 1020 px <br>Back Cover: 254 x 1020 px</p>
+    </div>
+</div>
+<div class="canvas-viewport">
+<div id="jcard-canvas">
+    <div class="section back-flap" id="playlistSection">
+        <div class="transform-box" style="top:40px; left:20px;">
+            <div class="handle-move">+</div>
+            <div class="editable-content">
+                <h3 contenteditable="true">playlist</h3>
+                <div class="tracklist" contenteditable="true">1. track<br>2. track<br>3. track</div>
+            </div>
+            <div class="handle-resize"></div>
+        </div>
+    </div>
+    <div class="section spine">
+        <div class="transform-box">
+            <div class="handle-move">+</div>
+            <div class="editable-content spine-text" contenteditable="true">band name</div>
+            <div class="handle-resize"></div>
+        </div>
+    </div>
+    <div class="section front-cover" id="albumArt">
+        <div class="transform-box" style="left:30px;">
+            <div class="handle-move">+</div>
+            <div class="front-overlay">
+                <h1 class="editable-content" contenteditable="true">Cover</h1>
+            </div>
+            <div class="handle-resize"></div>
+        </div>
+    </div>
+</div>
 </div>
 
-<div id="jcard">
-
-<div class="cut topCut"></div>
-<div class="cut bottomCut"></div>
-
-<div class="panel flap"></div>
-
-<div class="panel inside">
-<img id="insideImg">
+<div class="action-buttons">
+    <button onclick="downloadJPG()" class="btn-save">Save JPG</button>
+    <button onclick="downloadPDF()" class="btn-save">Save PDF</button>
+    <button onclick="location.reload()" class="btn-reset">Reset Design</button>
 </div>
-
-<div class="panel spine">
-<div id="spineText">Band</div>
-</div>
-
-<div class="panel front">
-<img id="frontImg">
-<div id="frontText">Band</div>
-</div>
-
-<div class="panel back">
-<img id="backImg">
-<div id="trackText"></div>
-</div>
-
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script>
+// (Seluruh Script tetap sama seperti sebelumnya)
+function handleUpload(input, target) {
+    const file = input.files[0];
+    if (!file) return;
 
-/ upload image /
-
-function upload(input,img){
-
-input.onchange=e=>{
-
-let reader=new FileReader()
-
-reader.onload=a=>img.src=a.target.result
-
-reader.readAsDataURL(e.target.files[0])
-
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        if (target === 'front') {
+            // Mengganti gambar Cover Depan
+            document.getElementById("albumArt").style.backgroundImage = "url(" + e.target.result + ")";
+        } else {
+            // Mengganti gambar Back Cover (Playlist)
+            document.getElementById("playlistSection").style.backgroundImage = "url(" + e.target.result + ")";
+            document.getElementById("playlistSection").style.backgroundSize = "cover";
+            document.getElementById("playlistSection").style.backgroundPosition = "center";
+        }
+    };
+    reader.readAsDataURL(file);
 }
 
+function changeBackColor(){ document.documentElement.style.setProperty("--backColor", document.getElementById("coverColor").value); }
+function changeFont(){
+    const font=document.getElementById("fontSelector").value;
+    document.querySelectorAll(".editable-content, .editable-content h3, .tracklist").forEach(el=>{el.style.fontFamily=font});
+}
+function changeFontColor(){
+    const color=document.getElementById("fontColor").value;
+    document.querySelectorAll(".editable-content, .editable-content h3, .tracklist").forEach(el=>{el.style.color=color});
 }
 
-upload(frontUpload,frontImg)
-upload(backUpload,backImg)
-upload(insideUpload,insideImg)
+const canvas = document.getElementById('jcard-canvas');
+function getScale() { return canvas.getBoundingClientRect().width / 1031; }
 
-/ text edit /
+document.querySelectorAll('.transform-box').forEach(box => {
+    const moveBtn = box.querySelector('.handle-move');
+    const resizeBtn = box.querySelector('.handle-resize');
+    const textPart = box.querySelector('.editable-content');
 
-bandName.oninput=()=>{
+    box.addEventListener('mousedown', () => {
+        document.querySelectorAll('.transform-box').forEach(b => b.classList.remove('active'));
+        box.classList.add('active');
+    });
 
-frontText.innerText=bandName.value
-spineText.innerText=bandName.value
+    const startDrag = (e) => {
+        e.preventDefault(); e.stopPropagation();
+        const ev = e.touches ? e.touches[0] : e;
+        let sX = ev.clientX, sY = ev.clientY, iL = box.offsetLeft, iT = box.offsetTop;
+        const move = me => {
+            const mev = me.touches ? me.touches[0] : me;
+            box.style.left = iL + (mev.clientX - sX) / getScale() + 'px';
+            box.style.top = iT + (mev.clientY - sY) / getScale() + 'px';
+        };
+        const stop = () => { document.removeEventListener('mousemove', move); document.removeEventListener('touchmove', move); };
+        document.addEventListener('mousemove', move);
+        document.addEventListener('touchmove', move, {passive:false});
+        document.addEventListener('mouseup', stop); document.addEventListener('touchend', stop);
+    };
 
+    const startResize = (e) => {
+        e.preventDefault(); e.stopPropagation();
+        const ev = e.touches ? e.touches[0] : e;
+        let sX = ev.clientX, iSize = parseFloat(window.getComputedStyle(textPart).fontSize);
+        const resize = re => {
+            const rev = re.touches ? re.touches[0] : re;
+            textPart.style.fontSize = iSize + (rev.clientX - sX) / getScale() + 'px';
+        };
+        const stop = () => { document.removeEventListener('mousemove', resize); document.removeEventListener('touchmove', resize); };
+        document.addEventListener('mousemove', resize);
+        document.addEventListener('touchmove', resize, {passive:false});
+        document.addEventListener('mouseup', stop); document.addEventListener('touchend', stop);
+    };
+    moveBtn.addEventListener('mousedown', startDrag); moveBtn.addEventListener('touchstart', startDrag);
+    resizeBtn.addEventListener('mousedown', startResize); resizeBtn.addEventListener('touchstart', startResize);
+});
+
+function downloadJPG(){
+    canvas.classList.add('exporting');
+    html2canvas(canvas,{scale:3,useCORS:true}).then(c=>{
+        const l=document.createElement("a"); l.download="jcard.jpg"; l.href=c.toDataURL("image/jpeg",1); l.click();
+        canvas.classList.remove('exporting');
+    });
 }
-
-tracklist.oninput=()=>{
-
-trackText.innerText=tracklist.value
-
+function downloadPDF(){
+    canvas.classList.add('exporting');
+    html2canvas(canvas,{scale:3,useCORS:true}).then(c=>{
+        const img=c.toDataURL("image/png"); const {jsPDF}=window.jspdf;
+        const pdf=new jsPDF({orientation:"landscape",unit:"px",format:[1031,1020]});
+        pdf.addImage(img,"PNG",0,0,1031,1020); pdf.save("jcard.pdf");
+        canvas.classList.remove('exporting');
+    });
 }
-
-/ font /
-
-function applyStyle(){
-
-let font=fontSelect.value
-let color=fontColor.value
-
-frontText.style.fontFamily=font
-spineText.style.fontFamily=font
-trackText.style.fontFamily=font
-
-frontText.style.color=color
-spineText.style.color=color
-trackText.style.color=color
-
-}
-
-fontSelect.onchange=applyStyle
-fontColor.onchange=applyStyle
-
-/ download */
-
-downloadBtn.onclick=()=>{
-
-html2canvas(document.getElementById("jcard")).then(canvas=>{
-
-let link=document.createElement("a")
-
-link.download="cassette-jcard.png"
-
-link.href=canvas.toDataURL()
-
-link.click()
-
-})
-
-}
-
 </script>
-
 </body>
 </html>
