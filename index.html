@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cassette J-Card Mobile</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;900&family=Archivo+Black&family=Bebas+Neue&family=Anton&family=Oswald&family=Montserrat:wght@400;700&family=Orbitron&family=Russo+One&family=Teko:wght@700&family=Rajdhani:wght@700&family=Kanit:wght@700&family=Manrope:wght@800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Abel&family=Abril+Fatface&family=Alegreya+Sans+SC:wght@800&family=Alfa+Slab+One&family=Alumni+Sans+Collegiate+One&family=Amatic+SC:wght@700&family=Anton&family=Archivo+Black&family=Bangers&family=Barlow+Condensed:wght@900&family=Bebas+Neue&family=Black+Ops+One&family=Bungee&family=Bungee+Shade&family=Cabin+Sketch:wght@700&family=Cinzel:wght@900&family=Comfortaa:wght@700&family=Creepster&family=DM+Serif+Display&family=Faster+One&family=Fativa&family=Fredoka+One&family=Graduate&family=Gravitas+One&family=Gruppo&family=Iceberg&family=Inter:wght@400;900&family=JetBrains+Mono:wght@800&family=Jura:wght@700&family=Kanit:wght@900&family=Koulen&family=Lobster&family=Londrina+Solid:wght@900&family=Major+Mono+Display&family=Michroma&family=Monoton&family=Montserrat:wght@900&family=Nova+Mono&family=Orbitron:wght@900&family=Oswald:wght@700&family=Permanent+Marker&family=Press+Start+2P&family=Quantico:wght@700&family=Rajdhani:wght@700&family=Righteous&family=Russo+One&family=Silkscreen&family=Special+Elite&family=Staatliches&family=Syncopate:wght@700&family=Teko:wght@700&family=Unica+One&family=Vampiro+One&family=VT323&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
@@ -120,7 +120,6 @@ button{ background:white; color:black; border:none; padding:12px; border-radius:
 .spine .editable-content.spine-text {
     /* Matikan semua rotasi individu pada teks agar tidak konflik */
     transform: none !important; 
-    display: inline-block;
     
     /* Pastikan font mengikuti variabel global atau setelan menu */
     font-family: "Orbitron"; 
@@ -157,14 +156,24 @@ button{ background:white; color:black; border:none; padding:12px; border-radius:
     cursor: pointer;
 }
 /* Menghilangkan garis pembatas saat proses export/simpan */
+/* GANTI bagian .exporting lama dengan ini */
 .exporting .section {
-    border-right: none !important;
+    border-right: 1px solid #cccccc !important; /* Garis tipis solid saat simpan */
 }
 
-.exporting .section::after {
-    display: none !important;
-    content: none !important;
+.exporting .section:last-child {
+    border-right: none !important; /* Menghilangkan garis di paling ujung kanan */
 }
+
+/* Pastikan garis putus-putus tetap ada saat editing */
+.section { 
+    height: 100%; 
+    box-sizing: border-box; 
+    border-right: 2px dashed #444; /* Garis putus-putus di editor */
+    position: relative; 
+    background: var(--backColor); 
+}
+
 .web-info-tab {
     background: var(--glass);
     backdrop-filter: blur(15px);
@@ -172,10 +181,10 @@ button{ background:white; color:black; border:none; padding:12px; border-radius:
     border: 1px solid var(--glass-border);
     border-radius: 24px;
     
-    width: 92%;
-    max-width: 360px; /* Samakan dengan lebar kontrol lainnya */
-    padding: 45px;
-    margin-bottom: 35px; /* Jarak ke tab berikutnya */
+    width: 100%;
+    max-width: 400px; /* Samakan dengan lebar kontrol lainnya */
+    padding: 50px;
+    margin-bottom: 20px; /* Jarak ke tab berikutnya */
     box-sizing: border-box;
     text-align: center;
 }
@@ -192,7 +201,8 @@ button{ background:white; color:black; border:none; padding:12px; border-radius:
 .info-content p {
     margin: 0;
     font-size: 13px;
-    line-height: 1.4;
+    letter-spacing: 1px;
+    line-height: 1.5;
     color: rgba(255, 255, 255, 0.7);
     font-weight: 400;
 }
@@ -212,14 +222,15 @@ button{ background:white; color:black; border:none; padding:12px; border-radius:
 <div class="controls">
         <button onclick="document.getElementById('imageUpload').click()">Upload Front Cover</button>
         <input type="file" id="imageUpload" accept="image/*" style="display:none" onchange="handleUpload(this, 'front')">
-    
+        <button onclick="document.getElementById('spineUpload').click()">Upload Spine Cover</button>
+        <input type="file" id="spineUpload" accept="image/*" style="display:none" onchange="handleUpload(this, 'spine')">
         <button onclick="document.getElementById('backUpload').click()">Upload Back Cover</button>
         <input type="file" id="backUpload" accept="image/*" style="display:none" onchange="handleUpload(this, 'back')">
         
     
     <div class="color-row">
         <div class="color-group">
-            <label>Back Color</label>
+            <label>Cover Color</label>
             <input type="color" id="coverColor" value="#ffffff" onchange="changeBackColor()">
         </div>
         <div class="color-group">
@@ -229,25 +240,13 @@ button{ background:white; color:black; border:none; padding:12px; border-radius:
     </div>
 
     <label>Font Family</label>
-    <select id="fontSelector" onchange="changeFont()">
-        <option value="'Archivo Black',sans-serif">Archivo Black</option>
-        <option value="'Bebas Neue',sans-serif">Bebas Neue</option>
-        <option value="'Anton',sans-serif">Anton</option>
-        <option value="'Oswald',sans-serif">Oswald</option>
-        <option value="'Montserrat',sans-serif">Montserrat</option>
-        <option value="'Orbitron',sans-serif">Orbitron</option>
-        <option value="'Russo One',sans-serif">Russo One</option>
-        <option value="'Teko',sans-serif">Teko</option>
-        <option value="'Rajdhani',sans-serif">Rajdhani</option>
-        <option value="'Kanit',sans-serif">Kanit</option>
-        <option value="'Manrope',sans-serif">Manrope</option>
-    </select>
+        <select id="fontSelector" onchange="changeFont()"></select>
 </div>
 </div>
 <div class="web-info-tab">
     <div class="info-content">
-        <h3>UKURAN IDEAL COVER</h3>
-        <p>Front Cover: 650 x 1020 px <br>Back Cover: 254 x 1020 px</p>
+        <h3>PENTING!</h3>
+        <p>Klik Text, Tahan<br>tanda + untuk menggeser.<br><br>Front Cover: 650 x 1020 px <br>Back Cover: 254 x 1020 px</p>
     </div>
 </div>
 <div class="canvas-viewport">
@@ -288,25 +287,64 @@ button{ background:white; color:black; border:none; padding:12px; border-radius:
 </div>
 
 <script>
-// (Seluruh Script tetap sama seperti sebelumnya)
+// Pastikan daftar nama sesuai dengan Google Fonts
+const fontList = [
+    "Archivo Black", "Bebas Neue", "Anton", "Orbitron", "Russo One", "Kanit", "Montserrat", "Oswald", "Teko", "Rajdhani",
+    "Press Start 2P", "Monoton", "Bungee", "Bungee Shade", "Alfa Slab One", "Abril Fatface", "Permanent Marker", "Lobster", "Righteous", "Staatliches",
+    "Black Ops One", "Special Elite", "Fredoka One", "Silkscreen", "VT323", "Michroma", "Syncopate", "Faster One", "Creepster", "Bangers",
+    "Quantico", "Koulen", "Major Mono Display", "Nova Mono", "JetBrains Mono", "Unica One", "Vampiro One", "Comfortaa", "Cinzel", "Londrina Solid",
+    "Cabin Sketch", "Amatic SC", "Alumni Sans Collegiate One", "Barlow Condensed", "Alegreya Sans SC", "Graduate", "Gravitas One", "Gruppo", "Iceberg", "Jura"
+];
+
+function populateFonts() {
+    const selector = document.getElementById('fontSelector');
+    if(!selector) return;
+    
+    selector.innerHTML = ""; // Bersihkan dulu
+    fontList.sort().forEach(font => {
+        let opt = document.createElement('option');
+        // Simpan nama font asli sebagai value
+        opt.value = font; 
+        opt.innerHTML = font;
+        opt.style.fontFamily = font; // Preview font di dalam dropdown
+        selector.appendChild(opt);
+    });
+}
+
+function changeFont() {
+    const selectedFont = document.getElementById("fontSelector").value;
+    // Terapkan font ke semua elemen teks
+    const elements = document.querySelectorAll(".editable-content, .editable-content h3, .tracklist, .spine-text");
+    
+    elements.forEach(el => {
+        el.style.fontFamily = `'', sans-serif`;
+    });
+}
+
+// Panggil fungsi saat halaman siap
+document.addEventListener("DOMContentLoaded", populateFonts);
+
 function handleUpload(input, target) {
     const file = input.files[0];
     if (!file) return;
 
     const reader = new FileReader();
     reader.onload = (e) => {
-        if (target === 'front') {
-            // Mengganti gambar Cover Depan
-            document.getElementById("albumArt").style.backgroundImage = "url(" + e.target.result + ")";
-        } else {
-            // Mengganti gambar Back Cover (Playlist)
-            document.getElementById("playlistSection").style.backgroundImage = "url(" + e.target.result + ")";
-            document.getElementById("playlistSection").style.backgroundSize = "cover";
-            document.getElementById("playlistSection").style.backgroundPosition = "center";
+        const targetElement = {
+            'front': document.getElementById("albumArt"),
+            'back': document.getElementById("playlistSection"),
+            'spine': document.querySelector(".spine") // Mengambil elemen spine
+        };
+
+        if (targetElement[target]) {
+            targetElement[target].style.backgroundImage = "url(" + e.target.result + ")";
+            targetElement[target].style.backgroundSize = "cover";
+            targetElement[target].style.backgroundPosition = "center";
         }
     };
     reader.readAsDataURL(file);
 }
+
 
 function changeBackColor(){ document.documentElement.style.setProperty("--backColor", document.getElementById("coverColor").value); }
 function changeFont(){
@@ -364,21 +402,49 @@ document.querySelectorAll('.transform-box').forEach(box => {
 });
 
 function downloadJPG(){
+    // Aktifkan mode ekspor (mengubah garis jadi solid)
     canvas.classList.add('exporting');
-    html2canvas(canvas,{scale:3,useCORS:true}).then(c=>{
-        const l=document.createElement("a"); l.download="jcard.jpg"; l.href=c.toDataURL("image/jpeg",1); l.click();
-        canvas.classList.remove('exporting');
-    });
+    
+    // Beri jeda 100ms agar browser merender perubahan garis sebelum difoto
+    setTimeout(() => {
+        html2canvas(canvas, {
+            scale: 3, 
+            useCORS: true,
+            logging: false
+        }).then(c => {
+            const l = document.createElement("a");
+            l.download = "jcard-kaset.jpg";
+            l.href = c.toDataURL("image/jpeg", 0.9);
+            l.click();
+            
+            // Kembalikan ke garis putus-putus setelah selesai
+            canvas.classList.remove('exporting');
+        });
+    }, 100);
 }
+
 function downloadPDF(){
     canvas.classList.add('exporting');
-    html2canvas(canvas,{scale:3,useCORS:true}).then(c=>{
-        const img=c.toDataURL("image/png"); const {jsPDF}=window.jspdf;
-        const pdf=new jsPDF({orientation:"landscape",unit:"px",format:[1031,1020]});
-        pdf.addImage(img,"PNG",0,0,1031,1020); pdf.save("jcard.pdf");
-        canvas.classList.remove('exporting');
-    });
+    
+    setTimeout(() => {
+        html2canvas(canvas, {
+            scale: 3,
+            useCORS: true
+        }).then(c => {
+            const img = c.toDataURL("image/png");
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({
+                orientation: "landscape",
+                unit: "px",
+                format: [1031, 1020]
+            });
+            pdf.addImage(img, "PNG", 0, 0, 1031, 1020);
+            pdf.save("jcard-siap-cetak.pdf");
+            
+            canvas.classList.remove('exporting');
+        });
+    }, 100);
 }
+
 </script>
 </body>
-</html>
