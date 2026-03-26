@@ -6,10 +6,8 @@
     <meta name="google" content="notranslate">
     <title>zinexflipbook</title>
     
-    <!-- Fonts Minimal -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     
-    <!-- Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -400,21 +398,24 @@
         .action-btn.download::before {
             content: '';
             position: absolute;
-            width: 10px;
-            height: 10px;
-            border-right: 1px solid currentColor;
-            border-bottom: 1px solid currentColor;
-            transform: rotate(45deg);
-            top: 6px;
+            width: 6px;
+            height: 6px;
+            border-right: 1.5px solid currentColor;
+            border-bottom: 1.5px solid currentColor;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -20%) rotate(45deg);
         }
 
         .action-btn.download::after {
             content: '';
             position: absolute;
-            width: 1px;
-            height: 10px;
+            width: 1.5px;
+            height: 11px;
             background: currentColor;
-            top: 6px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -70%);
         }
 
         .action-btn:hover {
@@ -818,7 +819,7 @@
             }
 
             .zine-grid {
-                grid-template-columns: repeat(3, 1fr); /* tetap 3 di tablet */
+                grid-template-columns: repeat(2, 1fr); /* 2 di tablet */
                 gap: 12px;
             }
 
@@ -868,7 +869,7 @@
 
         @media (max-width: 480px) {
             .zine-grid {
-                grid-template-columns: repeat(2, 1fr); /* 2 di mobile kecil */
+                grid-template-columns: 1fr; /* 1 di mobile, berurutan ke bawah */
             }
         }
     </style>
@@ -877,18 +878,15 @@
 
     <div class="bg-layer"></div>
 
-    <!-- Intro -->
     <div id="intro">
         <div id="introText">TURMOILDISTRACTED</div>
         <div id="introSub">digital underground archive</div>
     </div>
 
-    <!-- Loading -->
     <div id="zine-loading">
         <div class="loading-text">MEMUAT ZINE...</div>
     </div>
 
-    <!-- Navigation -->
     <nav>
         <div class="brand">
             <img src="logo.png" alt="logo">
@@ -901,14 +899,12 @@
     </nav>
 
     <main>
-        <!-- Hero -->
         <section class="hero">
             <h1>ZINE FLIPBOOK</h1>
             <p>Arsip digital independen. Eksplorasi visual dalam format flipbook interaktif.</p>
             <a href="#zine" class="btn-primary">Jelajahi Arsip →</a>
         </section>
 
-        <!-- Charity -->
         <section id="charity">
             <div class="section-title">Charity</div>
             <div class="charity-card">
@@ -918,7 +914,6 @@
             </div>
         </section>
 
-        <!-- Zine Archive -->
         <section id="zine">
             <div class="section-title">Koleksi Zine</div>
             
@@ -931,7 +926,6 @@
             <div id="pagination" class="pagination"></div>
         </section>
 
-        <!-- Feedback -->
         <section id="feedback">
             <div class="section-title">Feedback</div>
             <form class="feedback-form" onsubmit="event.preventDefault(); kirimKritik();">
@@ -942,7 +936,6 @@
             </form>
         </section>
 
-        <!-- About -->
         <section id="about">
             <div class="section-title">About Archive</div>
             <p class="about-text">
@@ -957,7 +950,6 @@
         </section>
     </main>
 
-    <!-- Footer -->
     <footer>
         <div class="footer-sponsors">
             <img src="spon1.png" alt="">
@@ -967,7 +959,6 @@
         <div class="footer-copy">ZINE FLIPBOOK Copyright © Rath x Souterrain</div>
     </footer>
 
-    <!-- Flipbook Container -->
     <div id="flipbook-container">
         <div class="reader-header">
             <div class="reader-title" id="readerTitle">ZINE</div>
@@ -992,7 +983,6 @@
         </div>
     </div>
 
-    <!-- Audio -->
     <audio id="bg-music" loop>
         <source src="music.mp3" type="audio/mpeg">
     </audio>
