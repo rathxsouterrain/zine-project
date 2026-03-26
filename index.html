@@ -322,24 +322,29 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        margin-bottom: 16px;
+        margin-bottom: 0px;
     }
 
-    .zine-views {
-        font-size: 12px;
-        color: rgba(255,255,255,0.6);
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
+/* Susun ikon view, tombol read, dan tombol download dalam satu baris */
+.zine-buttons {
+    display: flex;
+    gap: 12px;
+    align-items: center; /* Menyejajarkan secara vertikal */
+    justify-content: center;
+    width: 100%;
+    margin-top: 15px;
+}
 
-    .zine-buttons {
-        display: flex;
-        gap: 10px;
-        justify-content: center;
-        max-width: 300px;
-        margin: 0 auto;
-    }
+/* Gaya khusus untuk angka view agar terlihat rapi di kiri */
+.zine-views {
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    display: flex;
+    flex-direction: column; /* Ikon di atas angka, atau hilangkan baris ini jika ingin sejajar */
+    align-items: center;
+    min-width: 40px;
+}
+
 
     .read-btn {
         flex: 1;
@@ -875,20 +880,26 @@
             totalViewsCount += (zine.views || 0);
             
             const zineHTML = `
-            <div class="glass zine-card" style="animation: fadeUp 0.8s ease forwards; animation-delay: ${index * 0.1}s;">
-                <div class="zine-image-container" onclick="openFlipbook('${zine.pdf_url}', ${zine.id}, '${zine.music_url || ''}')">
-                    <img src="${zine.cover_url}" draggable="false">
-                </div>
-                <h4 class="zine-title">${zine.title}</h4>
-                <p class="zine-music">♫ ${zine.music_title || 'Default theme'}</p>
-                <div class="zine-stats">
-                    <span class="zine-views"><i class="ph ph-eye"></i> <span id="view-${zine.id}">${zine.views || 0}</span></span>
-                </div>
-                <div class="zine-buttons">
-                    <button class="read-btn" onclick="openFlipbook('${zine.pdf_url}', ${zine.id}, '${zine.music_url || ''}')">READ</button>
-                    <a href="${zine.pdf_url}" download class="download-btn"><i class="ph ph-download-simple"></i></a>
-                </div>
-            </div>`;
+<div class="glass zine-card">
+    <div class="zine-image-container" onclick="openFlipbook('${zine.pdf_url}', ${zine.id}, '${zine.music_url || ''}')">
+        <img src="${zine.cover_url}" draggable="false">
+    </div>
+    <h4 class="zine-title">${zine.title}</h4>
+    <p class="zine-music">♫ ${zine.music_title || 'Default theme'}</p>
+    
+    <div class="zine-buttons">
+        <div class="zine-views">
+            <i class="ph ph-eye"></i> 
+            <span id="view-${zine.id}">${zine.views || 0}</span>
+        </div>
+
+        <button class="read-btn" onclick="openFlipbook('${zine.pdf_url}', ${zine.id}, '${zine.music_url || ''}')">READ</button>
+        
+        <a href="${zine.pdf_url}" download class="download-btn">
+            <i class="ph ph-download-simple"></i>
+        </a>
+    </div>
+</div>`;
             container.insertAdjacentHTML('beforeend', zineHTML);
         });
 
