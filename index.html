@@ -257,11 +257,13 @@
             margin-bottom: 24px;
         }
 
-        /* Zine Grid - Clean Layout */
+        /* ============================================
+           ZINE GRID - SMALLER COVERS (REVISED)
+           ============================================ */
         .zine-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 24px;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
         }
 
         .zine-card {
@@ -269,6 +271,9 @@
             border: 1px solid rgba(255,255,255,0.08);
             transition: var(--transition);
             cursor: pointer;
+            max-width: 220px;
+            margin: 0 auto;
+            width: 100%;
         }
 
         .zine-card:hover {
@@ -310,11 +315,11 @@
         }
 
         .read-btn-overlay {
-            padding: 12px 24px;
+            padding: 10px 20px;
             background: var(--white);
             color: var(--black);
             border: none;
-            font-size: 11px;
+            font-size: 10px;
             letter-spacing: 1px;
             text-transform: uppercase;
             cursor: pointer;
@@ -326,32 +331,35 @@
         }
 
         .zine-info {
-            padding: 20px;
+            padding: 16px;
         }
 
         .zine-title {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             letter-spacing: 0.5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .zine-meta {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 12px;
+            font-size: 11px;
             color: var(--gray-400);
         }
 
         .zine-actions {
             display: flex;
-            gap: 12px;
+            gap: 8px;
         }
 
         .action-btn {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             border: 1px solid rgba(255,255,255,0.2);
             background: transparent;
             color: var(--white);
@@ -359,7 +367,7 @@
             align-items: center;
             justify-content: center;
             text-decoration: none;
-            font-size: 12px;
+            font-size: 11px;
             transition: var(--transition);
         }
 
@@ -526,7 +534,7 @@
         }
 
         /* ============================================
-           FLIPBOOK - MODIFIED FOR BETTER READING
+           FLIPBOOK - FIXED FOR PROPER FLIPPING
            ============================================ */
         #flipbook-container {
             display: none;
@@ -534,19 +542,19 @@
             inset: 0;
             background: var(--black);
             z-index: 2000;
-            flex-direction: column;
         }
 
         /* Reader Header - Simple */
         .reader-header {
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            padding: 20px 40px;
+            height: 60px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 0 40px;
             background: rgba(0,0,0,0.9);
             backdrop-filter: blur(10px);
             z-index: 2001;
@@ -564,7 +572,7 @@
             border: 1px solid rgba(255,255,255,0.2);
             background: transparent;
             color: var(--white);
-            font-size: 16px;
+            font-size: 18px;
             cursor: pointer;
             transition: var(--transition);
             display: flex;
@@ -577,122 +585,136 @@
             color: var(--black);
         }
 
-        /* Flipbook Area - Optimized */
+        /* Flipbook Area - FIXED */
         .flipbook-wrapper {
-            flex: 1;
+            position: absolute;
+            top: 60px;
+            left: 0;
+            right: 0;
+            bottom: 80px;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 80px 40px 40px;
-            position: relative;
+            overflow: hidden;
         }
 
         #flipbook {
             position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
         }
 
         #flipbook .page {
             background: var(--white);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            overflow: hidden;
         }
 
-        #flipbook canvas {
-            max-width: 100%;
-            max-height: 100%;
+        #flipbook .page img,
+        #flipbook .page canvas {
+            width: 100%;
+            height: 100%;
             display: block;
+            object-fit: contain;
+        }
+
+        /* Hard cover effect */
+        #flipbook .hard {
+            background: #1a1a1a !important;
+            color: var(--white);
         }
 
         /* Navigation Controls - Bottom Center */
         .reader-controls {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
             display: flex;
             align-items: center;
-            gap: 20px;
-            padding: 16px 24px;
-            background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
+            justify-content: center;
+            gap: 30px;
+            background: rgba(0,0,0,0.9);
+            border-top: 1px solid rgba(255,255,255,0.1);
             z-index: 2001;
         }
 
         .ctrl-btn {
-            width: 44px;
-            height: 44px;
-            border: 1px solid rgba(255,255,255,0.2);
+            width: 48px;
+            height: 48px;
+            border: 1px solid rgba(255,255,255,0.3);
             background: transparent;
             color: var(--white);
-            font-size: 18px;
+            font-size: 20px;
             cursor: pointer;
             transition: var(--transition);
             display: flex;
             align-items: center;
             justify-content: center;
+            border-radius: 50%;
         }
 
         .ctrl-btn:hover:not(:disabled) {
             background: var(--white);
             color: var(--black);
+            transform: scale(1.1);
         }
 
         .ctrl-btn:disabled {
-            opacity: 0.3;
+            opacity: 0.2;
             cursor: not-allowed;
+            border-color: rgba(255,255,255,0.1);
         }
 
         .page-indicator {
-            font-size: 12px;
+            font-size: 13px;
             letter-spacing: 2px;
             color: var(--gray-400);
-            min-width: 80px;
+            min-width: 100px;
             text-align: center;
+            font-variant-numeric: tabular-nums;
         }
 
-        /* Click Zones for Page Turn */
+        /* Click Zones for Page Turn - FIXED */
         .click-zone {
             position: absolute;
-            top: 80px;
-            bottom: 100px;
-            width: 25%;
+            top: 60px;
+            bottom: 80px;
+            width: 15%;
             z-index: 2000;
             cursor: pointer;
+            transition: var(--transition);
         }
 
         .click-zone.prev { left: 0; }
         .click-zone.next { right: 0; }
 
-        .click-zone:hover::after {
-            content: '';
+        .click-zone:hover {
+            background: rgba(255,255,255,0.03);
+        }
+
+        .zone-indicator {
             position: absolute;
             top: 50%;
-            transform: translateY(-50%);
-            width: 40px;
-            height: 40px;
-            border: 1px solid rgba(255,255,255,0.3);
+            transform: translateY(-50%) scale(0);
+            width: 50px;
+            height: 50px;
+            border: 2px solid rgba(255,255,255,0.5);
             border-radius: 50%;
-        }
-
-        .click-zone.prev:hover::after {
-            left: 20px;
-            content: '←';
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 20px;
             color: var(--white);
+            opacity: 0;
+            transition: all 0.3s ease;
         }
 
-        .click-zone.next:hover::after {
-            right: 20px;
-            content: '→';
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--white);
+        .click-zone.prev .zone-indicator { right: 20px; }
+        .click-zone.next .zone-indicator { left: 20px; }
+
+        .click-zone:hover .zone-indicator {
+            transform: translateY(-50%) scale(1);
+            opacity: 1;
         }
 
         /* Loading */
@@ -752,12 +774,23 @@
                 padding: 60px 20px;
             }
 
+            /* Smaller zine cards on mobile */
             .zine-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .zine-card {
+                max-width: none;
+            }
+
+            .zine-title {
+                font-size: 12px;
             }
 
             .reader-header {
-                padding: 16px 20px;
+                padding: 0 20px;
+                height: 50px;
             }
 
             .reader-title {
@@ -765,16 +798,48 @@
             }
 
             .flipbook-wrapper {
-                padding: 70px 10px 100px;
+                top: 50px;
+                bottom: 70px;
             }
 
             .reader-controls {
-                bottom: 20px;
-                padding: 12px 16px;
+                height: 70px;
+                gap: 20px;
+            }
+
+            .ctrl-btn {
+                width: 44px;
+                height: 44px;
+                font-size: 18px;
             }
 
             .click-zone {
                 display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .zine-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .zine-info {
+                padding: 12px;
+            }
+
+            .zine-title {
+                font-size: 11px;
+            }
+
+            .zine-meta {
+                font-size: 10px;
+            }
+
+            .action-btn {
+                width: 24px;
+                height: 24px;
+                font-size: 10px;
             }
         }
     </style>
@@ -872,18 +937,22 @@
         <div class="footer-copy">ZINE FLIPBOOK Copyright © Rath x Souterrain</div>
     </footer>
 
-    <!-- Flipbook Container - MODIFIED -->
+    <!-- Flipbook Container - FIXED STRUCTURE -->
     <div id="flipbook-container">
         <div class="reader-header">
             <div class="reader-title" id="readerTitle">ZINE</div>
             <button class="reader-close" onclick="closeFlipbook()">✕</button>
         </div>
 
+        <!-- Click zones -->
+        <div class="click-zone prev" onclick="prevPage()">
+            <div class="zone-indicator">←</div>
+        </div>
+        <div class="click-zone next" onclick="nextPage()">
+            <div class="zone-indicator">→</div>
+        </div>
+
         <div class="flipbook-wrapper">
-            <!-- Click zones for easy navigation -->
-            <div class="click-zone prev" onclick="prevPage()"></div>
-            <div class="click-zone next" onclick="nextPage()"></div>
-            
             <div id="flipbook"></div>
         </div>
 
@@ -908,7 +977,653 @@
         const _supabase = supabase.createClient(SUBA_URL, SUBA_KEY);
 
         let currentPage = 1;
-        const itemsPerPage = 6;
+        const itemsPerPage = 8; // Increased for smaller cards
+        let flipbookInstance = null;
+        let totalPages = 0;
+
+        /* --- Load Zines - Fundamental sama --- */
+        async function loadZines(page = 1) {
+            currentPage = page;
+            const container = document.getElementById('dynamic-zine-list');
+            const from = (page - 1) * itemsPerPage;
+            const to = from + itemsPerPage - 1;
+
+            const { data: zines, error, count } = await _supabase
+                .from('zine')
+                .select('*', { count: 'exact' })
+                .order('created_at', { ascending: false })
+                .range(from, to);
+
+            if (error) return console.error("Error load:", error);
+
+            container.innerHTML = '';
+            
+            zines.forEach((zine) => {
+                const zineHTML = `
+                <div class="zine-card" onclick="openFlipbook('${zine.pdf_url}', ${zine.id}, '${zine.title}', '${zine.music_url || ''}')">
+                    <div class="zine-cover">
+                        <img src="${zine.cover_url}" draggable="false" alt="${zine.title}">
+                        <div class="read-overlay">
+                            <button class="read-btn-overlay" onclick="event.stopPropagation(); openFlipbook('${zine.pdf_url}', ${zine.id}, '${zine.title}', '${zine.music_url || ''}')">Baca</button>
+                        </div>
+                    </div>
+                    <div class="zine-info">
+                        <div class="zine            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 11px;
+            transition: var(--transition);
+        }
+
+        .action-btn:hover {
+            background: var(--white);
+            color: var(--black);
+        }
+
+        /* Search - Minimal */
+        .search-box {
+            max-width: 400px;
+            margin: 0 auto 40px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--white);
+            font-size: 14px;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-box input:focus {
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        .search-box input::placeholder {
+            color: var(--gray-400);
+        }
+
+        /* Pagination - Minimal Lines */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 60px;
+        }
+
+        .page-btn {
+            min-width: 32px;
+            height: 32px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: transparent;
+            color: var(--gray-400);
+            font-size: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .page-btn:hover,
+        .page-btn.active {
+            background: var(--white);
+            color: var(--black);
+            border-color: var(--white);
+        }
+
+        /* Feedback - Clean Form */
+        .feedback-form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 16px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--white);
+            font-size: 14px;
+            outline: none;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--white);
+            color: var(--black);
+            border: none;
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .submit-btn:hover {
+            background: var(--gray-100);
+        }
+
+        /* About - Simple Text */
+        .about-text {
+            max-width: 700px;
+            font-size: 16px;
+            line-height: 2;
+            color: var(--gray-400);
+        }
+
+        .about-text strong {
+            color: var(--white);
+            font-weight: 400;
+        }
+
+        .about-meta {
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            gap: 60px;
+            font-size: 12px;
+            color: var(--gray-400);
+        }
+
+        .about-meta span {
+            display: block;
+            color: var(--white);
+            margin-top: 4px;
+        }
+
+        /* Footer - Minimal */
+        footer {
+            padding: 40px;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-sponsors {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 24px;
+            opacity: 0.5;
+        }
+
+        .footer-sponsors img {
+            height: 24px;
+            filter: grayscale(100%) brightness(2);
+        }
+
+        .footer-copy {
+            font-size: 11px;
+            color: var(--gray-400);
+            letter-spacing: 1px;
+        }
+
+        /* ============================================
+           FLIPBOOK - FIXED FOR PROPER FLIPPING
+           ============================================ */
+        #flipbook-container {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: var(--black);
+            z-index: 2000;
+        }
+
+        /* Reader Header - Simple */
+        .reader-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 40px;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(10px);
+            z-index: 2001;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .reader-title {
+            font-size: 14px;
+            letter-spacing: 2px;
+        }
+
+        .reader-close {
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: transparent;
+            color: var(--white);
+            font-size: 18px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .reader-close:hover {
+            background: var(--white);
+            color: var(--black);
+        }
+
+        /* Flipbook Area - FIXED */
+        .flipbook-wrapper {
+            position: absolute;
+            top: 60px;
+            left: 0;
+            right: 0;
+            bottom: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        #flipbook {
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        #flipbook .page {
+            background: var(--white);
+            overflow: hidden;
+        }
+
+        #flipbook .page img,
+        #flipbook .page canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: contain;
+        }
+
+        /* Hard cover effect */
+        #flipbook .hard {
+            background: #1a1a1a !important;
+            color: var(--white);
+        }
+
+        /* Navigation Controls - Bottom Center */
+        .reader-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            background: rgba(0,0,0,0.9);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            z-index: 2001;
+        }
+
+        .ctrl-btn {
+            width: 48px;
+            height: 48px;
+            border: 1px solid rgba(255,255,255,0.3);
+            background: transparent;
+            color: var(--white);
+            font-size: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .ctrl-btn:hover:not(:disabled) {
+            background: var(--white);
+            color: var(--black);
+            transform: scale(1.1);
+        }
+
+        .ctrl-btn:disabled {
+            opacity: 0.2;
+            cursor: not-allowed;
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        .page-indicator {
+            font-size: 13px;
+            letter-spacing: 2px;
+            color: var(--gray-400);
+            min-width: 100px;
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Click Zones for Page Turn - FIXED */
+        .click-zone {
+            position: absolute;
+            top: 60px;
+            bottom: 80px;
+            width: 15%;
+            z-index: 2000;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .click-zone.prev { left: 0; }
+        .click-zone.next { right: 0; }
+
+        .click-zone:hover {
+            background: rgba(255,255,255,0.03);
+        }
+
+        .zone-indicator {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%) scale(0);
+            width: 50px;
+            height: 50px;
+            border: 2px solid rgba(255,255,255,0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--white);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .click-zone.prev .zone-indicator { right: 20px; }
+        .click-zone.next .zone-indicator { left: 20px; }
+
+        .click-zone:hover .zone-indicator {
+            transform: translateY(-50%) scale(1);
+            opacity: 1;
+        }
+
+        /* Loading */
+        #zine-loading {
+            position: fixed;
+            inset: 0;
+            background: var(--black);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .loading-text {
+            font-size: 12px;
+            letter-spacing: 4px;
+            color: var(--gray-400);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Utilities */
+        .no-scroll {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
+
+        img {
+            -webkit-touch-callout: none;
+            -webkit-user-drag: none;
+            user-select: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 16px 20px;
+            }
+
+            .menu {
+                gap: 20px;
+            }
+
+            .menu a {
+                font-size: 11px;
+            }
+
+            section {
+                padding: 60px 20px;
+            }
+
+            /* Smaller zine cards on mobile */
+            .zine-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .zine-card {
+                max-width: none;
+            }
+
+            .zine-title {
+                font-size: 12px;
+            }
+
+            .reader-header {
+                padding: 0 20px;
+                height: 50px;
+            }
+
+            .reader-title {
+                font-size: 12px;
+            }
+
+            .flipbook-wrapper {
+                top: 50px;
+                bottom: 70px;
+            }
+
+            .reader-controls {
+                height: 70px;
+                gap: 20px;
+            }
+
+            .ctrl-btn {
+                width: 44px;
+                height: 44px;
+                font-size: 18px;
+            }
+
+            .click-zone {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .zine-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .zine-info {
+                padding: 12px;
+            }
+
+            .zine-title {
+                font-size: 11px;
+            }
+
+            .zine-meta {
+                font-size: 10px;
+            }
+
+            .action-btn {
+                width: 24px;
+                height: 24px;
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <div class="bg-layer"></div>
+
+    <!-- Intro -->
+    <div id="intro">
+        <div id="introText">TURMOILDISTRACTED</div>
+        <div id="introSub">digital underground archive</div>
+    </div>
+
+    <!-- Loading -->
+    <div id="zine-loading">
+        <div class="loading-text">MEMUAT ZINE...</div>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="brand">
+            <img src="logo.png" alt="logo">
+        </div>
+        <div class="menu">
+            <a href="#zine" class="active">ZINE</a>
+            <a href="j-card.html">J-CARD</a>
+            <a href="#about">ABOUT</a>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Hero -->
+        <section class="hero">
+            <h1>ZINE FLIPBOOK</h1>
+            <p>Arsip digital independen. Eksplorasi visual dalam format flipbook interaktif.</p>
+            <a href="#zine" class="btn-primary">Jelajahi Arsip →</a>
+        </section>
+
+        <!-- Charity -->
+        <section id="charity">
+            <div class="section-title">Charity</div>
+            <div class="charity-card">
+                <h3>CHARITY FOR GAZA</h3>
+                <p>Satu kebaikan bisa jadi selimut, roti, dan obat bagi mereka.</p>
+                <a href="https://kasihpalestina.com/" target="_blank" class="btn-primary">Donasi Sekarang</a>
+            </div>
+        </section>
+
+        <!-- Zine Archive -->
+        <section id="zine">
+            <div class="section-title">Koleksi Zine</div>
+            
+            <div class="search-box">
+                <input type="text" id="zineSearch" placeholder="Cari zine..." onkeyup="searchZine()">
+            </div>
+
+            <div id="dynamic-zine-list" class="zine-grid"></div>
+            <div id="pagination" class="pagination"></div>
+        </section>
+
+        <!-- Feedback -->
+        <section id="feedback">
+            <div class="section-title">Feedback</div>
+            <form class="feedback-form" onsubmit="event.preventDefault(); kirimKritik();">
+                <div class="form-group">
+                    <input type="text" id="kritikPesan" placeholder="Tulis kritik & saran kamu..." required>
+                </div>
+                <button type="submit" class="submit-btn">Kirim Pesan</button>
+            </form>
+        </section>
+
+        <!-- About -->
+        <section id="about">
+            <div class="section-title">About Archive</div>
+            <p class="about-text">
+                Website ini adalah <strong>arsip digital zine independen.</strong> Eksplorasi visual dan teks dalam format flipbook digital. Setiap zine dapat dibaca seperti membuka buku fisik halaman demi halaman.
+                <br><br>
+                Beberapa zine mungkin terasa kasar, tidak rapi, atau penuh kesalahan. Halaman-halaman yang kotor, kalimat yang patah, dan ide yang tidak selalu selesai—tetapi itu adalah bagian dari autentisitasnya.
+            </p>
+            <div class="about-meta">
+                <div>Musik: <span>Hasohkah — Shcool Rooftop</span></div>
+                <div>Kolaborasi: <span>Rath x Souterrain</span></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-sponsors">
+            <img src="spon1.png" alt="">
+            <img src="spon2.png" alt="">
+            <img src="spon3.png" alt="">
+        </div>
+        <div class="footer-copy">ZINE FLIPBOOK Copyright © Rath x Souterrain</div>
+    </footer>
+
+    <!-- Flipbook Container - FIXED STRUCTURE -->
+    <div id="flipbook-container">
+        <div class="reader-header">
+            <div class="reader-title" id="readerTitle">ZINE</div>
+            <button class="reader-close" onclick="closeFlipbook()">✕</button>
+        </div>
+
+        <!-- Click zones -->
+        <div class="click-zone prev" onclick="prevPage()">
+            <div class="zone-indicator">←</div>
+        </div>
+        <div class="click-zone next" onclick="nextPage()">
+            <div class="zone-indicator">→</div>
+        </div>
+
+        <div class="flipbook-wrapper">
+            <div id="flipbook"></div>
+        </div>
+
+        <div class="reader-controls">
+            <button class="ctrl-btn" id="prevBtn" onclick="prevPage()">←</button>
+            <div class="page-indicator" id="pageIndicator">1 / 1</div>
+            <button class="ctrl-btn" id="nextBtn" onclick="nextPage()">→</button>
+        </div>
+    </div>
+
+    <!-- Audio -->
+    <audio id="bg-music" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        /* ============================================
+           FUNDAMENTAL CODE - TETAP SAMA
+           ============================================ */
+        const SUBA_URL = "https://yzekxpgjgnbksaleosti.supabase.co";
+        const SUBA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl6ZWt4cGdqZ25ia3NhbGVvc3RpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMzc1NjksImV4cCI6MjA4OTkxMzU2OX0.GXUHhaFQji-KfeFGwJ3ratj-uvm5E8KBvXp_oXNl0Y4";
+        const _supabase = supabase.createClient(SUBA_URL, SUBA_KEY);
+
+        let currentPage = 1;
+        const itemsPerPage = 8; // Increased for smaller cards
         let flipbookInstance = null;
         let totalPages = 0;
 
@@ -1028,7 +1743,7 @@
         }
 
         /* ============================================
-           FLIPBOOK - MODIFIED FOR BETTER READING
+           FLIPBOOK - FIXED FOR PROPER FLIPPING
            ============================================ */
         async function openFlipbook(pdfUrl, zineId, title, customMusicUrl) { 
             if (!pdfUrl) return;
@@ -1048,19 +1763,20 @@
             // Show loader
             document.body.classList.add('no-scroll');
             document.getElementById("zine-loading").style.display = "flex";
-            document.getElementById("flipbook-container").style.display = "flex";
+            document.getElementById("flipbook-container").style.display = "block";
             document.getElementById("readerTitle").textContent = title || 'ZINE';
 
-            // Reset flipbook
+            // Reset flipbook - IMPORTANT: Destroy old instance properly
             const oldFlip = document.getElementById("flipbook");
-            if ($(oldFlip).data("turn")) $(oldFlip).turn("destroy");
             
-            const newFlip = document.createElement("div");
-            newFlip.id = "flipbook";
-            oldFlip.parentNode.replaceChild(newFlip, oldFlip);
-            flipbookInstance = newFlip;
-
-            // Handle music
+            // Properly destroy if exists
+            if ($(oldFlip).data("turn")) {
+                $(oldFlip).turn("destroy");
+            }
+            
+            // Clear and recreate
+            oldFlip.innerHTML = '';
+            
             const music = document.getElementById("bg-music");
             music.pause();
             if (customMusicUrl && customMusicUrl !== 'undefined' && customMusicUrl.trim() !== '') {
@@ -1077,10 +1793,13 @@
                 const pdf = await pdfjsLib.getDocument(pdfUrl).promise;
                 totalPages = pdf.numPages;
                 
-                // Render pages
+                // Render pages with better quality
                 for (let i = 1; i <= totalPages; i++) {
                     const page = await pdf.getPage(i);
+                    
+                    // Calculate scale based on viewport
                     const viewport = page.getViewport({ scale: 1.5 });
+                    
                     const canvas = document.createElement("canvas");
                     const context = canvas.getContext("2d");
                     
@@ -1095,30 +1814,54 @@
                     const div = document.createElement("div");
                     div.className = "page";
                     div.appendChild(canvas);
-                    newFlip.appendChild(div);
+                    oldFlip.appendChild(div);
                 }
 
-                // Initialize turn.js - OPTIMIZED SETTINGS
+                // Calculate dimensions
                 const isMobile = window.innerWidth <= 768;
-                const flipWidth = isMobile ? window.innerWidth * 0.9 : Math.min(1000, window.innerWidth * 0.8);
-                const flipHeight = isMobile ? (window.innerWidth * 0.9) * 1.4 : flipWidth * 0.7;
+                const windowWidth = window.innerWidth;
+                const windowHeight = window.innerHeight - 140; // minus header and controls
+                
+                let flipWidth, flipHeight;
+                
+                if (isMobile) {
+                    // Single page on mobile
+                    flipWidth = Math.min(windowWidth * 0.9, 400);
+                    flipHeight = flipWidth * 1.4;
+                } else {
+                    // Double page on desktop
+                    const pageWidth = oldFlip.querySelector('.page').offsetWidth || 400;
+                    const pageHeight = oldFlip.querySelector('.page').offsetHeight || 560;
+                    
+                    flipWidth = Math.min(pageWidth * 2, windowWidth * 0.8, 900);
+                    flipHeight = Math.min(pageHeight, windowHeight * 0.85, 650);
+                }
 
-                $(newFlip).turn({
+                // Initialize turn.js with CORRECT settings
+                $(oldFlip).turn({
                     width: flipWidth,
                     height: flipHeight,
                     autoCenter: true,
                     display: isMobile ? "single" : "double",
-                    duration: 800,
+                    duration: 600,
                     acceleration: true,
                     gradients: true,
                     elevation: 50,
                     when: {
-                        turning: function(e, page) {
+                        turning: function(event, page, view) {
+                            console.log('Turning to page:', page);
+                            updateIndicator(page);
+                            updateButtons(page);
+                        },
+                        turned: function(event, page, view) {
+                            console.log('Turned to page:', page);
                             updateIndicator(page);
                             updateButtons(page);
                         }
                     }
                 });
+
+                flipbookInstance = oldFlip;
 
                 // Initial state
                 updateIndicator(1);
@@ -1137,16 +1880,24 @@
             }
         }
 
-        /* --- Navigation Functions - NEW --- */
+        /* --- Navigation Functions - FIXED --- */
         function nextPage() {
+            console.log('Next clicked, instance:', flipbookInstance);
             if (flipbookInstance && $(flipbookInstance).data("turn")) {
-                $(flipbookInstance).turn("next");
+                const current = $(flipbookInstance).turn("page");
+                if (current < totalPages) {
+                    $(flipbookInstance).turn("next");
+                }
             }
         }
 
         function prevPage() {
+            console.log('Prev clicked, instance:', flipbookInstance);
             if (flipbookInstance && $(flipbookInstance).data("turn")) {
-                $(flipbookInstance).turn("previous");
+                const current = $(flipbookInstance).turn("page");
+                if (current > 1) {
+                    $(flipbookInstance).turn("previous");
+                }
             }
         }
 
@@ -1166,9 +1917,17 @@
         }
 
         function handleKeydown(e) {
-            if (e.key === 'ArrowRight') nextPage();
-            if (e.key === 'ArrowLeft') prevPage();
-            if (e.key === 'Escape') closeFlipbook();
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextPage();
+            }
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevPage();
+            }
+            if (e.key === 'Escape') {
+                closeFlipbook();
+            }
         }
 
         function closeFlipbook() {
@@ -1177,9 +1936,11 @@
             document.getElementById("bg-music").pause();
             document.removeEventListener('keydown', handleKeydown);
             
+            // Properly destroy
             if (flipbookInstance && $(flipbookInstance).data("turn")) {
                 $(flipbookInstance).turn("destroy");
             }
+            flipbookInstance = null;
         }
 
         /* --- Feedback - Fundamental sama --- */
@@ -1242,8 +2003,12 @@
             // Random background
             const bgs = ["back1.jpg", "back2.jpg", "back3.jpg", "back4.jpg", "back5.jpg"];
             const selected = bgs[Math.floor(Math.random() * bgs.length)];
-            document.querySelector(".bg-layer::after") && 
-                document.documentElement.style.setProperty('--bg-img', `url("${selected}")`);
+            
+            // Apply background
+            const bgLayer = document.querySelector(".bg-layer");
+            if (bgLayer) {
+                bgLayer.style.setProperty('--bg-image', `url("${selected}")`);
+            }
 
             // Hide intro
             setTimeout(() => {
