@@ -548,7 +548,7 @@
         }
 
         /* ============================================
-           FLIPBOOK - FIXED STRUCTURE
+           FLIPBOOK - VERTICAL SINGLE PAGE VIEW
            ============================================ */
         #flipbook-container {
             display: none;
@@ -556,11 +556,13 @@
             inset: 0;
             background: var(--black);
             z-index: 2000;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
 
-        /* Reader Header - Simple */
+        /* Reader Header - Sticky */
         .reader-header {
-            position: absolute;
+            position: sticky;
             top: 0;
             left: 0;
             right: 0;
@@ -569,7 +571,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 0 40px;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.95);
             backdrop-filter: blur(10px);
             z-index: 2001;
             border-bottom: 1px solid rgba(255,255,255,0.1);
@@ -599,37 +601,44 @@
             color: var(--black);
         }
 
-        /* Flipbook Area - FIXED */
-        .flipbook-wrapper {
-            position: absolute;
-            top: 60px;
-            left: 0;
-            right: 0;
-            bottom: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
+        /* Flipbook Vertical Layout */
         #flipbook {
-            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            gap: 20px;
+            min-height: calc(100vh - 140px);
         }
 
         #flipbook .page {
             background: var(--white);
-            overflow: hidden;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            position: relative;
         }
 
         #flipbook .page canvas {
             width: 100%;
-            height: 100%;
+            height: auto;
             display: block;
         }
 
-        /* Navigation Controls - Bottom Center */
-        .reader-controls {
+        /* Page number indicator on each page */
+        .page-number {
             position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: var(--gray-400);
+            letter-spacing: 1px;
+        }
+
+        /* Navigation Controls - Fixed Bottom */
+        .reader-controls {
+            position: sticky;
             bottom: 0;
             left: 0;
             right: 0;
@@ -638,7 +647,7 @@
             align-items: center;
             justify-content: center;
             gap: 30px;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.95);
             border-top: 1px solid rgba(255,255,255,0.1);
             z-index: 2001;
         }
@@ -679,49 +688,6 @@
             font-variant-numeric: tabular-nums;
         }
 
-        /* Click Zones for Page Turn */
-        .click-zone {
-            position: absolute;
-            top: 60px;
-            bottom: 80px;
-            width: 15%;
-            z-index: 2000;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .click-zone.prev { left: 0; }
-        .click-zone.next { right: 0; }
-
-        .click-zone:hover {
-            background: rgba(255,255,255,0.03);
-        }
-
-        .zone-indicator {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%) scale(0);
-            width: 50px;
-            height: 50px;
-            border: 2px solid rgba(255,255,255,0.5);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            color: var(--white);
-            opacity: 0;
-            transition: all 0.3s ease;
-        }
-
-        .click-zone.prev .zone-indicator { right: 20px; }
-        .click-zone.next .zone-indicator { left: 20px; }
-
-        .click-zone:hover .zone-indicator {
-            transform: translateY(-50%) scale(1);
-            opacity: 1;
-        }
-
         /* Loading */
         #zine-loading {
             position: fixed;
@@ -759,6 +725,24 @@
             -webkit-touch-callout: none;
             -webkit-user-drag: none;
             user-select: none;
+        }
+
+        /* Scrollbar styling */
+        #flipbook-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #flipbook-container::-webkit-scrollbar-track {
+            background: var(--black);
+        }
+
+        #flipbook-container::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+        }
+
+        #flipbook-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.3);
         }
 
         /* Responsive */
@@ -805,9 +789,12 @@
                 font-size: 12px;
             }
 
-            .flipbook-wrapper {
-                top: 50px;
-                bottom: 70px;
+            #flipbook {
+                padding: 20px 10px;
+            }
+
+            #flipbook .page {
+                max-width: 100%;
             }
 
             .reader-controls {
@@ -819,10 +806,6 @@
                 width: 44px;
                 height: 44px;
                 font-size: 18px;
-            }
-
-            .click-zone {
-                display: none;
             }
         }
 
@@ -949,29 +932,19 @@
         <div class="footer-copy">ZINE FLIPBOOK Copyright © Rath x Souterrain</div>
     </footer>
 
-    <!-- Flipbook Container -->
+    <!-- Flipbook Container - VERTICAL SCROLL -->
     <div id="flipbook-container">
         <div class="reader-header">
             <div class="reader-title" id="readerTitle">ZINE</div>
             <button class="reader-close" onclick="closeFlipbook()">✕</button>
         </div>
 
-        <!-- Click zones -->
-        <div class="click-zone prev" onclick="prevPage()">
-            <div class="zone-indicator">←</div>
-        </div>
-        <div class="click-zone next" onclick="nextPage()">
-            <div class="zone-indicator">→</div>
-        </div>
-
-        <div class="flipbook-wrapper">
-            <div id="flipbook"></div>
-        </div>
+        <div id="flipbook"></div>
 
         <div class="reader-controls">
-            <button class="ctrl-btn" id="prevBtn" onclick="prevPage()">←</button>
+            <button class="ctrl-btn" id="prevBtn" onclick="scrollToPrev()">↑</button>
             <div class="page-indicator" id="pageIndicator">1 / 1</div>
-            <button class="ctrl-btn" id="nextBtn" onclick="nextPage()">→</button>
+            <button class="ctrl-btn" id="nextBtn" onclick="scrollToNext()">↓</button>
         </div>
     </div>
 
@@ -990,8 +963,9 @@
 
         let currentPage = 1;
         const itemsPerPage = 8;
-        let flipbookInstance = null;
+        let currentZineId = null;
         let totalPages = 0;
+        let pageElements = [];
 
         /* --- Load Zines - WITH MUSIC NAME --- */
         async function loadZines(page = 1) {
@@ -1014,11 +988,10 @@
             container.innerHTML = '';
             
             zines.forEach((zine) => {
-                // Extract music name from URL or use music_title field
                 const musicName = zine.music_title || getMusicNameFromUrl(zine.music_url) || 'Default Theme';
                 
                 const zineHTML = `
-                <div class="zine-card" onclick="openFlipbook('${zine.pdf_url}', ${zine.id}, '${escapeHtml(zine.title)}', '${zine.music_url || ''}')">
+                <div class="zine-card" data-zine-id="${zine.id}" onclick="openFlipbook('${zine.pdf_url}', ${zine.id}, '${escapeHtml(zine.title)}', '${zine.music_url || ''}')">
                     <div class="zine-cover">
                         <img src="${zine.cover_url}" draggable="false" alt="${escapeHtml(zine.title)}">
                         <div class="read-overlay">
@@ -1029,10 +1002,10 @@
                         <div class="zine-title">${escapeHtml(zine.title)}</div>
                         <div class="zine-music">${escapeHtml(musicName)}</div>
                         <div class="zine-meta">
-                            <span>${zine.views || 0} views</span>
+                            <span class="view-count" data-id="${zine.id}">${zine.views || 0} views</span>
                             <div class="zine-actions">
                                 <button class="action-btn" onclick="event.stopPropagation(); openFlipbook('${zine.pdf_url}', ${zine.id}, '${escapeHtml(zine.title)}', '${zine.music_url || ''}')" title="Baca">→</button>
-                                <a href="${zine.pdf_url}" download class="action-btn" onclick="event.stopPropagation()" title="Download">↓</a>
+                                <button class="action-btn" onclick="event.stopPropagation(); downloadZine('${zine.pdf_url}')" title="Download">↓</button>
                             </div>
                         </div>
                     </div>
@@ -1063,6 +1036,18 @@
                 .replace(/>/g, "&gt;")
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#039;");
+        }
+
+        // Download function
+        function downloadZine(url) {
+            if (!url) return;
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = '';
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         function renderPagination(totalItems) {
@@ -1120,7 +1105,7 @@
                 const musicName = zine.music_title || getMusicNameFromUrl(zine.music_url) || 'Default Theme';
                 
                 const zineHTML = `
-                <div class="zine-card" onclick="openFlipbook('${zine.pdf_url}', ${zine.id}, '${escapeHtml(zine.title)}', '${zine.music_url || ''}')">
+                <div class="zine-card" data-zine-id="${zine.id}" onclick="openFlipbook('${zine.pdf_url}', ${zine.id}, '${escapeHtml(zine.title)}', '${zine.music_url || ''}')">
                     <div class="zine-cover">
                         <img src="${zine.cover_url}" draggable="false" alt="${escapeHtml(zine.title)}">
                         <div class="read-overlay">
@@ -1131,10 +1116,10 @@
                         <div class="zine-title">${escapeHtml(zine.title)}</div>
                         <div class="zine-music">${escapeHtml(musicName)}</div>
                         <div class="zine-meta">
-                            <span>${zine.views || 0} views</span>
+                            <span class="view-count" data-id="${zine.id}">${zine.views || 0} views</span>
                             <div class="zine-actions">
-                                <button class="action-btn" onclick="event.stopPropagation(); openFlipbook('${zine.pdf_url}', ${zine.id}, '${escapeHtml(zine.title)}', '${zine.music_url || ''}')">→</button>
-                                <a href="${zine.pdf_url}" download class="action-btn" onclick="event.stopPropagation()">↓</a>
+                                <button class="action-btn" onclick="event.stopPropagation(); openFlipbook('${zine.pdf_url}', ${zine.id}, '${escapeHtml(zine.title)}', '${zine.music_url || ''}')" title="Baca">→</button>
+                                <button class="action-btn" onclick="event.stopPropagation(); downloadZine('${zine.pdf_url}')" title="Download">↓</button>
                             </div>
                         </div>
                     </div>
@@ -1144,7 +1129,7 @@
         }
 
         /* ============================================
-           FLIPBOOK - FIXED AND WORKING
+           FLIPBOOK - VERTICAL SCROLL VIEW
            ============================================ */
         async function openFlipbook(pdfUrl, zineId, title, customMusicUrl) { 
             if (!pdfUrl) {
@@ -1152,21 +1137,13 @@
                 return;
             }
 
-            // Update views
+            // Always increment view when opening
             if (zineId) {
+                currentZineId = zineId;
                 try {
                     await _supabase.rpc('increment_views', { row_id: zineId });
-                    // Update view count in UI
-                    const cards = document.querySelectorAll('.zine-card');
-                    cards.forEach(card => {
-                        if (card.getAttribute('onclick').includes(`'${zineId}'`)) {
-                            const viewSpan = card.querySelector('.zine-meta span');
-                            if (viewSpan) {
-                                const current = parseInt(viewSpan.textContent) || 0;
-                                viewSpan.textContent = `${current + 1} views`;
-                            }
-                        }
-                    });
+                    // Update view count in UI immediately
+                    updateViewCount(zineId);
                 } catch (e) { 
                     console.error("View update error:", e);
                 }
@@ -1178,20 +1155,10 @@
             document.getElementById("flipbook-container").style.display = "block";
             document.getElementById("readerTitle").textContent = title || 'ZINE';
 
-            // Get flipbook element
+            // Clear previous flipbook
             const flipbookEl = document.getElementById("flipbook");
-            
-            // Destroy existing if any
-            try {
-                if ($(flipbookEl).data("turn")) {
-                    $(flipbookEl).turn("destroy");
-                }
-            } catch (e) {
-                console.log("No existing flipbook to destroy");
-            }
-            
-            // Clear content
             flipbookEl.innerHTML = '';
+            pageElements = [];
 
             // Handle music
             const music = document.getElementById("bg-music");
@@ -1210,83 +1177,25 @@
                 const pdf = await pdfjsLib.getDocument(pdfUrl).promise;
                 totalPages = pdf.numPages;
                 
-                // Render all pages
-                const pagePromises = [];
+                // Render all pages vertically
                 for (let i = 1; i <= totalPages; i++) {
-                    pagePromises.push(renderPage(pdf, i));
-                }
-                
-                const pages = await Promise.all(pagePromises);
-                pages.forEach(pageDiv => {
+                    const pageDiv = await renderPageVertical(pdf, i);
                     flipbookEl.appendChild(pageDiv);
-                });
-
-                // Calculate dimensions based on first page
-                const firstCanvas = flipbookEl.querySelector('canvas');
-                let pageWidth = 400;
-                let pageHeight = 560;
-                
-                if (firstCanvas) {
-                    pageWidth = firstCanvas.width;
-                    pageHeight = firstCanvas.height;
+                    pageElements.push(pageDiv);
                 }
 
-                // Calculate responsive dimensions
-                const isMobile = window.innerWidth <= 768;
-                const windowWidth = window.innerWidth;
-                const windowHeight = window.innerHeight - 140; // minus header and controls
-                
-                let flipWidth, flipHeight;
-                
-                if (isMobile) {
-                    // Single page on mobile
-                    flipWidth = Math.min(windowWidth * 0.9, 350);
-                    const ratio = pageHeight / pageWidth;
-                    flipHeight = flipWidth * ratio;
-                } else {
-                    // Double page on desktop
-                    flipWidth = Math.min(pageWidth * 2, windowWidth * 0.8, 900);
-                    flipHeight = Math.min(pageHeight, windowHeight * 0.85, 650);
-                }
-
-                console.log("Initializing flipbook:", { flipWidth, flipHeight, isMobile });
-
-                // Small delay to ensure DOM is ready
-                await new Promise(resolve => setTimeout(resolve, 100));
-
-                // Initialize turn.js
-                $(flipbookEl).turn({
-                    width: flipWidth,
-                    height: flipHeight,
-                    autoCenter: true,
-                    display: isMobile ? "single" : "double",
-                    duration: 600,
-                    acceleration: true,
-                    gradients: true,
-                    elevation: 50,
-                    when: {
-                        turning: function(event, page, view) {
-                            console.log('Turning to page:', page);
-                            updateIndicator(page);
-                            updateButtons(page);
-                        },
-                        turned: function(event, page, view) {
-                            console.log('Turned to page:', page);
-                        }
-                    }
-                });
-
-                flipbookInstance = flipbookEl;
-
-                // Initial state
+                // Update indicator
                 updateIndicator(1);
                 updateButtons(1);
 
-                // Keyboard navigation
-                document.addEventListener('keydown', handleKeydown);
+                // Setup scroll observer
+                setupScrollObserver();
 
                 // Hide loader
                 document.getElementById("zine-loading").style.display = "none";
+
+                // Scroll to top
+                document.getElementById("flipbook-container").scrollTop = 0;
 
             } catch (err) {
                 console.error("Flipbook error:", err);
@@ -1295,10 +1204,17 @@
             }
         }
 
-        async function renderPage(pdf, pageNum) {
+        function updateViewCount(zineId) {
+            const viewElements = document.querySelectorAll(`.view-count[data-id="${zineId}"]`);
+            viewElements.forEach(el => {
+                const current = parseInt(el.textContent) || 0;
+                el.textContent = `${current + 1} views`;
+            });
+        }
+
+        async function renderPageVertical(pdf, pageNum) {
             const page = await pdf.getPage(pageNum);
-            const scale = 1.5;
-            const viewport = page.getViewport({ scale: scale });
+            const viewport = page.getViewport({ scale: 1.5 });
             
             const canvas = document.createElement("canvas");
             const context = canvas.getContext("2d");
@@ -1313,34 +1229,58 @@
             
             const div = document.createElement("div");
             div.className = "page";
+            div.setAttribute('data-page-num', pageNum);
             div.appendChild(canvas);
+            
+            // Add page number
+            const pageNumDiv = document.createElement("div");
+            pageNumDiv.className = "page-number";
+            pageNumDiv.textContent = `${pageNum} / ${totalPages}`;
+            div.appendChild(pageNumDiv);
             
             return div;
         }
 
-        /* --- Navigation Functions --- */
-        function nextPage() {
-            if (!flipbookInstance) return;
-            try {
-                const current = $(flipbookInstance).turn("page");
-                if (current < totalPages) {
-                    $(flipbookInstance).turn("next");
-                }
-            } catch (e) {
-                console.error("Next page error:", e);
-            }
+        function setupScrollObserver() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const pageNum = parseInt(entry.target.getAttribute('data-page-num'));
+                        updateIndicator(pageNum);
+                        updateButtons(pageNum);
+                    }
+                });
+            }, {
+                root: document.getElementById("flipbook-container"),
+                threshold: 0.5
+            });
+
+            pageElements.forEach(page => observer.observe(page));
         }
 
-        function prevPage() {
-            if (!flipbookInstance) return;
-            try {
-                const current = $(flipbookInstance).turn("page");
-                if (current > 1) {
-                    $(flipbookInstance).turn("previous");
-                }
-            } catch (e) {
-                console.error("Prev page error:", e);
-            }
+        /* --- Navigation Functions - VERTICAL --- */
+        function scrollToNext() {
+            const container = document.getElementById("flipbook-container");
+            const currentScroll = container.scrollTop;
+            const pageHeight = pageElements[0]?.offsetHeight || 600;
+            const gap = 20;
+            
+            container.scrollTo({
+                top: currentScroll + pageHeight + gap,
+                behavior: 'smooth'
+            });
+        }
+
+        function scrollToPrev() {
+            const container = document.getElementById("flipbook-container");
+            const currentScroll = container.scrollTop;
+            const pageHeight = pageElements[0]?.offsetHeight || 600;
+            const gap = 20;
+            
+            container.scrollTo({
+                top: currentScroll - pageHeight - gap,
+                behavior: 'smooth'
+            });
         }
 
         function updateIndicator(current) {
@@ -1358,36 +1298,16 @@
             if (nextBtn) nextBtn.disabled = current >= totalPages;
         }
 
-        function handleKeydown(e) {
-            if (e.key === 'ArrowRight' || e.key === ' ') {
-                e.preventDefault();
-                nextPage();
-            }
-            if (e.key === 'ArrowLeft') {
-                e.preventDefault();
-                prevPage();
-            }
-            if (e.key === 'Escape') {
-                closeFlipbook();
-            }
-        }
-
         function closeFlipbook() {
             document.body.classList.remove('no-scroll');
             document.getElementById("flipbook-container").style.display = "none";
             document.getElementById("bg-music").pause();
-            document.removeEventListener('keydown', handleKeydown);
             
-            if (flipbookInstance) {
-                try {
-                    if ($(flipbookInstance).data("turn")) {
-                        $(flipbookInstance).turn("destroy");
-                    }
-                } catch (e) {
-                    console.log("Destroy error:", e);
-                }
-            }
-            flipbookInstance = null;
+            // Clear flipbook
+            const flipbookEl = document.getElementById("flipbook");
+            flipbookEl.innerHTML = '';
+            pageElements = [];
+            currentZineId = null;
         }
 
         /* --- Feedback --- */
