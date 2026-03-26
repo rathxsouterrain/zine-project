@@ -1,0 +1,1746 @@
+<!DOCTYPE html>
+<html lang="id" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="google" content="notranslate">
+    <title>zinexflipbook</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+    </script>
+
+    <style>
+        :root {
+            --pure-white: #ffffff;
+            --off-white: #f5f5f5;
+            --light-gray: #e0e0e0;
+            --mid-gray: #888888;
+            --dark-gray: #2a2a2a;
+            --charcoal: #1a1a1a;
+            --pure-black: #000000;
+            --transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-fast: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background: var(--pure-black);
+            color: var(--pure-white);
+            font-family: 'Inter', sans-serif;
+            -webkit-user-select: none;
+            user-select: none;
+            overflow-x: hidden;
+            line-height: 1.6;
+            cursor: default;
+        }
+
+        /* Grain Texture Overlay */
+        .grain {
+            position: fixed;
+            inset: 0;
+            z-index: 9998;
+            pointer-events: none;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Custom Cursor */
+        .cursor-dot,
+        .cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .cursor-dot {
+            width: 5px;
+            height: 5px;
+            background: var(--pure-white);
+        }
+
+        .cursor-outline {
+            width: 30px;
+            height: 30px;
+            border: 1px solid rgba(255,255,255,0.5);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+
+        body.hovering .cursor-outline {
+            width: 50px;
+            height: 50px;
+            background: rgba(255,255,255,0.1);
+            border-color: var(--pure-white);
+        }
+
+        /* Intro */
+        #intro {
+            position: fixed;
+            inset: 0;
+            background: var(--pure-black);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 0.8s ease, visibility 0.8s;
+        }
+
+        #intro.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .intro-line {
+            width: 0;
+            height: 1px;
+            background: var(--pure-white);
+            margin-bottom: 40px;
+            animation: lineExpand 1s ease forwards 0.5s;
+        }
+
+        @keyframes lineExpand {
+            to { width: 200px; }
+        }
+
+        .intro-text {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 12px;
+            letter-spacing: 12px;
+            text-transform: uppercase;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards 1s;
+        }
+
+        .intro-sub {
+            margin-top: 20px;
+            font-size: 10px;
+            letter-spacing: 4px;
+            color: var(--mid-gray);
+            opacity: 0;
+            animation: fadeIn 1s ease forwards 1.5s;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* Fixed Side Navigation - INNOVATIVE POSITION */
+        .side-nav {
+            position: fixed;
+            left: 40px;
+            top: 50%;
+            transform: translateY(-50%) translateX(-100px);
+            z-index: 1000;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .side-nav.visible {
+            transform: translateY(-50%) translateX(0);
+            opacity: 1;
+        }
+
+        .side-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 0;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            text-decoration: none;
+            color: var(--mid-gray);
+        }
+
+        .side-nav-item:hover {
+            color: var(--pure-white);
+        }
+
+        .side-nav-line {
+            width: 20px;
+            height: 1px;
+            background: currentColor;
+            transition: var(--transition-fast);
+        }
+
+        .side-nav-item:hover .side-nav-line,
+        .side-nav-item.active .side-nav-line {
+            width: 40px;
+        }
+
+        .side-nav-text {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: var(--transition-fast);
+        }
+
+        .side-nav-item:hover .side-nav-text,
+        .side-nav-item.active .side-nav-text {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .side-nav-item.active {
+            color: var(--pure-white);
+        }
+
+        /* Top Right Utility Nav */
+        .utility-nav {
+            position: fixed;
+            top: 40px;
+            right: 40px;
+            z-index: 1000;
+            display: flex;
+            gap: 8px;
+            transform: translateY(-100px);
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .utility-nav.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .utility-btn {
+            width: 48px;
+            height: 48px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: transparent;
+            color: var(--pure-white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            font-size: 14px;
+        }
+
+        .utility-btn:hover {
+            background: var(--pure-white);
+            color: var(--pure-black);
+            transform: scale(1.1);
+        }
+
+        /* Main Content */
+        main {
+            margin-left: 120px;
+            min-height: 100vh;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 60px;
+            position: relative;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .hero-label {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 10px;
+            letter-spacing: 4px;
+            color: var(--mid-gray);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        .hero-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(48px, 10vw, 120px);
+            font-weight: 300;
+            letter-spacing: -4px;
+            line-height: 0.9;
+            margin-bottom: 40px;
+            max-width: 800px;
+        }
+
+        .hero-title span {
+            display: block;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: slideUp 1s ease forwards;
+        }
+
+        .hero-title span:nth-child(1) { animation-delay: 2.5s; }
+        .hero-title span:nth-child(2) { animation-delay: 2.7s; }
+
+        @keyframes slideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-desc {
+            max-width: 400px;
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--mid-gray);
+            margin-bottom: 50px;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards 3s;
+        }
+
+        /* Magnetic Button - INNOVATIVE */
+        .magnetic-wrap {
+            display: inline-block;
+            position: relative;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards 3.2s;
+        }
+
+        .magnetic-btn {
+            position: relative;
+            padding: 20px 40px;
+            border: 1px solid var(--pure-white);
+            background: transparent;
+            color: var(--pure-white);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            cursor: pointer;
+            overflow: hidden;
+            transition: var(--transition-fast);
+        }
+
+        .magnetic-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--pure-white);
+            transition: var(--transition-fast);
+            z-index: -1;
+        }
+
+        .magnetic-btn:hover {
+            color: var(--pure-black);
+        }
+
+        .magnetic-btn:hover::before {
+            left: 0;
+        }
+
+        /* Scroll Indicator - Bottom Left */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 60px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: var(--mid-gray);
+            text-transform: uppercase;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards 3.5s;
+        }
+
+        .scroll-line {
+            width: 60px;
+            height: 1px;
+            background: var(--mid-gray);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scroll-line::after {
+            content: '';
+            position: absolute;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--pure-white);
+            animation: scrollMove 2s ease infinite;
+        }
+
+        @keyframes scrollMove {
+            to { left: 100%; }
+        }
+
+        /* Section Styling */
+        section {
+            padding: 120px 60px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+        }
+
+        .section-header {
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            gap: 40px;
+            margin-bottom: 80px;
+            align-items: start;
+        }
+
+        .section-num {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: var(--mid-gray);
+            padding-top: 8px;
+        }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(32px, 5vw, 56px);
+            font-weight: 300;
+            letter-spacing: -2px;
+            line-height: 1.1;
+        }
+
+        /* Charity Section - Minimal */
+        .charity-section {
+            background: var(--charcoal);
+        }
+
+        .charity-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .charity-text h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 24px;
+            font-weight: 400;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+
+        .charity-text p {
+            color: var(--mid-gray);
+            line-height: 1.8;
+            margin-bottom: 40px;
+        }
+
+        /* Outline Button */
+        .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 32px;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: var(--pure-white);
+            text-decoration: none;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: var(--transition-fast);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-outline::before {
+            content: '→';
+            transition: var(--transition-fast);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--pure-white);
+            background: var(--pure-white);
+            color: var(--pure-black);
+        }
+
+        .btn-outline:hover::before {
+            transform: translateX(4px);
+        }
+
+        /* Zine Grid - Asymmetric */
+        .zine-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+        }
+
+        .zine-card {
+            position: relative;
+            cursor: pointer;
+            group: true;
+        }
+
+        .zine-card:nth-child(1) { grid-column: span 5; }
+        .zine-card:nth-child(2) { grid-column: span 4; }
+        .zine-card:nth-child(3) { grid-column: span 3; }
+        .zine-card:nth-child(4) { grid-column: span 4; }
+        .zine-card:nth-child(5) { grid-column: span 5; }
+        .zine-card:nth-child(6) { grid-column: span 3; }
+
+        .zine-image-wrap {
+            position: relative;
+            aspect-ratio: 3/4;
+            overflow: hidden;
+            background: var(--charcoal);
+            margin-bottom: 20px;
+        }
+
+        .zine-image-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%) contrast(1.1);
+            transition: var(--transition);
+        }
+
+        .zine-card:hover .zine-image-wrap img {
+            filter: grayscale(0%) contrast(1);
+            transform: scale(1.05);
+        }
+
+        /* Reveal Overlay */
+        .zine-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: var(--transition-fast);
+        }
+
+        .zine-card:hover .zine-overlay {
+            opacity: 1;
+        }
+
+        .view-btn {
+            width: 80px;
+            height: 80px;
+            border: 1px solid var(--pure-white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--pure-white);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transform: scale(0.8);
+            transition: var(--transition-fast);
+        }
+
+        .zine-card:hover .view-btn {
+            transform: scale(1);
+        }
+
+        .zine-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 16px;
+        }
+
+        .zine-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: -0.5px;
+        }
+
+        .zine-meta {
+            font-size: 11px;
+            color: var(--mid-gray);
+            display: flex;
+            gap: 20px;
+        }
+
+        /* Search - Floating Bottom */
+        .search-float {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            z-index: 100;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .search-float.visible {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 24px;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 100px;
+            min-width: 400px;
+        }
+
+        .search-box input {
+            background: transparent;
+            border: none;
+            color: var(--pure-white);
+            font-size: 14px;
+            outline: none;
+            flex: 1;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .search-box input::placeholder {
+            color: var(--mid-gray);
+        }
+
+        .search-icon {
+            color: var(--mid-gray);
+            font-size: 16px;
+        }
+
+        .search-close {
+            width: 24px;
+            height: 24px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: var(--mid-gray);
+            cursor: pointer;
+            opacity: 0;
+            transition: var(--transition-fast);
+        }
+
+        .search-box:focus-within .search-close {
+            opacity: 1;
+        }
+
+        /* Pagination - Horizontal Line */
+        .pagination-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 80px;
+            justify-content: center;
+        }
+
+        .page-line {
+            height: 2px;
+            background: rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: var(--transition-fast);
+            position: relative;
+        }
+
+        .page-line::after {
+            content: attr(data-page);
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            color: var(--mid-gray);
+            opacity: 0;
+            transition: var(--transition-fast);
+        }
+
+        .page-line:hover::after,
+        .page-line.active::after {
+            opacity: 1;
+            color: var(--pure-white);
+        }
+
+        .page-line:hover,
+        .page-line.active {
+            background: var(--pure-white);
+        }
+
+        .page-line.active {
+            width: 40px !important;
+        }
+
+        /* Feedback Section */
+        .feedback-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 80px;
+        }
+
+        .feedback-info h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 20px;
+            font-weight: 400;
+            margin-bottom: 16px;
+        }
+
+        .feedback-info p {
+            color: var(--mid-gray);
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .feedback-form {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .input-line {
+            position: relative;
+        }
+
+        .input-line input,
+        .input-line textarea {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding: 16px 0;
+            color: var(--pure-white);
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: var(--transition-fast);
+            resize: none;
+        }
+
+        .input-line textarea {
+            min-height: 120px;
+        }
+
+        .input-line label {
+            position: absolute;
+            left: 0;
+            top: 16px;
+            color: var(--mid-gray);
+            font-size: 14px;
+            pointer-events: none;
+            transition: var(--transition-fast);
+        }
+
+        .input-line input:focus,
+        .input-line textarea:focus,
+        .input-line input:not(:placeholder-shown),
+        .input-line textarea:not(:placeholder-shown) {
+            border-bottom-color: var(--pure-white);
+        }
+
+        .input-line input:focus + label,
+        .input-line textarea:focus + label,
+        .input-line input:not(:placeholder-shown) + label,
+        .input-line textarea:not(:placeholder-shown) + label {
+            top: -8px;
+            font-size: 10px;
+            color: var(--pure-white);
+            letter-spacing: 1px;
+        }
+
+        /* Submit Button - Corner */
+        .submit-wrap {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .btn-submit {
+            padding: 16px 40px;
+            background: var(--pure-white);
+            color: var(--pure-black);
+            border: none;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-submit::after {
+            content: '→';
+            margin-left: 8px;
+            transition: var(--transition-fast);
+        }
+
+        .btn-submit:hover {
+            background: var(--light-gray);
+        }
+
+        .btn-submit:hover::after {
+            transform: translateX(4px);
+        }
+
+        /* About - Large Typography */
+        .about-section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .about-text {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(24px, 4vw, 40px);
+            font-weight: 300;
+            line-height: 1.6;
+            letter-spacing: -1px;
+            max-width: 900px;
+        }
+
+        .about-text span {
+            color: var(--mid-gray);
+        }
+
+        .about-meta {
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            gap: 60px;
+        }
+
+        .meta-item {
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--mid-gray);
+        }
+
+        .meta-item strong {
+            display: block;
+            color: var(--pure-white);
+            font-weight: 400;
+            margin-top: 8px;
+            font-size: 13px;
+            letter-spacing: 0;
+            text-transform: none;
+        }
+
+        /* Footer - Minimal */
+        footer {
+            padding: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-left {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .footer-logo {
+            height: 24px;
+            filter: brightness(0) invert(1);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 24px;
+        }
+
+        .footer-links a {
+            color: var(--mid-gray);
+            text-decoration: none;
+            font-size: 12px;
+            letter-spacing: 1px;
+            transition: var(--transition-fast);
+        }
+
+        .footer-links a:hover {
+            color: var(--pure-white);
+        }
+
+        .footer-right {
+            font-size: 11px;
+            color: var(--mid-gray);
+            letter-spacing: 1px;
+        }
+
+        /* Flipbook - Full Screen Professional */
+        #flipbook-container {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: var(--pure-black);
+            z-index: 5000;
+            flex-direction: column;
+        }
+
+        .reader-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 5001;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+        }
+
+        .reader-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 14px;
+            letter-spacing: 2px;
+        }
+
+        .reader-close {
+            width: 48px;
+            height: 48px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            font-size: 12px;
+        }
+
+        .reader-close:hover {
+            background: var(--pure-white);
+            color: var(--pure-black);
+            transform: rotate(90deg);
+        }
+
+        #flipbook {
+            flex: 1;
+            margin: auto;
+            max-width: 90vw;
+        }
+
+        #flipbook .page {
+            background: var(--charcoal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #flipbook canvas {
+            max-width: 100%;
+            max-height: 100%;
+            pointer-events: none;
+        }
+
+        /* Reader Controls - Vertical Side */
+        .reader-controls {
+            position: fixed;
+            right: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            z-index: 5001;
+        }
+
+        .reader-btn {
+            width: 56px;
+            height: 56px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            background: transparent;
+            color: var(--pure-white);
+            font-size: 18px;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .reader-btn:hover {
+            background: var(--pure-white);
+            color: var(--pure-black);
+        }
+
+        .reader-progress {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 12px;
+            letter-spacing: 2px;
+            color: var(--mid-gray);
+            z-index: 5001;
+        }
+
+        /* Loading */
+        #zine-loading {
+            position: fixed;
+            inset: 0;
+            background: var(--pure-black);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 6000;
+            gap: 30px;
+        }
+
+        .loading-text {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 12px;
+            letter-spacing: 4px;
+            animation: blink 1.5s ease infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            main {
+                margin-left: 0;
+            }
+            
+            .side-nav {
+                display: none;
+            }
+            
+            .hero {
+                padding: 120px 30px 60px;
+            }
+            
+            section {
+                padding: 80px 30px;
+            }
+            
+            .charity-content,
+            .feedback-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .zine-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .zine-card:nth-child(n) {
+                grid-column: span 1;
+            }
+            
+            .utility-nav {
+                top: 20px;
+                right: 20px;
+            }
+            
+            .search-float {
+                bottom: 20px;
+                left: 20px;
+                right: 20px;
+                transform: translateX(0) translateY(100px);
+            }
+            
+            .search-float.visible {
+                transform: translateX(0) translateY(0);
+            }
+            
+            .search-box {
+                min-width: unset;
+                width: 100%;
+            }
+            
+            footer {
+                flex-direction: column;
+                gap: 30px;
+                text-align: center;
+                padding: 40px 30px;
+            }
+            
+            .footer-left {
+                flex-direction: column;
+            }
+            
+            .reader-controls {
+                right: 20px;
+            }
+            
+            .reader-header {
+                padding: 20px;
+            }
+        }
+
+        /* Utility */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 1s cubic-bezier(0.5, 0, 0, 1);
+        }
+
+        .reveal.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .no-scroll {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
+
+        img {
+            -webkit-touch-callout: none;
+            -webkit-user-drag: none;
+            user-select: none;
+        }
+
+        /* Hide default cursor on desktop */
+        @media (pointer: fine) {
+            body {
+                cursor: none;
+            }
+            
+            a, button, .zine-card, .nav-pill {
+                cursor: none;
+            }
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <!-- Grain Overlay -->
+    <div class="grain"></div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <!-- Intro -->
+    <div id="intro">
+        <div class="intro-line"></div>
+        <div class="intro-text">TURMOILDISTRACTED</div>
+        <div class="intro-sub">digital underground archive</div>
+    </div>
+
+    <!-- Loading -->
+    <div id="zine-loading">
+        <div class="loading-text">MEMUAT ZINE</div>
+    </div>
+
+    <!-- Side Navigation - INNOVATIVE LEFT VERTICAL -->
+    <nav class="side-nav">
+        <a href="#hero" class="side-nav-item active" data-section="hero">
+            <div class="side-nav-line"></div>
+            <span class="side-nav-text">Home</span>
+        </a>
+        <a href="#charity" class="side-nav-item" data-section="charity">
+            <div class="side-nav-line"></div>
+            <span class="side-nav-text">Charity</span>
+        </a>
+        <a href="#zine" class="side-nav-item" data-section="zine">
+            <div class="side-nav-line"></div>
+            <span class="side-nav-text">Archive</span>
+        </a>
+        <a href="#feedback" class="side-nav-item" data-section="feedback">
+            <div class="side-nav-line"></div>
+            <span class="side-nav-text">Contact</span>
+        </a>
+        <a href="#about" class="side-nav-item" data-section="about">
+            <div class="side-nav-line"></div>
+            <span class="side-nav-text">About</span>
+        </a>
+    </nav>
+
+    <!-- Top Right Utility -->
+    <div class="utility-nav">
+        <button class="utility-btn" onclick="toggleSearch()" title="Search">⌕</button>
+        <button class="utility-btn" onclick="toggleMute()" title="Sound">♪</button>
+    </div>
+
+    <!-- Search Float -->
+    <div class="search-float" id="searchFloat">
+        <div class="search-box">
+            <span class="search-icon">⌕</span>
+            <input type="text" id="zineSearch" placeholder="Cari zine..." onkeyup="searchZine()">
+            <span class="search-close" onclick="clearSearch()">×</span>
+        </div>
+    </div>
+
+    <main>
+        <!-- Hero -->
+        <section class="hero" id="hero">
+            <div class="hero-label">Est. 2024</div>
+            <h1 class="hero-title">
+                <span>ZINE</span>
+                <span>FLIPBOOK</span>
+            </h1>
+            <p class="hero-desc">
+                Arsip digital independen yang menyajikan zine dalam format flipbook interaktif. Eksplorasi visual dan narasi yang tak terfilter.
+            </p>
+            <div class="magnetic-wrap" id="magneticWrap">
+                <button class="magnetic-btn" onclick="scrollToZine()">Jelajahi Arsip</button>
+            </div>
+            
+            <div class="scroll-indicator">
+                <span>Scroll</span>
+                <div class="scroll-line"></div>
+            </div>
+        </section>
+
+        <!-- Charity -->
+        <section class="charity-section" id="charity">
+            <div class="section-header reveal">
+                <div class="section-num">01</div>
+                <h2 class="section-title">Charity for Gaza</h2>
+            </div>
+            <div class="charity-content reveal">
+                <div class="charity-text">
+                    <h3>Satu kebaikan bisa jadi selimut, roti, dan obat bagi mereka.</h3>
+                    <p>Setiap kontribusi Anda membantu menyalurkan bantuan kemanusiaan kepada saudara-saudara kita di Gaza. Bersama-sama, kita bisa menjadi bagian dari solusi.</p>
+                    <a href="https://kasihpalestina.com/" target="_blank" class="btn-outline">Donasi Sekarang</a>
+                </div>
+                <div class="charity-visual">
+                    <!-- Placeholder untuk visual charity -->
+                    <div style="width: 100%; height: 400px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; color: var(--mid-gray); font-size: 12px; letter-spacing: 2px;">
+                        [ VISUAL CHARITY ]
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Zine Archive -->
+        <section id="zine">
+            <div class="section-header reveal">
+                <div class="section-num">02</div>
+                <h2 class="section-title">Koleksi Zine</h2>
+            </div>
+            
+            <div id="dynamic-zine-list" class="zine-grid"></div>
+            
+            <div class="pagination-line" id="pagination"></div>
+        </section>
+
+        <!-- Feedback -->
+        <section id="feedback">
+            <div class="section-header reveal">
+                <div class="section-num">03</div>
+                <h2 class="section-title">Feedback</h2>
+            </div>
+            
+            <div class="feedback-grid reveal">
+                <div class="feedback-info">
+                    <h3>Kritik & Saran</h3>
+                    <p>Bagaimana pengalaman Anda menjelajahi arsip ini? Setiap masukan berharga untuk pengembangan lebih lanjut.</p>
+                </div>
+                <form class="feedback-form" onsubmit="event.preventDefault(); kirimKritik();">
+                    <div class="input-line">
+                        <input type="text" id="namaFeedback" placeholder=" " required>
+                        <label>Nama</label>
+                    </div>
+                    <div class="input-line">
+                        <input type="email" id="emailFeedback" placeholder=" " required>
+                        <label>Email</label>
+                    </div>
+                    <div class="input-line">
+                        <textarea id="kritikPesan" placeholder=" " required></textarea>
+                        <label>Pesan Anda</label>
+                    </div>
+                    <div class="submit-wrap">
+                        <button type="submit" class="btn-submit">Kirim Pesan</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- About -->
+        <section class="about-section" id="about">
+            <div class="section-header reveal">
+                <div class="section-num">04</div>
+                <h2 class="section-title">About Archive</h2>
+            </div>
+            
+            <div class="about-text reveal">
+                Website ini adalah <span>arsip digital zine independen.</span> Eksplorasi visual dan teks dalam format flipbook digital. Beberapa zine mungkin terasa kasar, tidak rapi, atau penuh kesalahan—tetapi itu adalah bagian dari autentisitasnya.
+            </div>
+            
+            <div class="about-meta reveal">
+                <div class="meta-item">
+                    Arsip
+                    <strong>Digital Underground</strong>
+                </div>
+                <div class="meta-item">
+                    Musik
+                    <strong>Hasohkah — Shcool Rooftop</strong>
+                </div>
+                <div class="meta-item">
+                    Kolaborasi
+                    <strong>Rath x Souterrain</strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <div class="footer-left">
+                <img src="logo.png" alt="Logo" class="footer-logo">
+                <div class="footer-links">
+                    <a href="#zine">Arsip</a>
+                    <a href="#about">Tentang</a>
+                    <a href="#feedback">Kontak</a>
+                </div>
+            </div>
+            <div class="footer-right">
+                © 2024 ZINE FLIPBOOK
+            </div>
+        </footer>
+    </main>
+
+    <!-- Flipbook Container -->
+    <div id="flipbook-container">
+        <div class="reader-header">
+            <div class="reader-title" id="readerTitle">ZINE FLIPBOOK</div>
+            <div class="reader-close" onclick="closeFlipbook()">✕</div>
+        </div>
+        
+        <div id="flipbook"></div>
+        
+        <div class="reader-controls">
+            <button class="reader-btn" id="prevBtn">←</button>
+            <button class="reader-btn" id="nextBtn">→</button>
+        </div>
+        
+        <div class="reader-progress" id="readerProgress">01 / 24</div>
+    </div>
+
+    <!-- Audio -->
+    <audio id="bg-music" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        /* --- Configuration --- */
+        const SUBA_URL = "https://yzekxpgjgnbksaleosti.supabase.co";
+        const SUBA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl6ZWt4cGdqZ25ia3NhbGVvc3RpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMzc1NjksImV4cCI6MjA4OTkxMzU2OX0.GXUHhaFQji-KfeFGwJ3ratj-uvm5E8KBvXp_oXNl0Y4";
+        const _supabase = supabase.createClient(SUBA_URL, SUBA_KEY);
+
+        let currentPage = 1;
+        const itemsPerPage = 6;
+        let isMuted = false;
+
+        /* --- Custom Cursor --- */
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+        
+        window.addEventListener('mousemove', (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+            
+            cursorDot.style.left = `px`;
+            cursorDot.style.top = `px`;
+            
+            cursorOutline.animate({
+                left: `px`,
+                top: `px`
+            }, { duration: 500, fill: "forwards" });
+        });
+
+        // Hover effect
+        document.querySelectorAll('a, button, .zine-card, .utility-btn, .reader-btn').forEach(el => {
+            el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+            el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+        });
+
+        /* --- Magnetic Button --- */
+        const magneticWrap = document.getElementById('magneticWrap');
+        const magneticBtn = magneticWrap.querySelector('.magnetic-btn');
+
+        magneticWrap.addEventListener('mousemove', (e) => {
+            const rect = magneticWrap.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            
+            magneticBtn.style.transform = `translate(px, px)`;
+        });
+
+        magneticWrap.addEventListener('mouseleave', () => {
+            magneticBtn.style.transform = 'translate(0, 0)';
+        });
+
+        /* --- Load Zines --- */
+        async function loadZines(page = 1) {
+            currentPage = page;
+            const container = document.getElementById('dynamic-zine-list');
+            const from = (page - 1) * itemsPerPage;
+            const to = from + itemsPerPage - 1;
+
+            const { data: zines, error, count } = await _supabase
+                .from('zine')
+                .select('*', { count: 'exact' })
+                .order('created_at', { ascending: false })
+                .range(from, to);
+
+            if (error) return console.error("Error load:", error);
+
+            container.innerHTML = '';
+            
+            zines.forEach((zine, index) => {
+                const zineHTML = `
+                <div class="zine-card reveal" style="transition-delay: s" onclick="openFlipbook('', , '', '')">
+                    <div class="zine-image-wrap">
+                        <img src="" draggable="false" alt="">
+                        <div class="zine-overlay">
+                            <div class="view-btn">View</div>
+                        </div>
+                    </div>
+                    <div class="zine-info">
+                        <h4 class="zine-title"></h4>
+                        <div class="zine-meta">
+                            <span> views</span>
+                            <span>→</span>
+                        </div>
+                    </div>
+                </div>`;
+                container.insertAdjacentHTML('beforeend', zineHTML);
+            });
+
+            renderPagination(count);
+            setupReveal();
+        }
+
+        function renderPagination(totalItems) {
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            const navContainer = document.getElementById('pagination');
+            navContainer.innerHTML = '';
+
+            if (totalPages > 1) {
+                for (let i = 1; i <= totalPages; i++) {
+                    const line = document.createElement("div");
+                    line.className = `page-line  ''`;
+                    line.style.width = i === currentPage ? '40px' : '20px';
+                    line.setAttribute('data-page', i.toString().padStart(2, '0'));
+                    line.onclick = () => {
+                        document.getElementById("zine").scrollIntoView({ behavior: "smooth" });
+                        loadZines(i);
+                    };
+                    navContainer.appendChild(line);
+                }
+            }
+        }
+
+        /* --- Search --- */
+        function toggleSearch() {
+            const searchFloat = document.getElementById('searchFloat');
+            searchFloat.classList.toggle('visible');
+            if (searchFloat.classList.contains('visible')) {
+                document.getElementById('zineSearch').focus();
+            }
+        }
+
+        function clearSearch() {
+            document.getElementById('zineSearch').value = '';
+            loadZines(1);
+        }
+
+        async function searchZine() {
+            const input = document.getElementById("zineSearch").value.toLowerCase().trim();
+            const container = document.getElementById('dynamic-zine-list');
+            const pagination = document.getElementById('pagination');
+
+            if (input === "") {
+                loadZines(1);
+                pagination.style.display = "flex";
+                return;
+            }
+
+            pagination.style.display = "none";
+
+            const { data: zines, error } = await _supabase
+                .from('zine')
+                .select('*')
+                .ilike('title', `%%`)
+                .order('created_at', { ascending: false });
+
+            if (error) return console.error("Search error:", error);
+
+            container.innerHTML = '';
+
+            if (zines.length === 0) {
+                container.innerHTML = `<div class="reveal" style="grid-column: 1/-1; text-align: center; padding: 80px; color: var(--mid-gray);">Zine tidak ditemukan</div>`;
+                return;
+            }
+
+            zines.forEach((zine, index) => {
+                const zineHTML = `
+                <div class="zine-card" style="animation: fadeUp 0.5s ease forwards; animation-delay: s">
+                    <div class="zine-image-wrap">
+                        <img src="" draggable="false" alt="">
+                        <div class="zine-overlay">
+                            <div class="view-btn">View</div>
+                        </div>
+                    </div>
+                    <div class="zine-info">
+                        <h4 class="zine-title"></h4>
+                        <div class="zine-meta">
+                            <span> views</span>
+                            <span>→</span>
+                        </div>
+                    </div>
+                </div>`;
+                container.insertAdjacentHTML('beforeend', zineHTML);
+            });
+        }
+
+        /* --- Flipbook --- */
+        let currentFlipbook = null;
+
+        async function openFlipbook(pdfUrl, zineId, title, customMusicUrl) { 
+            if (!pdfUrl) return;
+
+            if (zineId) {
+                try {
+                    await _supabase.rpc('increment_views', { row_id: zineId });
+                } catch (e) { console.error(e); }
+            }
+
+            document.body.classList.add('no-scroll');
+            document.getElementById("zine-loading").style.display = "flex";
+            document.getElementById("flipbook-container").style.display = "flex";
+            document.getElementById("readerTitle").textContent = title || 'ZINE';
+
+            const oldFlip = document.getElementById("flipbook");
+            if($(oldFlip).data("turn")) $(oldFlip).turn("destroy");
+            
+            const newFlip = document.createElement("div");
+            newFlip.id = "flipbook";
+            oldFlip.parentNode.replaceChild(newFlip, oldFlip);
+            currentFlipbook = newFlip;
+
+            const music = document.getElementById("bg-music");
+            if (!isMuted) {
+                music.pause();
+                if (customMusicUrl && customMusicUrl !== 'undefined' && customMusicUrl.trim() !== '') {
+                    music.src = customMusicUrl;
+                } else {
+                    music.src = "music.mp3";
+                }
+                music.volume = 0.5;
+                music.load(); 
+                music.play().catch(() => {});
+            }
+
+            try {
+                const pdf = await pdfjsLib.getDocument(pdfUrl).promise;
+                const totalPages = pdf.numPages;
+                
+                for(let i = 1; i <= totalPages; i++){
+                    const page = await pdf.getPage(i);
+                    const viewport = page.getViewport({ scale: 2 });
+                    const canvas = document.createElement("canvas");
+                    canvas.width = viewport.width; 
+                    canvas.height = viewport.height;
+                    await page.render({ canvasContext: canvas.getContext("2d"), viewport: viewport }).promise;
+                    const div = document.createElement("div");
+                    div.className = "page";
+                    div.appendChild(canvas);
+                    newFlip.appendChild(div);
+                }
+
+                const isMobile = window.innerWidth <= 768;
+                $(newFlip).turn({
+                    width: isMobile ? window.innerWidth * 0.85 : 1000,
+                    height: isMobile ? (window.innerWidth * 0.85) * 1.4 : 700,
+                    autoCenter: true,
+                    display: isMobile ? "single" : "double",
+                    duration: 1000,
+                    when: {
+                        turning: function(event, page, view) {
+                            updateProgress(page, totalPages);
+                        }
+                    }
+                });
+
+                updateProgress(1, totalPages);
+
+                document.getElementById("nextBtn").onclick = () => $(newFlip).turn("next");
+                document.getElementById("prevBtn").onclick = () => $(newFlip).turn("previous");
+                
+                document.addEventListener('keydown', handleKeyNav);
+                
+                document.getElementById("zine-loading").style.display = "none";
+            } catch(err) { 
+                console.error(err);
+                document.getElementById("zine-loading").style.display = "none";
+            }
+        }
+
+        function updateProgress(current, total) {
+            document.getElementById("readerProgress").textContent = 
+                ` / `;
+        }
+
+        function handleKeyNav(e) {
+            if (e.key === 'ArrowRight') $(currentFlipbook).turn("next");
+            if (e.key === 'ArrowLeft') $(currentFlipbook).turn("previous");
+            if (e.key === 'Escape') closeFlipbook();
+        }
+
+        function closeFlipbook(){
+            document.body.classList.remove('no-scroll');
+            document.getElementById("flipbook-container").style.display = "none";
+            document.getElementById("bg-music").pause();
+            document.removeEventListener('keydown', handleKeyNav);
+        }
+
+        /* --- Audio Control --- */
+        function toggleMute() {
+            const music = document.getElementById("bg-music");
+            isMuted = !isMuted;
+            if (isMuted) {
+                music.pause();
+                document.querySelector('.utility-btn[title="Sound"]').textContent = '◼';
+            } else {
+                music.play().catch(() => {});
+                document.querySelector('.utility-btn[title="Sound"]').textContent = '♪';
+            }
+        }
+
+        /* --- Feedback --- */
+        function kirimKritik(){
+            const nama = document.getElementById('namaFeedback').value;
+            const email = document.getElementById('emailFeedback').value;
+            const pesan = document.getElementById('kritikPesan').value;
+            
+            if(!nama || !email || !pesan) return alert("Lengkapi semua field");
+            
+            const body = `Nama: %0D%0AEmail: %0D%0A%0D%0APesan:%0D%0A`;
+            window.location.href = `mailto:ulinnha1140@gmail.com?subject=Feedback Zine&body=`;
+        }
+
+        function scrollToZine() {
+            document.getElementById('zine').scrollIntoView({ behavior: "smooth" });
+        }
+
+        /* --- Scroll Animations --- */
+        function setupReveal() {
+            const reveals = document.querySelectorAll('.reveal');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('show');
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+            reveals.forEach(el => observer.observe(el));
+        }
+
+        /* --- Navigation Logic --- */
+        const sideNav = document.querySelector('.side-nav');
+        const utilityNav = document.querySelector('.utility-nav');
+        const searchFloat = document.getElementById('searchFloat');
+        let lastScroll = 0;
+
+        window.addEventListener("scroll", () => {
+            const currentScroll = window.pageYOffset;
+            
+            // Show/hide navigation
+            if (currentScroll > 100) {
+                sideNav.classList.add('visible');
+                utilityNav.classList.add('visible');
+                searchFloat.classList.add('visible');
+            } else {
+                sideNav.classList.remove('visible');
+                utilityNav.classList.remove('visible');
+                searchFloat.classList.remove('visible');
+            }
+
+            // Active section highlighting
+            const sections = document.querySelectorAll("section[id]");
+            const navItems = document.querySelectorAll(".side-nav-item");
+            
+            let current = "";
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 300;
+                if (currentScroll >= sectionTop) {
+                    current = section.getAttribute("id");
+                }
+            });
+
+            navItems.forEach(item => {
+                item.classList.remove("active");
+                if (item.getAttribute("href") === "#" + current) {
+                    item.classList.add("active");
+                }
+            });
+
+            lastScroll = currentScroll;
+        });
+
+        // Smooth scroll for nav items
+        document.querySelectorAll(".side-nav-item").forEach(item => {
+            item.addEventListener("click", function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute("href");
+                const targetEl = document.querySelector(targetId);
+                if (targetEl) {
+                    window.scrollTo({
+                        top: targetEl.offsetTop - 50,
+                        behavior: "smooth"
+                    });
+                }
+            });
+        });
+
+        /* --- Initialization --- */
+        window.addEventListener("load", () => {
+            // Hide intro
+            setTimeout(() => {
+                document.getElementById("intro").classList.add("hidden");
+                setTimeout(() => {
+                    document.getElementById("intro").style.display = "none";
+                }, 800);
+            }, 2500);
+
+            loadZines(1);
+            setupReveal();
+        });
+    </script>
+</body>
+</html>
