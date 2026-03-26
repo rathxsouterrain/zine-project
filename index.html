@@ -257,12 +257,12 @@
         }
 
         /* ============================================
-           ZINE GRID - 3 PER ROW
+           ZINE GRID - SMALLER COVERS
            ============================================ */
         .zine-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
+            gap: 20px;
         }
 
         .zine-card {
@@ -270,6 +270,9 @@
             border: 1px solid rgba(255,255,255,0.08);
             transition: var(--transition);
             cursor: pointer;
+            max-width: 200px;
+            margin: 0 auto;
+            width: 100%;
         }
 
         .zine-card:hover {
@@ -310,11 +313,11 @@
         }
 
         .read-btn-overlay {
-            padding: 12px 24px;
+            padding: 10px 20px;
             background: var(--white);
             color: var(--black);
             border: none;
-            font-size: 11px;
+            font-size: 10px;
             letter-spacing: 1px;
             text-transform: uppercase;
             cursor: pointer;
@@ -326,13 +329,13 @@
         }
 
         .zine-info {
-            padding: 20px;
+            padding: 12px;
         }
 
         .zine-title {
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 500;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
             letter-spacing: 0.5px;
             white-space: nowrap;
             overflow: hidden;
@@ -340,9 +343,9 @@
         }
 
         .zine-music {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--gray-400);
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -356,18 +359,18 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 12px;
+            font-size: 11px;
             color: var(--gray-400);
         }
 
         .zine-actions {
             display: flex;
-            gap: 10px;
+            gap: 6px;
         }
 
         .action-btn {
-            width: 32px;
-            height: 32px;
+            width: 26px;
+            height: 26px;
             border: 1px solid rgba(255,255,255,0.2);
             background: transparent;
             color: var(--white);
@@ -375,7 +378,7 @@
             align-items: center;
             justify-content: center;
             text-decoration: none;
-            font-size: 12px;
+            font-size: 11px;
             cursor: pointer;
             transition: var(--transition);
         }
@@ -411,12 +414,13 @@
             color: var(--gray-400);
         }
 
-        /* Pagination - Page 1, 2, 3 */
+        /* Pagination */
         .pagination {
             display: flex;
             justify-content: center;
             gap: 12px;
             margin-top: 60px;
+            min-height: 40px;
         }
 
         .page-btn {
@@ -543,7 +547,7 @@
         }
 
         /* ============================================
-           FLIPBOOK - HORIZONTAL LIKE BOOK
+           FLIPBOOK - FIXED RESET
            ============================================ */
         #flipbook-container {
             display: none;
@@ -602,10 +606,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
         }
 
         #flipbook {
             position: relative;
+            display: none; /* Hidden until ready */
+        }
+
+        #flipbook.ready {
+            display: block;
         }
 
         #flipbook .page {
@@ -755,7 +765,11 @@
         /* Responsive */
         @media (max-width: 1024px) {
             .zine-grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .zine-card {
+                max-width: 180px;
             }
         }
 
@@ -777,19 +791,29 @@
             }
 
             .zine-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 16px;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
+            }
+
+            .zine-card {
+                max-width: none;
             }
 
             .zine-info {
-                padding: 16px;
+                padding: 10px;
             }
 
             .zine-title {
-                font-size: 13px;
+                font-size: 11px;
             }
 
             .zine-music {
+                font-size: 9px;
+            }
+
+            .action-btn {
+                width: 24px;
+                height: 24px;
                 font-size: 10px;
             }
 
@@ -817,7 +841,7 @@
 
         @media (max-width: 480px) {
             .zine-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
             }
         }
     </style>
@@ -876,6 +900,8 @@
             </div>
 
             <div id="dynamic-zine-list" class="zine-grid"></div>
+            
+            <!-- Pagination selalu ada -->
             <div id="pagination" class="pagination"></div>
         </section>
 
@@ -953,60 +979,77 @@
         const SUBA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl6ZWt4cGdqZ25ia3NhbGVvc3RpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMzc1NjksImV4cCI6MjA4OTkxMzU2OX0.GXUHhaFQji-KfeFGwJ3ratj-uvm5E8KBvXp_oXNl0Y4";
         const _supabase = supabase.createClient(SUBA_URL, SUBA_KEY);
 
-        let currentPage = 1;
-        const itemsPerPage = 9; // 3 zine per row x 3 rows = 9 per page
+        let currentPageNum = 1;
+        const itemsPerPage = 9; // 3x3 grid
         let flipbookInstance = null;
         let totalPages = 0;
+        let isLoading = false;
 
         /* ============================================
-           LOAD ZINES - 3 PER PAGE GRID
+           LOAD ZINES - 3 PER ROW, PAGINATION ALWAYS
            ============================================ */
-        async function loadZines(page = 1) {
-            currentPage = page;
+        async function loadZines(pageNum = 1) {
+            if (isLoading) return;
+            isLoading = true;
+            
+            currentPageNum = pageNum;
             const container = document.getElementById('dynamic-zine-list');
-            const from = (page - 1) * itemsPerPage;
+            const from = (pageNum - 1) * itemsPerPage;
             const to = from + itemsPerPage - 1;
 
-            const { data: zines, error, count } = await _supabase
-                .from('zine')
-                .select('*', { count: 'exact' })
-                .order('created_at', { ascending: false })
-                .range(from, to);
+            try {
+                const { data: zines, error, count } = await _supabase
+                    .from('zine')
+                    .select('*', { count: 'exact' })
+                    .order('created_at', { ascending: false })
+                    .range(from, to);
 
-            if (error) {
-                console.error("Error load:", error);
-                return;
-            }
+                if (error) {
+                    console.error("Error load:", error);
+                    isLoading = false;
+                    return;
+                }
 
-            container.innerHTML = '';
-            
-            zines.forEach((zine) => {
-                const musicName = zine.music_title || getMusicNameFromUrl(zine.music_url) || 'Default Theme';
+                container.innerHTML = '';
                 
-                const zineHTML = `
-                <div class="zine-card" data-zine-id="${zine.id}">
-                    <div class="zine-cover" onclick="openFlipbook('${zine.pdf_url}', ${zine.id}, '${escapeHtml(zine.title)}', '${zine.music_url || ''}')">
-                        <img src="${zine.cover_url}" draggable="false" alt="${escapeHtml(zine.title)}">
-                        <div class="read-overlay">
-                            <button class="read-btn-overlay" onclick="event.stopPropagation(); openFlipbook('${zine.pdf_url}', ${zine.id}, '${escapeHtml(zine.title)}', '${zine.music_url || ''}')">Baca</button>
-                        </div>
-                    </div>
-                    <div class="zine-info">
-                        <div class="zine-title">${escapeHtml(zine.title)}</div>
-                        <div class="zine-music">${escapeHtml(musicName)}</div>
-                        <div class="zine-meta">
-                            <span class="view-count" id="view-${zine.id}">${zine.views || 0} views</span>
-                            <div class="zine-actions">
-                                <button class="action-btn" onclick="openFlipbook('${zine.pdf_url}', ${zine.id}, '${escapeHtml(zine.title)}', '${zine.music_url || ''}')" title="Baca">→</button>
-                                <button class="action-btn" onclick="downloadZine('${zine.pdf_url}')" title="Download">↓</button>
+                if (zines && zines.length > 0) {
+                    zines.forEach((zine) => {
+                        const musicName = zine.music_title || getMusicNameFromUrl(zine.music_url) || 'Default Theme';
+                        
+                        const zineHTML = `
+                        <div class="zine-card" data-zine-id="${zine.id}">
+                            <div class="zine-cover" onclick="openFlipbook('${zine.pdf_url}', ${zine.id}, '${escapeHtml(zine.title)}', '${zine.music_url || ''}')">
+                                <img src="${zine.cover_url}" draggable="false" alt="${escapeHtml(zine.title)}">
+                                <div class="read-overlay">
+                                    <button class="read-btn-overlay" onclick="event.stopPropagation(); openFlipbook('${zine.pdf_url}', ${zine.id}, '${escapeHtml(zine.title)}', '${zine.music_url || ''}')">Baca</button>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                </div>`;
-                container.insertAdjacentHTML('beforeend', zineHTML);
-            });
+                            <div class="zine-info">
+                                <div class="zine-title">${escapeHtml(zine.title)}</div>
+                                <div class="zine-music">${escapeHtml(musicName)}</div>
+                                <div class="zine-meta">
+                                    <span class="view-count" id="view-${zine.id}">${zine.views || 0} views</span>
+                                    <div class="zine-actions">
+                                        <button class="action-btn" onclick="event.stopPropagation(); openFlipbook('${zine.pdf_url}', ${zine.id}, '${escapeHtml(zine.title)}', '${zine.music_url || ''}')" title="Baca">→</button>
+                                        <button class="action-btn" onclick="event.stopPropagation(); downloadZine('${zine.pdf_url}')" title="Download">↓</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                        container.insertAdjacentHTML('beforeend', zineHTML);
+                    });
+                } else {
+                    container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--gray-400); padding: 40px;">Belum ada zine</div>';
+                }
 
-            renderPagination(count);
+                // SELALU render pagination (meski 1 page)
+                renderPagination(count || 0);
+
+            } catch (err) {
+                console.error("Load error:", err);
+            }
+            
+            isLoading = false;
         }
 
         function getMusicNameFromUrl(url) {
@@ -1031,7 +1074,6 @@
 
         function downloadZine(url) {
             if (!url) return;
-            event.stopPropagation();
             const link = document.createElement('a');
             link.href = url;
             link.target = '_blank';
@@ -1041,21 +1083,22 @@
         }
 
         function renderPagination(totalItems) {
-            const totalPagesCount = Math.ceil(totalItems / itemsPerPage);
+            const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
             const navContainer = document.getElementById('pagination');
+            
+            // SELALU tampilkan pagination, minimal 1 button
             navContainer.innerHTML = '';
+            navContainer.style.display = 'flex';
 
-            if (totalPagesCount > 1) {
-                for (let i = 1; i <= totalPagesCount; i++) {
-                    const btn = document.createElement("button");
-                    btn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
-                    btn.innerText = i;
-                    btn.onclick = () => {
-                        document.getElementById("zine").scrollIntoView({ behavior: "smooth" });
-                        loadZines(i);
-                    };
-                    navContainer.appendChild(btn);
-                }
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement("button");
+                btn.className = `page-btn ${i === currentPageNum ? 'active' : ''}`;
+                btn.innerText = i;
+                btn.onclick = () => {
+                    document.getElementById("zine").scrollIntoView({ behavior: "smooth" });
+                    loadZines(i);
+                };
+                navContainer.appendChild(btn);
             }
         }
 
@@ -1069,59 +1112,62 @@
 
             if (input === "") {
                 loadZines(1);
-                pagination.style.display = "flex";
                 return;
             }
 
             pagination.style.display = "none";
 
-            const { data: zines, error } = await _supabase
-                .from('zine')
-                .select('*')
-                .ilike('title', `%${input}%`)
-                .order('created_at', { ascending: false });
+            try {
+                const { data: zines, error } = await _supabase
+                    .from('zine')
+                    .select('*')
+                    .ilike('title', `%${input}%`)
+                    .order('created_at', { ascending: false });
 
-            if (error) {
-                console.error("Search error:", error);
-                return;
-            }
+                if (error) {
+                    console.error("Search error:", error);
+                    return;
+                }
 
-            container.innerHTML = '';
+                container.innerHTML = '';
 
-            if (zines.length === 0) {
-                container.innerHTML = `<div style="text-align: center; padding: 60px; color: var(--gray-400); grid-column: 1/-1;">Zine tidak ditemukan</div>`;
-                return;
-            }
+                if (zines.length === 0) {
+                    container.innerHTML = `<div style="text-align: center; padding: 60px; color: var(--gray-400); grid-column: 1/-1;">Zine tidak ditemukan</div>`;
+                    return;
+                }
 
-            zines.forEach((zine) => {
-                const musicName = zine.music_title || getMusicNameFromUrl(zine.music_url) || 'Default Theme';
-                
-                const zineHTML = `
-                <div class="zine-card" data-zine-id="${zine.id}">
-                    <div class="zine-cover" onclick="openFlipbook('${zine.pdf_url}', ${zine.id}, '${escapeHtml(zine.title)}', '${zine.music_url || ''}')">
-                        <img src="${zine.cover_url}" draggable="false" alt="${escapeHtml(zine.title)}">
-                        <div class="read-overlay">
-                            <button class="read-btn-overlay" onclick="event.stopPropagation(); openFlipbook('${zine.pdf_url}', ${zine.id}, '${escapeHtml(zine.title)}', '${zine.music_url || ''}')">Baca</button>
-                        </div>
-                    </div>
-                    <div class="zine-info">
-                        <div class="zine-title">${escapeHtml(zine.title)}</div>
-                        <div class="zine-music">${escapeHtml(musicName)}</div>
-                        <div class="zine-meta">
-                            <span class="view-count" id="view-${zine.id}">${zine.views || 0} views</span>
-                            <div class="zine-actions">
-                                <button class="action-btn" onclick="openFlipbook('${zine.pdf_url}', ${zine.id}, '${escapeHtml(zine.title)}', '${zine.music_url || ''}')" title="Baca">→</button>
-                                <button class="action-btn" onclick="downloadZine('${zine.pdf_url}')" title="Download">↓</button>
+                zines.forEach((zine) => {
+                    const musicName = zine.music_title || getMusicNameFromUrl(zine.music_url) || 'Default Theme';
+                    
+                    const zineHTML = `
+                    <div class="zine-card" data-zine-id="${zine.id}">
+                        <div class="zine-cover" onclick="openFlipbook('${zine.pdf_url}', ${zine.id}, '${escapeHtml(zine.title)}', '${zine.music_url || ''}')">
+                            <img src="${zine.cover_url}" draggable="false" alt="${escapeHtml(zine.title)}">
+                            <div class="read-overlay">
+                                <button class="read-btn-overlay" onclick="event.stopPropagation(); openFlipbook('${zine.pdf_url}', ${zine.id}, '${escapeHtml(zine.title)}', '${zine.music_url || ''}')">Baca</button>
                             </div>
                         </div>
-                    </div>
-                </div>`;
-                container.insertAdjacentHTML('beforeend', zineHTML);
-            });
+                        <div class="zine-info">
+                            <div class="zine-title">${escapeHtml(zine.title)}</div>
+                            <div class="zine-music">${escapeHtml(musicName)}</div>
+                            <div class="zine-meta">
+                                <span class="view-count" id="view-${zine.id}">${zine.views || 0} views</span>
+                                <div class="zine-actions">
+                                    <button class="action-btn" onclick="event.stopPropagation(); openFlipbook('${zine.pdf_url}', ${zine.id}, '${escapeHtml(zine.title)}', '${zine.music_url || ''}')" title="Baca">→</button>
+                                    <button class="action-btn" onclick="event.stopPropagation(); downloadZine('${zine.pdf_url}')" title="Download">↓</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+                    container.insertAdjacentHTML('beforeend', zineHTML);
+                });
+            } catch (err) {
+                console.error("Search error:", err);
+            }
         }
 
         /* ============================================
-           FLIPBOOK - HORIZONTAL BOOK FLIP
+           FLIPBOOK - FIXED PROPER RESET
            ============================================ */
         async function openFlipbook(pdfUrl, zineId, title, customMusicUrl) { 
             if (!pdfUrl) {
@@ -1129,13 +1175,11 @@
                 return;
             }
 
-            // SELALU increment view setiap kali buka
+            // SELALU increment view
             if (zineId) {
                 try {
-                    // Call RPC to increment
                     await _supabase.rpc('increment_views', { row_id: zineId });
                     
-                    // Update UI immediately
                     const viewEl = document.getElementById(`view-${zineId}`);
                     if (viewEl) {
                         const current = parseInt(viewEl.textContent) || 0;
@@ -1152,20 +1196,34 @@
             document.getElementById("flipbook-container").style.display = "block";
             document.getElementById("readerTitle").textContent = title || 'ZINE';
 
-            // Clean up old flipbook
+            // COMPLETE RESET flipbook
             const flipbookEl = document.getElementById("flipbook");
             
-            // Proper destroy
-            try {
-                if ($(flipbookEl).data("turn")) {
-                    $(flipbookEl).turn("destroy");
+            // Step 1: Destroy existing instance properly
+            if (flipbookInstance && $(flipbookInstance).data("turn")) {
+                try {
+                    $(flipbookInstance).turn("destroy");
+                } catch (e) {
+                    console.log("Destroy error (expected):", e);
                 }
-            } catch (e) {
-                // No existing instance
             }
             
-            // Clear content
-            flipbookEl.innerHTML = '';
+            // Step 2: Remove old element completely
+            const wrapper = document.querySelector('.flipbook-wrapper');
+            const oldFlipbook = document.getElementById("flipbook");
+            if (oldFlipbook) {
+                oldFlipbook.remove();
+            }
+            
+            // Step 3: Create fresh element
+            const newFlipbook = document.createElement('div');
+            newFlipbook.id = "flipbook";
+            wrapper.appendChild(newFlipbook);
+            flipbookEl = newFlipbook;
+
+            // Reset variables
+            flipbookInstance = null;
+            totalPages = 0;
 
             // Handle music
             const music = document.getElementById("bg-music");
@@ -1177,7 +1235,12 @@
             }
             music.volume = 0.5;
             music.load();
-            music.play().catch(() => {});
+            
+            try {
+                await music.play();
+            } catch (e) {
+                // Autoplay blocked, ignore
+            }
 
             try {
                 // Load PDF
@@ -1214,16 +1277,19 @@
                 let flipWidth, flipHeight;
                 
                 if (isMobile) {
-                    flipWidth = Math.min(windowWidth * 0.9, 400);
+                    flipWidth = Math.min(windowWidth * 0.9, 350);
                     flipHeight = flipWidth * 1.4;
                 } else {
                     const firstCanvas = flipbookEl.querySelector('canvas');
                     const pageWidth = firstCanvas ? firstCanvas.width : 400;
                     const pageHeight = firstCanvas ? firstCanvas.height : 560;
                     
-                    flipWidth = Math.min(pageWidth * 2, windowWidth * 0.8, 900);
-                    flipHeight = Math.min(pageHeight, windowHeight * 0.85, 650);
+                    flipWidth = Math.min(pageWidth * 2, windowWidth * 0.8, 800);
+                    flipHeight = Math.min(pageHeight, windowHeight * 0.85, 600);
                 }
+
+                // Wait for DOM
+                await new Promise(resolve => setTimeout(resolve, 50));
 
                 // Initialize turn.js
                 $(flipbookEl).turn({
@@ -1259,6 +1325,7 @@
                 console.error("Flipbook error:", err);
                 document.getElementById("zine-loading").style.display = "none";
                 alert("Gagal memuat zine. Silakan coba lagi.");
+                closeFlipbook();
             }
         }
 
@@ -1310,19 +1377,40 @@
         }
 
         function closeFlipbook() {
-            document.body.classList.remove('no-scroll');
-            document.getElementById("flipbook-container").style.display = "none";
-            document.getElementById("bg-music").pause();
+            // Remove keyboard listener
             document.removeEventListener('keydown', handleKeydown);
             
+            // Stop music
+            const music = document.getElementById("bg-music");
+            music.pause();
+            
+            // Destroy flipbook
             if (flipbookInstance) {
                 try {
                     if ($(flipbookInstance).data("turn")) {
                         $(flipbookInstance).turn("destroy");
                     }
                 } catch (e) {}
+                
+                // Remove element
+                try {
+                    flipbookInstance.remove();
+                } catch (e) {}
             }
+            
+            // Reset variables
             flipbookInstance = null;
+            totalPages = 0;
+            
+            // Hide container
+            document.getElementById("flipbook-container").style.display = "none";
+            document.body.classList.remove('no-scroll');
+            
+            // Create fresh flipbook element for next time
+            const wrapper = document.querySelector('.flipbook-wrapper');
+            if (wrapper) {
+                wrapper.innerHTML = '<div id="flipbook"></div>';
+            }
         }
 
         /* ============================================
@@ -1405,6 +1493,7 @@
                 }
             }, 2000);
 
+            // Load zines with pagination
             loadZines(1);
         });
     </script>
