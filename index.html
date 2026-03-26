@@ -325,25 +325,26 @@
         margin-bottom: 0px;
     }
 
-/* Susun ikon view, tombol read, dan tombol download dalam satu baris */
+.zine-views {
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    display: flex;
+    flex-direction: row; /* MEMBUAT SEJAJAR KE SAMPING */
+    align-items: center;
+    gap: 5px;            /* JARAK ANTARA MATA DAN ANGKA */
+    margin-right: 5px;   /* JARAK KE TOMBOL READ */
+}
+
+/* Pastikan container tombol membungkus semuanya dengan rapi */
 .zine-buttons {
     display: flex;
-    gap: 12px;
-    align-items: center; /* Menyejajarkan secara vertikal */
+    gap: 10px;
+    align-items: center;
     justify-content: center;
     width: 100%;
     margin-top: 15px;
 }
 
-/* Gaya khusus untuk angka view agar terlihat rapi di kiri */
-.zine-views {
-    font-size: 12px;
-    color: rgba(255,255,255,0.6);
-    display: flex;
-    flex-direction: column; /* Ikon di atas angka, atau hilangkan baris ini jika ingin sejajar */
-    align-items: center;
-    min-width: 40px;
-}
 
 
     .read-btn {
