@@ -353,18 +353,27 @@
 /* Card Judul Melayang di Atas Canvas */
 .zine-header-floating {
     position: absolute;
-    top: 1px;            /* GANTI: Dari 15px ke 10px (lebih rapat ke atas) */
+    top: 10px;
     left: 50%;
     transform: translateX(-50%);
-    padding: 4px 15px;    /* GANTI: Dari 8px 40px ke 4px 25px (lebih tipis/pendek) */
+    
+    /* KUNCI AGAR MELEBAR BUKAN MEMBESAR */
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    white-space: nowrap; /* Mencegah teks turun ke baris baru */
+    
+    padding: 6px 30px; /* Padding samping (30px) lebih besar dari atas-bawah (6px) */
+    width: auto;
+    max-width: 90vw; /* Maksimal lebar 90% layar agar tidak tumpah */
+    overflow: hidden; /* Potong jika benar-benar terlalu panjang */
+    text-overflow: ellipsis;
+    
+    border-radius: 8px;
     z-index: 100001;
-    text-align: center;
-    width: auto;          /* GANTI: Dari min-width ke width auto agar pas dengan teks */
-    max-width: 90%;       /* TAMBAHKAN: Supaya di HP tidak melebihi lebar layar */
-    border-radius: 10px;  /* GANTI: Dari 20px ke 10px agar lebih modern & tipis */
     pointer-events: none;
-    transition: all 0.3s ease;
 }
+
 
 /* Geser posisi Flipbook ke bawah sedikit agar tidak tertutup judul */
 #flipbook {
