@@ -112,8 +112,11 @@
             font-weight: 600;
             font-size: 1.25rem;
             opacity: 0.8;
+            pointer-events: none;
+            z-index: 2;
         }
 
+        /* PERBAIKAN: Input number styling */
         .nominal-input {
             width: 100%;
             background: rgba(255, 255, 255, 0.05);
@@ -126,6 +129,17 @@
             font-family: 'JetBrains Mono', monospace;
             transition: all 0.3s ease;
             outline: none;
+            /* Hilangkan spinner di Chrome/Safari/Edge */
+            -moz-appearance: textfield;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        /* Hilangkan spinner di Chrome/Safari/Edge */
+        .nominal-input::-webkit-outer-spin-button,
+        .nominal-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
 
         .nominal-input:focus {
@@ -348,7 +362,7 @@
             position: relative;
             background: transparent;
             filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
-            transition: height 0.05s linear;
+            will-change: height;
         }
 
         .receipt-container::after {
@@ -384,6 +398,7 @@
                     rgba(0, 0, 0, 0.01) 21px
                 );
             position: relative;
+            will-change: transform;
         }
 
         .receipt-paper::before {
@@ -655,7 +670,17 @@
                 <label class="input-label">Nominal Pembayaran</label>
                 <div class="input-wrapper">
                     <span class="currency-symbol">Rp</span>
-                    <input type="text" class="nominal-input" id="nominalInput" placeholder="0" autocomplete="off">
+                    <!-- PERBAIKAN: type="number" dengan inputmode dan pattern -->
+                    <input 
+                        type="number" 
+                        class="nominal-input" 
+                        id="nominalInput" 
+                        placeholder="0" 
+                        autocomplete="off"
+                        inputmode="numeric"
+                        pattern="[0-9]*"
+                        min="0"
+                    >
                 </div>
             </div>
             <button class="print-btn" id="printBtn">
@@ -750,14 +775,20 @@
 
         let qrCodeObj = null;
         let audioContext = null;
-        let printerSound = null;
+        let isAnimating = false;
 
         function formatCurrency(value) {
             return new Intl.NumberFormat('id-ID').format(value);
         }
 
+        // PERBAIKAN: Event listener untuk input number
         nominalInput.addEventListener('input', (e) => {
-            let value = e.target.value.replace(/\D/g, '');
+            let value = e.target.value;
+            
+            // Hanya izinkan angka
+            value = value.replace(/\D/g, '');
+            
+            // Format dengan pemisah ribuan
             if (value) {
                 e.target.value = formatCurrency(value);
             } else {
@@ -765,7 +796,15 @@
             }
         });
 
-        // Fungsi membuat suara printer thermal
+        // Cegah input karakter non-angka
+        nominalInput.addEventListener('keypress', (e) => {
+            // Izinkan: angka, backspace, delete, arrow keys
+            const char = String.fromCharCode(e.which);
+            if (!/[0-9]/.test(char) && e.which !== 8 && e.which !== 0) {
+                e.preventDefault();
+            }
+        });
+
         function initPrinterSound() {
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
         }
@@ -773,10 +812,9 @@
         function playPrinterSound() {
             if (!audioContext) initPrinterSound();
             
-            const duration = 2000; // 2 detik
+            const duration = 2000;
             const startTime = audioContext.currentTime;
             
-            // White noise untuk suara mekanis printer
             const bufferSize = audioContext.sampleRate * 2;
             const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
             const data = buffer.getChannelData(0);
@@ -788,18 +826,15 @@
             const noise = audioContext.createBufferSource();
             noise.buffer = buffer;
             
-            // Filter untuk suara printer yang lebih realistis
             const filter = audioContext.createBiquadFilter();
             filter.type = 'bandpass';
             filter.frequency.value = 800;
             filter.Q.value = 1;
             
-            // Gain untuk volume
             const gainNode = audioContext.createGain();
             gainNode.gain.setValueAtTime(0.1, startTime);
             gainNode.gain.exponentialRampToValueAtTime(0.05, startTime + 0.1);
             
-            // Modulasi untuk efek "tick-tick" printer thermal
             const modulator = audioContext.createOscillator();
             modulator.type = 'square';
             modulator.frequency.value = 50;
@@ -807,7 +842,6 @@
             const modGain = audioContext.createGain();
             modGain.gain.value = 0.3;
             
-            // Connect nodes
             noise.connect(filter);
             filter.connect(gainNode);
             gainNode.connect(audioContext.destination);
@@ -815,38 +849,53 @@
             modulator.connect(modGain);
             modGain.connect(gainNode.gain);
             
-            // Start
             noise.start(startTime);
             modulator.start(startTime);
             
-            // Stop
             noise.stop(startTime + duration / 1000);
             modulator.stop(startTime + duration / 1000);
-            
-            return { noise, modulator };
         }
 
         function generateQRCode(text) {
-            qrContainer.innerHTML = '';
-            qrCodeObj = new QRCode(qrContainer, {
-                text: text,
-                width: 124,
-                height: 124,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
+            return new Promise((resolve) => {
+                qrContainer.innerHTML = '';
+                
+                qrCodeObj = new QRCode(qrContainer, {
+                    text: text,
+                    width: 124,
+                    height: 124,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+
+                setTimeout(() => {
+                    const img = qrContainer.querySelector('img');
+                    if (img) {
+                        img.onload = resolve;
+                        setTimeout(resolve, 100);
+                    } else {
+                        resolve();
+                    }
+                }, 50);
             });
         }
 
-        printBtn.addEventListener('click', () => {
-            const value = nominalInput.value.replace(/\D/g, '');
-            if (!value || value === '0') {
+        printBtn.addEventListener('click', async () => {
+            if (isAnimating) return;
+            
+            // PERBAIKAN: Ambil value dan hapus semua non-digit
+            const rawValue = nominalInput.value.replace(/\D/g, '');
+            
+            if (!rawValue || rawValue === '0') {
                 nominalInput.style.borderColor = 'rgba(255, 255, 255, 0.5)';
                 setTimeout(() => {
                     nominalInput.style.borderColor = '';
                 }, 300);
                 return;
             }
+
+            isAnimating = true;
 
             const now = new Date();
             receiptDate.textContent = now.toLocaleString('id-ID', {
@@ -856,27 +905,27 @@
                 hour: '2-digit',
                 minute: '2-digit'
             });
+            
+            // Tampilkan formatted value di struk
             receiptAmount.textContent = 'Rp ' + nominalInput.value;
 
-            // Generate QR dulu
-            const qrData = `https://payment.example.com/pay?amount=${value}&ref=${Date.now()}`;
-            generateQRCode(qrData);
+            const qrData = `https://payment.example.com/pay?amount=${rawValue}&ref=${Date.now()}`;
+            await generateQRCode(qrData);
 
-            // Tampilkan section
             printerSection.classList.add('active');
             
-            // Reset posisi
             receiptContainer.style.height = '0';
             receiptContainer.classList.remove('has-content');
             receiptPaper.style.transform = 'translateY(-100%)';
             
-            // Tunggu QR render lalu mulai animasi dan suara
-            setTimeout(() => {
-                // Mainkan suara printer
-                playPrinterSound();
-                // Mulai animasi
-                startPrinting();
-            }, 200);
+            receiptPaper.offsetHeight;
+            
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    playPrinterSound();
+                    startPrinting();
+                });
+            });
         });
 
         function startPrinting() {
@@ -886,7 +935,15 @@
             rollerRight.classList.add('active');
             printerWrapper.classList.add('printing');
 
+            receiptPaper.style.visibility = 'visible';
+            
             const fullHeight = receiptPaper.scrollHeight;
+            
+            if (fullHeight === 0) {
+                console.error('Receipt height is 0');
+                isAnimating = false;
+                return;
+            }
             
             const duration = 2000;
             const interval = 16;
@@ -913,6 +970,8 @@
                     receiptPaper.style.transform = 'translateY(0)';
                     receiptContainer.classList.add('has-content');
                     
+                    isAnimating = false;
+                    
                     setTimeout(() => {
                         printerLight.classList.remove('active');
                         soundWaves.classList.remove('active');
@@ -928,6 +987,8 @@
         closeBtn.addEventListener('click', resetPrinter);
 
         function resetPrinter() {
+            isAnimating = false;
+            
             printerSection.classList.remove('active');
             closeBtn.classList.remove('show');
             
@@ -945,6 +1006,7 @@
             nominalInput.value = '';
         }
 
+        // PERBAIKAN: Enter key tetap berfungsi
         nominalInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 printBtn.click();
