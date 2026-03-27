@@ -694,34 +694,30 @@ footer img {
         gap: 16px;
     }
 
-    .arrow {
-    width: 36px; /* Ukuran lebih kecil sesuai permintaan sebelumnya */
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.15);
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-    user-select: none;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent; /* PENTING: Menghilangkan flicker abu-abu bawaan HP */
+    
+.arrow {
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+        user-select: none;
+        transition: var(--transition-bounce);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        touch-action: manipulation;
+    }
 
-    /* Gunakan transition sederhana saat MELEPAS tombol agar tidak kedap-kedip */
-    transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
-}
-
-/* Efek saat tombol PANAH ditekan */
+    /* Efek saat tombol PANAH ditekan */
 .arrow:active {
-    /* Instan saat ditekan agar responsif */
-    transition: 0s !important; 
     background-color: #ffffff !important; 
     color: #000000 !important;
     transform: scale(0.85);
-    border-color: #ffffff !important;
+    transition: 0s;
 }
 
 
