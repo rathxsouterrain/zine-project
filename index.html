@@ -351,17 +351,17 @@
 }
 
 /* Card Judul Melayang di Atas Canvas */
-/* Card Judul Melayang */
 .zine-header-floating {
     position: absolute;
-    top: 15px; /* Tetap di atas */
+    top: 10px;            /* GANTI: Dari 15px ke 10px (lebih rapat ke atas) */
     left: 50%;
     transform: translateX(-50%);
-    padding: 8px 40px;
+    padding: 4px 25px;    /* GANTI: Dari 8px 40px ke 4px 25px (lebih tipis/pendek) */
     z-index: 100001;
     text-align: center;
-    min-width: 220px;
-    border-radius: 20px; /* Bentuk lebih kotak-bulat agar rapi */
+    width: auto;          /* GANTI: Dari min-width ke width auto agar pas dengan teks */
+    max-width: 90%;       /* TAMBAHKAN: Supaya di HP tidak melebihi lebar layar */
+    border-radius: 10px;  /* GANTI: Dari 20px ke 10px agar lebih modern & tipis */
     pointer-events: none;
     transition: all 0.3s ease;
 }
@@ -373,17 +373,19 @@
 }
 
 
+/* Perkecil juga ukuran teksnya agar kotak ikut mengecil */
 .zine-header-floating h3 {
-    font-size: 14px;
+    font-size: 11px;      /* GANTI: Dari 14px ke 11px */
     letter-spacing: 1px;
-    margin-bottom: 2px;
+    margin-bottom: 0px;   /* GANTI: Dari 2px ke 0px */
     color: white;
 }
 
 .zine-header-floating p {
-    font-size: 10px;
+    font-size: 8px;       /* GANTI: Dari 10px ke 8px */
     color: rgba(255, 255, 255, 0.6);
 }
+
 
 
     .read-btn {
