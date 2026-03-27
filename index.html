@@ -350,6 +350,31 @@
     margin-top: 15px;
 }
 
+/* Card Judul Melayang di Atas Canvas */
+.zine-header-floating {
+    position: absolute;
+    top: 20px; /* Jarak dari atas layar */
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 24px;
+    z-index: 100001; /* Harus lebih tinggi dari flipbook */
+    text-align: center;
+    min-width: 250px;
+    border-radius: 100px; /* Bentuk kapsul agar modern */
+    pointer-events: none; /* Agar tidak menghalangi klik pada zine */
+}
+
+.zine-header-floating h3 {
+    font-size: 14px;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+    color: white;
+}
+
+.zine-header-floating p {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.6);
+}
 
 
     .read-btn {
@@ -868,8 +893,11 @@ footer img {
     <div id="zine-loading">
         <div class="loader-text">membuka zine...</div>
     </div>
-
-    <div id="flipbook-container">
+<div id="flipbook-container">
+    <div id="zine-header-card" class="glass zine-header-floating">
+        <h3 id="floating-zine-title">Judul Zine</h3>
+        <p id="floating-zine-music">♫ Artist - Track</p>
+    </div>
         <div id="flipbook"></div>
         <div class="reader-nav-panel">
             <div class="close-btn" onclick="closeFlipbook()">CLOSE</div>
@@ -1022,6 +1050,22 @@ footer img {
 
     async function openFlipbook(pdfUrl, zineId, customMusicUrl) { 
         if (!pdfUrl) return;
+        async function openFlipbook(pdfUrl, zineId, customMusicUrl) { 
+    if (!pdfUrl) return;
+
+    // --- TAMBAHKAN BAGIAN INI ---
+    // Cari data zine yang sedang aktif (bisa dari elemen card yang diklik)
+    const cardElement = event.currentTarget.closest('.zine-card');
+    const title = cardElement.querySelector('.zine-title').innerText;
+    const music = cardElement.querySelector('.zine-music').innerText;
+
+    // Update isi card melayang
+    document.getElementById('floating-zine-title').innerText = title;
+    document.getElementById('floating-zine-music').innerText = music;
+    // ----------------------------
+
+    // ... sisa kode openFlipbook kamu yang lain ...
+}
 
         // Play music ketika membaca zine
         const bgMusic = document.getElementById('bgMusic');
