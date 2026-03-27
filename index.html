@@ -116,7 +116,6 @@
             z-index: 2;
         }
 
-        /* PERBAIKAN: Input number styling */
         .nominal-input {
             width: 100%;
             background: rgba(255, 255, 255, 0.05);
@@ -129,13 +128,11 @@
             font-family: 'JetBrains Mono', monospace;
             transition: all 0.3s ease;
             outline: none;
-            /* Hilangkan spinner di Chrome/Safari/Edge */
             -moz-appearance: textfield;
             -webkit-appearance: none;
             appearance: none;
         }
 
-        /* Hilangkan spinner di Chrome/Safari/Edge */
         .nominal-input::-webkit-outer-spin-button,
         .nominal-input::-webkit-inner-spin-button {
             -webkit-appearance: none;
@@ -670,7 +667,6 @@
                 <label class="input-label">Nominal Pembayaran</label>
                 <div class="input-wrapper">
                     <span class="currency-symbol">Rp</span>
-                    <!-- PERBAIKAN: type="number" dengan inputmode dan pattern -->
                     <input 
                         type="number" 
                         class="nominal-input" 
@@ -777,18 +773,21 @@
         let audioContext = null;
         let isAnimating = false;
 
+        // Data merchant QRIS (GANTI DENGAN DATA ANDA)
+        const MERCHANT_DATA = {
+            id: "ID1234567890123", // ID Merchant QRIS
+            name: "NAMA MERCHANT", // Nama Merchant (maks 25 karakter)
+            city: "JAKARTA" // Kota Merchant
+        };
+
         function formatCurrency(value) {
             return new Intl.NumberFormat('id-ID').format(value);
         }
 
-        // PERBAIKAN: Event listener untuk input number
         nominalInput.addEventListener('input', (e) => {
             let value = e.target.value;
-            
-            // Hanya izinkan angka
             value = value.replace(/\D/g, '');
             
-            // Format dengan pemisah ribuan
             if (value) {
                 e.target.value = formatCurrency(value);
             } else {
@@ -796,9 +795,7 @@
             }
         });
 
-        // Cegah input karakter non-angka
         nominalInput.addEventListener('keypress', (e) => {
-            // Izinkan: angka, backspace, delete, arrow keys
             const char = String.fromCharCode(e.which);
             if (!/[0-9]/.test(char) && e.which !== 8 && e.which !== 0) {
                 e.preventDefault();
@@ -856,6 +853,69 @@
             modulator.stop(startTime + duration / 1000);
         }
 
+        // Fungsi untuk generate CRC16 CCITT
+        function crc16(str) {
+            let crc = 0xFFFF;
+            for (let i = 0; i < str.length; i++) {
+                crc ^= str.charCodeAt(i) << 8;
+                for (let j = 0; j < 8; j++) {
+                    crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) : (crc << 1);
+                }
+            }
+            return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
+        }
+
+        // Fungsi untuk format data QRIS dengan nominal
+        function generateQRISContent(amount) {
+            // Payload Format Indicator
+            let qris = "000201";
+            
+            // Point of Initiation Method (12 = Dynamic)
+            qris += "010212";
+            
+            // Merchant Account Information - QRIS
+            // ID 26: Payment Network Specific
+            let merchantInfo = "0014ID.CO.QRIS.WWW";
+            merchantInfo += "0115" + MERCHANT_DATA.id;
+            qris += "26" + merchantInfo.length + merchantInfo;
+            
+            // Merchant Category Code (5999 = Other Services)
+            qris += "52045999";
+            
+            // Transaction Currency (360 = IDR)
+            qris += "5303360";
+            
+            // Transaction Amount (jika ada)
+            if (amount && amount > 0) {
+                const amt = amount.toString();
+                qris += "54" + amt.length.toString().padStart(2, '0') + amt;
+            }
+            
+            // Country Code (ID)
+            qris += "5802ID";
+            
+            // Merchant Name
+            const name = MERCHANT_DATA.name.substring(0, 25);
+            qris += "59" + name.length.toString().padStart(2, '0') + name;
+            
+            // Merchant City
+            const city = MERCHANT_DATA.city.substring(0, 15);
+            qris += "60" + city.length.toString().padStart(2, '0') + city;
+            
+            // Additional Data Field Template (ID 62)
+            // Reference Label/Transaction ID
+            const ref = "TRX" + Date.now().toString().slice(-6);
+            const additionalData = "0516" + ref; // ID 05, length 16
+            qris += "62" + additionalData.length.toString().padStart(2, '0') + additionalData;
+            
+            // CRC
+            qris += "6304"; // CRC ID + length
+            const crc = crc16(qris);
+            qris += crc;
+            
+            return qris;
+        }
+
         function generateQRCode(text) {
             return new Promise((resolve) => {
                 qrContainer.innerHTML = '';
@@ -884,7 +944,6 @@
         printBtn.addEventListener('click', async () => {
             if (isAnimating) return;
             
-            // PERBAIKAN: Ambil value dan hapus semua non-digit
             const rawValue = nominalInput.value.replace(/\D/g, '');
             
             if (!rawValue || rawValue === '0') {
@@ -906,11 +965,13 @@
                 minute: '2-digit'
             });
             
-            // Tampilkan formatted value di struk
             receiptAmount.textContent = 'Rp ' + nominalInput.value;
 
-            const qrData = `https://payment.example.com/pay?amount=${rawValue}&ref=${Date.now()}`;
-            await generateQRCode(qrData);
+            // Generate QRIS dengan nominal
+            const qrisContent = generateQRISContent(parseInt(rawValue));
+            console.log('QRIS Content:', qrisContent); // Untuk debugging
+            
+            await generateQRCode(qrisContent);
 
             printerSection.classList.add('active');
             
@@ -1006,7 +1067,6 @@
             nominalInput.value = '';
         }
 
-        // PERBAIKAN: Enter key tetap berfungsi
         nominalInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 printBtn.click();
