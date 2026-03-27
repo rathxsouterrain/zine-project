@@ -341,7 +341,6 @@
             align-items: center;
         }
 
-        /* PERBAIKAN: Container dengan overflow hidden */
         .receipt-container {
             width: 100%;
             height: 0;
@@ -750,6 +749,8 @@
         const qrContainer = document.getElementById('qrcode');
 
         let qrCodeObj = null;
+        let audioContext = null;
+        let printerSound = null;
 
         function formatCurrency(value) {
             return new Intl.NumberFormat('id-ID').format(value);
@@ -763,6 +764,67 @@
                 e.target.value = '';
             }
         });
+
+        // Fungsi membuat suara printer thermal
+        function initPrinterSound() {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        function playPrinterSound() {
+            if (!audioContext) initPrinterSound();
+            
+            const duration = 2000; // 2 detik
+            const startTime = audioContext.currentTime;
+            
+            // White noise untuk suara mekanis printer
+            const bufferSize = audioContext.sampleRate * 2;
+            const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+            const data = buffer.getChannelData(0);
+            
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+            
+            const noise = audioContext.createBufferSource();
+            noise.buffer = buffer;
+            
+            // Filter untuk suara printer yang lebih realistis
+            const filter = audioContext.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.value = 800;
+            filter.Q.value = 1;
+            
+            // Gain untuk volume
+            const gainNode = audioContext.createGain();
+            gainNode.gain.setValueAtTime(0.1, startTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.05, startTime + 0.1);
+            
+            // Modulasi untuk efek "tick-tick" printer thermal
+            const modulator = audioContext.createOscillator();
+            modulator.type = 'square';
+            modulator.frequency.value = 50;
+            
+            const modGain = audioContext.createGain();
+            modGain.gain.value = 0.3;
+            
+            // Connect nodes
+            noise.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            modulator.connect(modGain);
+            modGain.connect(gainNode.gain);
+            
+            // Start
+            noise.start(startTime);
+            modulator.start(startTime);
+            
+            // Stop
+            noise.stop(startTime + duration / 1000);
+            modulator.stop(startTime + duration / 1000);
+            
+            return { noise, modulator };
+        }
 
         function generateQRCode(text) {
             qrContainer.innerHTML = '';
@@ -803,13 +865,16 @@
             // Tampilkan section
             printerSection.classList.add('active');
             
-            // Reset posisi - kertas di atas (tersembunyi)
+            // Reset posisi
             receiptContainer.style.height = '0';
             receiptContainer.classList.remove('has-content');
             receiptPaper.style.transform = 'translateY(-100%)';
             
-            // Tunggu QR render lalu mulai animasi
+            // Tunggu QR render lalu mulai animasi dan suara
             setTimeout(() => {
+                // Mainkan suara printer
+                playPrinterSound();
+                // Mulai animasi
                 startPrinting();
             }, 200);
         });
@@ -821,10 +886,8 @@
             rollerRight.classList.add('active');
             printerWrapper.classList.add('printing');
 
-            // Ambil tinggi full kertas
             const fullHeight = receiptPaper.scrollHeight;
             
-            // Durasi animasi
             const duration = 2000;
             const interval = 16;
             const steps = duration / interval;
@@ -835,14 +898,9 @@
                 stepCount++;
                 
                 const progress = stepCount / steps;
-                // Easing cubic ease-out untuk gerakan natural
                 const easedProgress = 1 - Math.pow(1 - progress, 3);
                 
-                // PERBAIKAN: Container height bertambah dari 0 ke fullHeight
-                // Ini membuat kertas terlihat "keluar" dari printer
                 const currentHeight = fullHeight * easedProgress;
-                
-                // Kertas bergerak dari atas (-100%) ke posisi normal (0)
                 const currentTranslate = -100 + (100 * easedProgress);
 
                 receiptContainer.style.height = currentHeight + 'px';
@@ -851,7 +909,6 @@
                 if (stepCount >= steps) {
                     clearInterval(printInterval);
                     
-                    // Pastikan posisi akhir tepat
                     receiptContainer.style.height = fullHeight + 'px';
                     receiptPaper.style.transform = 'translateY(0)';
                     receiptContainer.classList.add('has-content');
@@ -874,7 +931,6 @@
             printerSection.classList.remove('active');
             closeBtn.classList.remove('show');
             
-            // Reset ke posisi awal
             receiptContainer.style.height = '0';
             receiptContainer.classList.remove('has-content');
             receiptPaper.style.transform = 'translateY(-100%)';
