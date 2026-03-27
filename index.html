@@ -803,7 +803,16 @@ footer img {
     </style>
 </head>
 <body oncontextmenu="return false;">
-
+    
+import { ShaderGradientCanvas, ShaderGradient } from '@shadergradient/react'
+function App() {
+return (
+<ShaderGradientCanvas>
+<ShaderGradient brightness={1.5} cAzimuthAngle={250}
+cDistance={1.5} cPolarAngle={140}
+cameraZoom={12.5} color1="#809bd6"
+color2="#910aff" color3="#af38ff"
+destination="onCanvas" embedMode="off" envPreset="city"
     <!-- Audio element untuk background music -->
     <audio id="bgMusic" loop></audio>
 
