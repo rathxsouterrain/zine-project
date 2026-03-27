@@ -1057,91 +1057,88 @@ footer img {
         });
     }
 
-    async function openFlipbook(pdfUrl, zineId, customMusicUrl) { 
-        if (!pdfUrl) return;
-            // Update isi teks di kartu melayang secara dinamis
+    // PASTIKAN ada 5 parameter di sini: pdfUrl, zineId, customMusicUrl, zineTitle, zineMusic
+async function openFlipbook(pdfUrl, zineId, customMusicUrl, zineTitle, zineMusic) { 
+    if (!pdfUrl) return;
+
+    // Update isi teks di kartu melayang secara dinamis
     const headerCard = document.getElementById('zine-header-card');
     const titleElement = document.getElementById('floating-zine-title');
     const musicElement = document.getElementById('floating-zine-music');
 
+    // MENGGUNAKAN parameter yang dikirim dari tombol
     if (titleElement) titleElement.innerText = zineTitle || "Untitled Zine";
-    if (musicElement) musicElement.innerText = zineMusic ? `♫ ${zineMusic}` : "♫ No background music";
+    if (musicElement) musicElement.innerText = zineMusic ? `♫ ${zineMusic}` : "♫ Default theme";
     
-    // Tampilkan card (jika sebelumnya disembunyikan)
     if (headerCard) headerCard.style.display = 'block';
 
-        // Play music ketika membaca zine
-        const bgMusic = document.getElementById('bgMusic');
-        if (customMusicUrl) {
-            bgMusic.src = customMusicUrl;
-            bgMusic.play().catch(e => console.log('Audio play failed:', e));
-        }
+    // Play music
+    const bgMusic = document.getElementById('bgMusic');
+    if (customMusicUrl) {
+        bgMusic.src = customMusicUrl;
+        bgMusic.play().catch(e => console.log('Audio play failed:', e));
+    }
 
-        if (zineId) {
-            try {
-                await _supabase.rpc('increment_views', { row_id: zineId });
-                const viewSpan = document.getElementById(`view-${zineId}`);
-                if (viewSpan) viewSpan.innerText = parseInt(viewSpan.innerText) + 1;
-            } catch (e) { console.error(e); }
-        }
-
-        document.documentElement.style.overflow = 'hidden';
-        document.getElementById("zine-loading").style.display = "flex";
-        document.getElementById("flipbook-container").style.display = "block";
-
-        const oldFlip = document.getElementById("flipbook");
-        if($(oldFlip).data("turn")) $(oldFlip).turn("destroy");
-        const newFlip = document.createElement("div");
-        newFlip.id = "flipbook";
-        oldFlip.parentNode.replaceChild(newFlip, oldFlip);
-
+    // Update Views
+    if (zineId) {
         try {
-            const pdf = await pdfjsLib.getDocument(pdfUrl).promise;
-            for(let i = 1; i <= pdf.numPages; i++){
-                const page = await pdf.getPage(i);
-                const viewport = page.getViewport({ scale: 2 });
-                const canvas = document.createElement("canvas");
-                canvas.width = viewport.width; canvas.height = viewport.height;
-                await page.render({ canvasContext: canvas.getContext("2d"), viewport: viewport }).promise;
-                const div = document.createElement("div");
-                div.className = "page";
-                div.appendChild(canvas);
-                newFlip.appendChild(div);
-            }
-
-            // Di dalam fungsi openFlipbook, setelah loop render canvas:
-
-let isMobile = window.innerWidth <= 768;
-$(newFlip).turn({
-    width: isMobile ? window.innerWidth * 0.95 : 1000,
-    height: isMobile ? (window.innerWidth * 0.95) * 1.41 : 700,
-    autoCenter: true,
-    display: isMobile ? "single" : "double",
-    duration: 1000,
-    acceleration: true, // Mempercepat render di HP
-    gradients: true,
-    elevation: 50,
-    when: {
-        turning: function(e, page, view) {
-            // Opsional: tambahkan efek suara balik kertas di sini
-        }
+            await _supabase.rpc('increment_views', { row_id: zineId });
+            const viewSpan = document.getElementById(`view-${zineId}`);
+            if (viewSpan) viewSpan.innerText = parseInt(viewSpan.innerText) + 1;
+        } catch (e) { console.error(e); }
     }
-});
 
-// Tambahkan ini agar layar tidak goyang saat menyentuh zine
-document.getElementById("flipbook-container").addEventListener('touchmove', function(e) {
-    e.preventDefault();
-}, { passive: false });
+    // Tampilkan Container & Loading
+    document.documentElement.style.overflow = 'hidden';
+    document.getElementById("zine-loading").style.display = "flex";
+    document.getElementById("flipbook-container").style.display = "block";
 
-            
-            document.getElementById("nextBtn").onclick = () => $(newFlip).turn("next");
-            document.getElementById("prevBtn").onclick = () => $(newFlip).turn("previous");
-            document.getElementById("zine-loading").style.display = "none";
-        } catch(err) { 
-            console.error(err);
-            document.getElementById("zine-loading").style.display = "none";
+    // Re-create Flipbook Element
+    const oldFlip = document.getElementById("flipbook");
+    if($(oldFlip).data("turn")) $(oldFlip).turn("destroy");
+    const newFlip = document.createElement("div");
+    newFlip.id = "flipbook";
+    
+    // TAMBAHKAN INI: Agar zine turun sedikit dan tidak tertutup judul
+    newFlip.style.marginTop = "100px"; 
+
+    oldFlip.parentNode.replaceChild(newFlip, oldFlip);
+
+    try {
+        const pdf = await pdfjsLib.getDocument(pdfUrl).promise;
+        for(let i = 1; i <= pdf.numPages; i++){
+            const page = await pdf.getPage(i);
+            const viewport = page.getViewport({ scale: 2 });
+            const canvas = document.createElement("canvas");
+            canvas.width = viewport.width; canvas.height = viewport.height;
+            await page.render({ canvasContext: canvas.getContext("2d"), viewport: viewport }).promise;
+            const div = document.createElement("div");
+            div.className = "page";
+            div.appendChild(canvas);
+            newFlip.appendChild(div);
         }
+
+        let isMobile = window.innerWidth <= 768;
+        $(newFlip).turn({
+            width: isMobile ? window.innerWidth * 0.95 : 1000,
+            height: isMobile ? (window.innerWidth * 0.95) * 1.41 : 700,
+            autoCenter: true,
+            display: isMobile ? "single" : "double",
+            duration: 1000,
+            acceleration: true,
+            gradients: true,
+            elevation: 50
+        });
+
+        document.getElementById("nextBtn").onclick = () => $(newFlip).turn("next");
+        document.getElementById("prevBtn").onclick = () => $(newFlip).turn("previous");
+        document.getElementById("zine-loading").style.display = "none";
+    } catch(err) { 
+        console.error(err);
+        document.getElementById("zine-loading").style.display = "none";
     }
+}
+
 
     function closeFlipbook(){
     document.documentElement.style.overflow = '';
