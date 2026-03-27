@@ -351,18 +351,27 @@
 }
 
 /* Card Judul Melayang di Atas Canvas */
+/* Card Judul Melayang */
 .zine-header-floating {
     position: absolute;
-    top: 20px; /* Jarak dari atas layar */
+    top: 25px; /* Tetap di atas */
     left: 50%;
     transform: translateX(-50%);
-    padding: 12px 24px;
-    z-index: 100001; /* Harus lebih tinggi dari flipbook */
+    padding: 10px 20px;
+    z-index: 100001;
     text-align: center;
-    min-width: 250px;
-    border-radius: 100px; /* Bentuk kapsul agar modern */
-    pointer-events: none; /* Agar tidak menghalangi klik pada zine */
+    min-width: 220px;
+    border-radius: 20px; /* Bentuk lebih kotak-bulat agar rapi */
+    pointer-events: none;
+    transition: all 0.3s ease;
 }
+
+/* Geser posisi Flipbook ke bawah sedikit agar tidak tertutup judul */
+#flipbook {
+    margin-top: 80px !important; /* Memberi ruang untuk judul di atasnya */
+    position: relative;
+}
+
 
 .zine-header-floating h3 {
     font-size: 14px;
@@ -945,7 +954,7 @@ footer img {
             
             const zineHTML = `
 <div class="glass zine-card">
-    <div class="zine-image-container" onclick="openFlipbook('${zine.pdf_url}', ${zine.id}, '${zine.music_url || ''}')">
+    <div class="zine-image-container" onclick="openFlipbook('${zine.pdf_url}', ${zine.id}, '${zine.music_url || ''}', '${zine.title.replace(/'/g, "\\'")}', '${zine.music_title ? zine.music_title.replace(/'/g, "\\'") : 'Default theme'}')">
         <img src="${zine.cover_url}" draggable="false">
     </div>
     <h4 class="zine-title">${zine.title}</h4>
@@ -957,7 +966,7 @@ footer img {
             <span id="view-${zine.id}">${zine.views || 0}</span>
         </div>
 
-        <button class="read-btn" onclick="openFlipbook('${zine.pdf_url}', ${zine.id}, '${zine.music_url || ''}')">READ</button>
+        <button class="read-btn" onclick="openFlipbook('${zine.pdf_url}', ${zine.id}, '${zine.music_url || ''}', '${zine.title.replace(/'/g, "\\'")}', '${zine.music_title ? zine.music_title.replace(/'/g, "\\'") : 'Default theme'}')">READ</button>
         
         <a href="${zine.pdf_url}" download class="download-btn">
             <i class="ph ph-download-simple"></i>
@@ -1050,22 +1059,16 @@ footer img {
 
     async function openFlipbook(pdfUrl, zineId, customMusicUrl) { 
         if (!pdfUrl) return;
-        async function openFlipbook(pdfUrl, zineId, customMusicUrl) { 
-    if (!pdfUrl) return;
+            // Update isi teks di kartu melayang secara dinamis
+    const headerCard = document.getElementById('zine-header-card');
+    const titleElement = document.getElementById('floating-zine-title');
+    const musicElement = document.getElementById('floating-zine-music');
 
-    // --- TAMBAHKAN BAGIAN INI ---
-    // Cari data zine yang sedang aktif (bisa dari elemen card yang diklik)
-    const cardElement = event.currentTarget.closest('.zine-card');
-    const title = cardElement.querySelector('.zine-title').innerText;
-    const music = cardElement.querySelector('.zine-music').innerText;
-
-    // Update isi card melayang
-    document.getElementById('floating-zine-title').innerText = title;
-    document.getElementById('floating-zine-music').innerText = music;
-    // ----------------------------
-
-    // ... sisa kode openFlipbook kamu yang lain ...
-}
+    if (titleElement) titleElement.innerText = zineTitle || "Untitled Zine";
+    if (musicElement) musicElement.innerText = zineMusic ? `♫ ${zineMusic}` : "♫ No background music";
+    
+    // Tampilkan card (jika sebelumnya disembunyikan)
+    if (headerCard) headerCard.style.display = 'block';
 
         // Play music ketika membaca zine
         const bgMusic = document.getElementById('bgMusic');
@@ -1141,14 +1144,18 @@ document.getElementById("flipbook-container").addEventListener('touchmove', func
     }
 
     function closeFlipbook(){
-        document.documentElement.style.overflow = '';
-        document.getElementById("flipbook-container").style.display="none";
-        
-        // Stop music ketika menutup flipbook
-        const bgMusic = document.getElementById('bgMusic');
-        bgMusic.pause();
-        bgMusic.currentTime = 0;
-    }
+    document.documentElement.style.overflow = '';
+    document.getElementById("flipbook-container").style.display = "none";
+    
+    // Sembunyikan header card saat ditutup
+    const headerCard = document.getElementById('zine-header-card');
+    if (headerCard) headerCard.style.display = "none";
+    
+    const bgMusic = document.getElementById('bgMusic');
+    bgMusic.pause();
+    bgMusic.currentTime = 0;
+}
+
 
     function kirimKritik(){
         const pesan = document.getElementById("kritikPesan").value;
