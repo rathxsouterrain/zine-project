@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Struk Digital</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Library QR Code -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -336,12 +335,13 @@
             position: relative;
             width: 280px;
             z-index: 15;
-            margin-top: -5px;
+            margin-top: -2px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
+        /* PERBAIKAN: Container dengan overflow hidden */
         .receipt-container {
             width: 100%;
             height: 0;
@@ -349,6 +349,7 @@
             position: relative;
             background: transparent;
             filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+            transition: height 0.05s linear;
         }
 
         .receipt-container::after {
@@ -495,7 +496,6 @@
             letter-spacing: -0.02em;
         }
 
-        /* QR Section - Updated */
         .qr-section {
             margin-top: 1.5rem;
             text-align: center;
@@ -521,23 +521,10 @@
             justify-content: center;
         }
 
-        /* QR Code Image Styling */
         #qrcode img {
             width: 100% !important;
             height: 100% !important;
             display: block;
-        }
-
-        /* Fallback jika QR belum generate */
-        .qr-placeholder {
-            width: 100%;
-            height: 100%;
-            background: #f0f0f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.6rem;
-            color: #999;
         }
 
         .qr-hint {
@@ -700,7 +687,7 @@
                     <div class="roller right" id="rollerRight"></div>
                 </div>
                 <div class="printer-light" id="printerLight"></div>
-                <div class="printer-brand">PRINTER</div>
+                <div class="printer-brand">THERMAL</div>
                 <div class="sound-waves" id="soundWaves">
                     <div class="wave"></div>
                     <div class="wave"></div>
@@ -727,7 +714,6 @@
                             <div class="qr-section">
                                 <div class="qr-label">Scan untuk Bayar</div>
                                 <div class="qr-container">
-                                    <!-- QR Code akan digenerate di sini -->
                                     <div id="qrcode"></div>
                                 </div>
                                 <div class="qr-hint">
@@ -778,12 +764,8 @@
             }
         });
 
-        // Fungsi untuk generate QR Code
         function generateQRCode(text) {
-            // Clear QR container
             qrContainer.innerHTML = '';
-            
-            // Generate QR dengan library
             qrCodeObj = new QRCode(qrContainer, {
                 text: text,
                 width: 124,
@@ -814,24 +796,22 @@
             });
             receiptAmount.textContent = 'Rp ' + nominalInput.value;
 
-            // Generate QR Code dengan data pembayaran
-            // Format: "PAYMENT|MERCHANT|AMOUNT|DATE" atau URL QRIS Anda
-            const qrData = `https://payment.example.com/pay?amount=&ref=`;
-            // ATAU gunakan data QRIS statis Anda:
-            // const qrData = "00020101021126670014COM.GO-JEK.WWW01189360091430123456789021091234567890303UMI51440014ID.CO.QRIS.WWW0215ID12345678901230303UMI5204549953033605802ID5920Nama Merchant6002ID610812345678627303";
-            
+            // Generate QR dulu
+            const qrData = `https://payment.example.com/pay?amount=${value}&ref=${Date.now()}`;
             generateQRCode(qrData);
 
+            // Tampilkan section
             printerSection.classList.add('active');
             
-            // Reset states
+            // Reset posisi - kertas di atas (tersembunyi)
             receiptContainer.style.height = '0';
             receiptContainer.classList.remove('has-content');
-            receiptPaper.style.transform = 'translateY(-100%) scaleY(0.95)';
+            receiptPaper.style.transform = 'translateY(-100%)';
             
+            // Tunggu QR render lalu mulai animasi
             setTimeout(() => {
                 startPrinting();
-            }, 500);
+            }, 200);
         });
 
         function startPrinting() {
@@ -841,9 +821,10 @@
             rollerRight.classList.add('active');
             printerWrapper.classList.add('printing');
 
-            receiptPaper.style.display = 'block';
+            // Ambil tinggi full kertas
             const fullHeight = receiptPaper.scrollHeight;
             
+            // Durasi animasi
             const duration = 2000;
             const interval = 16;
             const steps = duration / interval;
@@ -854,21 +835,26 @@
                 stepCount++;
                 
                 const progress = stepCount / steps;
+                // Easing cubic ease-out untuk gerakan natural
                 const easedProgress = 1 - Math.pow(1 - progress, 3);
                 
-                const currentHeight = Math.min(fullHeight * easedProgress, fullHeight);
+                // PERBAIKAN: Container height bertambah dari 0 ke fullHeight
+                // Ini membuat kertas terlihat "keluar" dari printer
+                const currentHeight = fullHeight * easedProgress;
+                
+                // Kertas bergerak dari atas (-100%) ke posisi normal (0)
                 const currentTranslate = -100 + (100 * easedProgress);
-                const scale = 0.95 + (0.05 * easedProgress);
 
                 receiptContainer.style.height = currentHeight + 'px';
-                receiptPaper.style.transform = `translateY(%) scaleY()`;
+                receiptPaper.style.transform = `translateY(${currentTranslate}%)`;
 
                 if (stepCount >= steps) {
                     clearInterval(printInterval);
                     
+                    // Pastikan posisi akhir tepat
                     receiptContainer.style.height = fullHeight + 'px';
+                    receiptPaper.style.transform = 'translateY(0)';
                     receiptContainer.classList.add('has-content');
-                    receiptPaper.style.transform = 'translateY(0) scaleY(1)';
                     
                     setTimeout(() => {
                         printerLight.classList.remove('active');
@@ -888,9 +874,10 @@
             printerSection.classList.remove('active');
             closeBtn.classList.remove('show');
             
+            // Reset ke posisi awal
             receiptContainer.style.height = '0';
             receiptContainer.classList.remove('has-content');
-            receiptPaper.style.transform = 'translateY(-100%) scaleY(0.95)';
+            receiptPaper.style.transform = 'translateY(-100%)';
             
             printerLight.classList.remove('active');
             soundWaves.classList.remove('active');
@@ -898,9 +885,7 @@
             rollerRight.classList.remove('active');
             printerWrapper.classList.remove('printing');
             
-            // Clear QR saat reset
             qrContainer.innerHTML = '';
-            
             nominalInput.value = '';
         }
 
@@ -911,3 +896,4 @@
         });
     </script>
 </body>
+</html>
