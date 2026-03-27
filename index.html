@@ -577,11 +577,14 @@ footer img {
         inset: 0;
         background: rgba(0, 0, 0, 0.95);
         backdrop-filter: blur(20px);
-        z-index: 2000;
+        z-index: 99999;
+        overflow: hiden;
+        touch action: none;
     }
 
     #flipbook {
         margin: auto;
+        position: relative;
     }
 
     #flipbook .page {
@@ -599,14 +602,14 @@ footer img {
 
     /* Reader Nav Panel */
     .reader-nav-panel {
-        position: fixed;
+        position: absolute;
         bottom: 24px;
         left: 50%;
         transform: translateX(-50%);
         width: auto;
         min-width: 280px;
         padding: 16px 24px;
-        z-index: 9999;
+        z-index: 100000;
         background: rgba(255, 255, 255, 0.1);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
@@ -1059,14 +1062,30 @@ footer img {
                 newFlip.appendChild(div);
             }
 
-            let isMobile = window.innerWidth <= 768;
-            $(newFlip).turn({
-                width: isMobile ? window.innerWidth * 0.9 : 1000,
-                height: isMobile ? (window.innerWidth * 0.9) * 1.41 : 700,
-                autoCenter: true,
-                display: isMobile ? "single" : "double",
-                duration: 1200
-            });
+            // Di dalam fungsi openFlipbook, setelah loop render canvas:
+
+let isMobile = window.innerWidth <= 768;
+$(newFlip).turn({
+    width: isMobile ? window.innerWidth * 0.95 : 1000,
+    height: isMobile ? (window.innerWidth * 0.95) * 1.41 : 700,
+    autoCenter: true,
+    display: isMobile ? "single" : "double",
+    duration: 1000,
+    acceleration: true, // Mempercepat render di HP
+    gradients: true,
+    elevation: 50,
+    when: {
+        turning: function(e, page, view) {
+            // Opsional: tambahkan efek suara balik kertas di sini
+        }
+    }
+});
+
+// Tambahkan ini agar layar tidak goyang saat menyentuh zine
+document.getElementById("flipbook-container").addEventListener('touchmove', function(e) {
+    e.preventDefault();
+}, { passive: false });
+
             
             document.getElementById("nextBtn").onclick = () => $(newFlip).turn("next");
             document.getElementById("prevBtn").onclick = () => $(newFlip).turn("previous");
