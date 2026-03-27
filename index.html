@@ -543,6 +543,16 @@
         transition: var(--transition-bounce);
         text-decoration: none;
     }
+    footer {
+    text-align: center;
+    /* Jarak 150px di bawah ini supaya bar navigasi ABOUT tetap putih pas di-scroll mentok */
+    padding: 20px 0 25px 0; 
+}
+
+footer img {
+    display: block;
+    pointer-events: none; /* Supaya logo cuma jadi pajangan, tidak bisa diklik */
+}
 
     .dock-item:hover {
         color: white;
