@@ -25,6 +25,7 @@
             --accent: #ffffff;
             --spotify-green: #1db954;
             --error-red: #ff4444;
+            --warning-yellow: #ffa500;
         }
 
         @font-face {
@@ -532,6 +533,17 @@
             transform: translateY(-1px);
         }
 
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid var(--border-gray);
+            color: var(--text-secondary);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--text-primary);
+            color: var(--text-primary);
+        }
+
         /* Modal */
         .modal-overlay {
             position: fixed;
@@ -769,6 +781,11 @@
             color: var(--text-secondary);
         }
 
+        .toast.warning {
+            border-color: var(--warning-yellow);
+            color: var(--warning-yellow);
+        }
+
         /* Loading Spinner */
         .spinner {
             width: 20px;
@@ -867,14 +884,24 @@
             font-size: 12px;
             color: var(--text-muted);
             margin-bottom: 12px;
+            padding: 8px 12px;
+            background-color: var(--medium-gray);
+            border-radius: 6px;
         }
 
         .connection-status.connected {
             color: var(--spotify-green);
+            background-color: rgba(29, 185, 84, 0.1);
         }
 
         .connection-status.error {
             color: var(--error-red);
+            background-color: rgba(255, 68, 68, 0.1);
+        }
+
+        .connection-status.warning {
+            color: var(--warning-yellow);
+            background-color: rgba(255, 165, 0, 0.1);
         }
 
         .status-dot {
@@ -893,10 +920,16 @@
             border: 1px solid var(--border-gray);
         }
 
+        .token-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
         .token-title {
             font-size: 13px;
             font-weight: 600;
-            margin-bottom: 8px;
             color: var(--text-primary);
         }
 
@@ -920,6 +953,12 @@
             font-size: 11px;
             color: var(--text-muted);
             line-height: 1.4;
+        }
+
+        .token-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
         }
 
         .mode-toggle {
@@ -994,6 +1033,31 @@
         .playlist-preview-artist {
             font-size: 11px;
             color: var(--text-secondary);
+        }
+
+        /* Debug Info */
+        .debug-info {
+            background-color: var(--light-gray);
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 12px;
+            font-size: 11px;
+            font-family: monospace;
+            color: var(--text-secondary);
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .debug-info strong {
+            color: var(--text-primary);
+        }
+
+        .debug-error {
+            color: var(--error-red);
+        }
+
+        .debug-success {
+            color: var(--spotify-green);
         }
     </style>
 </head>
@@ -1112,7 +1176,7 @@
         </div>
     </div>
 
-    <!-- Spotify Modal - DENGAN DUKUNGAN PLAYLIST -->
+    <!-- Spotify Modal - DENGAN DEBUG TOKEN -->
     <div class="modal-overlay" id="spotify-modal">
         <div class="modal">
             <div class="modal-header">
@@ -1136,12 +1200,25 @@
 
             <!-- Token Input (untuk playlist) -->
             <div class="token-section" id="token-section" style="display: none;">
-                <div class="token-title">User Access Token</div>
+                <div class="token-header">
+                    <div class="token-title">User Access Token</div>
+                </div>
                 <input type="text" class="token-input" id="user-token" placeholder="Masukkan token akses user Spotify...">
                 <div class="token-hint">
-                    Token diperlukan untuk mengakses playlist pribadi. 
-                    <a href="https://developer.spotify.com/documentation/web-api/tutorials/getting-started" target="_blank" style="color: var(--spotify-green);">Dapatkan token di sini</a>
+                    Token diperlukan untuk mengakses playlist. Token berlaku 1 jam.
                 </div>
+                <div class="token-actions">
+                    <button class="btn btn-secondary" id="btn-check-token" style="flex: 1;">
+                        <i data-lucide="check-circle" style="width: 14px; height: 14px;"></i>
+                        Cek Token
+                    </button>
+                    <button class="btn btn-primary" id="btn-get-token" style="flex: 1;">
+                        <i data-lucide="external-link" style="width: 14px; height: 14px;"></i>
+                        Dapatkan Token
+                    </button>
+                </div>
+                <!-- Debug Info -->
+                <div class="debug-info" id="token-debug" style="display: none;"></div>
             </div>
 
             <div class="input-group">
@@ -1157,8 +1234,8 @@
             </button>
 
             <div class="spotify-info">
-                <strong>Mode Single Track:</strong> Masukkan URL track untuk mengambil metadata + preview 30 detik.<br><br>
-                <strong>Mode Playlist:</strong> Masukkan URL playlist + User Access Token untuk mengimpor semua track.
+                <strong>Mode Single Track:</strong> Tidak perlu token, cukup masukkan URL track.<br><br>
+                <strong>Mode Playlist:</strong> Perlu User Access Token. Klik "Dapatkan Token" untuk mengambil token baru dari Spotify.
             </div>
         </div>
     </div>
@@ -1182,10 +1259,10 @@
             // KREDENSIAL SPOTIFY
             spotifyClientId: '9b38509a05264494a417c63ebbe51d78',
             spotifyClientSecret: 'ae6ee6fbfd0a48c9b58dc8146ab9ebed',
-            // TOKEN USER (untuk playlist)
+            // TOKEN USER
             userAccessToken: null,
             // Mode import
-            importMode: 'track' // 'track' atau 'playlist'
+            importMode: 'track'
         };
 
         // DOM Elements
@@ -1218,6 +1295,7 @@
         const userTokenInput = document.getElementById('user-token');
         const playlistPreview = document.getElementById('playlist-preview');
         const urlLabel = document.getElementById('url-label');
+        const tokenDebug = document.getElementById('token-debug');
 
         // Initialize Visualizer Bars
         function initVisualizer() {
@@ -1422,7 +1500,7 @@
         }
 
         // ============================================
-        // SPOTIFY API INTEGRATION - DUKUNG PLAYLIST
+        // SPOTIFY API INTEGRATION - DENGAN TOKEN DEBUG
         // ============================================
         
         const SpotifyAPI = {
@@ -1466,7 +1544,83 @@
                 return true;
             },
 
-            // API Call dengan token yang sesuai
+            // CEK TOKEN USER - Debug function
+            async checkUserToken(token) {
+                try {
+                    const response = await fetch('https://api.spotify.com/v1/me', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    if (!response.ok) {
+                        const error = await response.json();
+                        return {
+                            valid: false,
+                            error: error.error?.message || `HTTP ${response.status}`,
+                            status: response.status
+                        };
+                    }
+
+                    const data = await response.json();
+                    return {
+                        valid: true,
+                        user: data.display_name || data.id,
+                        email: data.email,
+                        country: data.country,
+                        product: data.product,
+                        scopes: this.extractScopesFromToken(token)
+                    };
+                } catch (error) {
+                    return {
+                        valid: false,
+                        error: error.message
+                    };
+                }
+            },
+
+            // Extract scopes dari token (approximation)
+            extractScopesFromToken(token) {
+                // Token Spotify biasanya tidak mengandung scope info di dalamnya
+                // Tapi kita bisa coba cek dengan endpoint yang memerlukan scope tertentu
+                return 'Unknown - akan dicek saat mengakses playlist';
+            },
+
+            // Cek apakah token bisa akses playlist
+            async checkPlaylistAccess(token) {
+                try {
+                    // Coba ambil playlist user
+                    const response = await fetch('https://api.spotify.com/v1/me/playbooks?limit=1', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    if (response.status === 403) {
+                        return {
+                            canAccess: false,
+                            reason: 'Token tidak memiliki scope playlist-read-private. Gunakan Authorization Code Flow dengan scope yang benar.'
+                        };
+                    }
+
+                    if (!response.ok) {
+                        return {
+                            canAccess: false,
+                            reason: `Error: ${response.status}`
+                        };
+                    }
+
+                    return {
+                        canAccess: true
+                    };
+                } catch (error) {
+                    return {
+                        canAccess: false,
+                        reason: error.message
+                    };
+                }
+            },
+
             async apiCall(endpoint, useUserToken = false, retryCount = 0) {
                 const token = useUserToken && state.userAccessToken 
                     ? state.userAccessToken 
@@ -1502,22 +1656,17 @@
                 return this.accessToken;
             },
 
-            // Get Single Track
             async getTrack(trackId) {
                 const data = await this.apiCall(`tracks/${trackId}`, false);
                 return this.formatTrackData(data);
             },
 
-            // Get Playlist dengan semua track
             async getPlaylist(playlistId) {
-                // Playlist memerlukan user token jika private
                 const useUserToken = !!state.userAccessToken;
                 
                 try {
-                    // Ambil info playlist
                     const playlistData = await this.apiCall(`playlists/${playlistId}`, useUserToken);
                     
-                    // Ambil semua track (handle pagination)
                     let tracks = [];
                     let nextUrl = playlistData.tracks.href;
                     
@@ -1530,7 +1679,6 @@
                         tracks = tracks.concat(tracksData.items);
                         nextUrl = tracksData.next;
                         
-                        // Limit untuk performa
                         if (tracks.length >= 100) break;
                     }
 
@@ -1546,7 +1694,7 @@
                     };
                 } catch (error) {
                     if (error.message.includes('404')) {
-                        throw new Error('Playlist tidak ditemukan atau bersifat pribadi');
+                        throw new Error('Playlist tidak ditemukan atau bersifat pribadi (perlu token user)');
                     }
                     throw error;
                 }
@@ -1568,15 +1716,33 @@
             },
 
             parseUrl(url) {
-                // Track URL
                 const trackMatch = url.match(/(?:spotify:track:|open\.spotify\.com\/(?:intl-[a-z]+\/)?track\/)([a-zA-Z0-9]+)/i);
                 if (trackMatch) return { type: 'track', id: trackMatch[1] };
                 
-                // Playlist URL
                 const playlistMatch = url.match(/(?:spotify:playlist:|open\.spotify\.com\/(?:intl-[a-z]+\/)?playlist\/)([a-zA-Z0-9]+)/i);
                 if (playlistMatch) return { type: 'playlist', id: playlistMatch[1] };
                 
                 return null;
+            },
+
+            // Buka halaman authorization Spotify
+            getAuthUrl() {
+                const scopes = [
+                    'playlist-read-private',
+                    'playlist-read-collaborative',
+                    'user-read-private',
+                    'user-read-email'
+                ].join(' ');
+                
+                const params = new URLSearchParams({
+                    client_id: state.spotifyClientId,
+                    response_type: 'token',
+                    redirect_uri: 'http://localhost:5500/callback', // Sesuaikan dengan redirect URI Anda
+                    scope: scopes,
+                    show_dialog: 'true'
+                });
+                
+                return `https://accounts.spotify.com/authorize?${params.toString()}`;
             }
         };
 
@@ -1585,7 +1751,61 @@
             connectionStatus.className = 'connection-status';
             if (status === 'connected') connectionStatus.classList.add('connected');
             if (status === 'error') connectionStatus.classList.add('error');
+            if (status === 'warning') connectionStatus.classList.add('warning');
             connectionText.textContent = text;
+        }
+
+        // Debug Token Function
+        async function checkToken() {
+            const token = userTokenInput.value.trim();
+            
+            if (!token) {
+                showToast('Masukkan token terlebih dahulu', 'error');
+                return;
+            }
+
+            tokenDebug.style.display = 'block';
+            tokenDebug.innerHTML = '<span class="debug-success">Memeriksa token...</span>';
+            
+            try {
+                const result = await SpotifyAPI.checkUserToken(token);
+                
+                if (result.valid) {
+                    let html = `<span class="debug-success">✓ Token Valid!</span><br>`;
+                    html += `<strong>User:</strong> ${result.user}<br>`;
+                    html += `<strong>Email:</strong> ${result.email}<br>`;
+                    html += `<strong>Country:</strong> ${result.country}<br>`;
+                    html += `<strong>Product:</strong> ${result.product}<br><br>`;
+                    html += `<span class="debug-success">Token bisa digunakan!</span>`;
+                    
+                    tokenDebug.innerHTML = html;
+                    updateConnectionStatus('connected', `Token valid - ${result.user}`);
+                    state.userAccessToken = token;
+                    showToast('Token valid!', 'success');
+                } else {
+                    let html = `<span class="debug-error">✗ Token Tidak Valid</span><br>`;
+                    html += `<strong>Error:</strong> ${result.error}<br>`;
+                    html += `<strong>Status:</strong> ${result.status}<br><br>`;
+                    
+                    if (result.status === 401) {
+                        html += `<span class="debug-error">Token sudah expired atau tidak benar. Silakan dapatkan token baru.</span>`;
+                    }
+                    
+                    tokenDebug.innerHTML = html;
+                    updateConnectionStatus('error', 'Token tidak valid');
+                    showToast('Token tidak valid: ' + result.error, 'error');
+                }
+            } catch (error) {
+                tokenDebug.innerHTML = `<span class="debug-error">Error: ${error.message}</span>`;
+                updateConnectionStatus('error', 'Error cek token');
+            }
+        }
+
+        // Buka Spotify Auth
+        function openSpotifyAuth() {
+            const authUrl = SpotifyAPI.getAuthUrl();
+            window.open(authUrl, '_blank');
+            showToast('Buka tab baru untuk login Spotify. Copy token dari URL redirect.', 'info');
         }
 
         // Import dari Spotify
@@ -1598,7 +1818,6 @@
                 return;
             }
 
-            // Simpan token user jika ada
             if (token) {
                 state.userAccessToken = token;
             }
@@ -1609,7 +1828,6 @@
                 return;
             }
 
-            // Jika mode track tapi URL playlist, atau sebaliknya
             if (state.importMode === 'track' && parsed.type === 'playlist') {
                 showToast('Ini adalah URL playlist. Pilih mode Playlist.', 'info');
                 switchMode('playlist');
@@ -1624,7 +1842,6 @@
 
             try {
                 if (state.importMode === 'track' || parsed.type === 'track') {
-                    // Import single track
                     const trackData = await SpotifyAPI.getTrack(parsed.id);
                     await addTrackToPlaylist(trackData);
                     
@@ -1633,14 +1850,9 @@
                     showToast(`✓ ${trackData.title} ditambahkan`, 'success');
                     
                 } else {
-                    // Import playlist
                     updateConnectionStatus('loading', 'Mengambil playlist...');
                     const playlistData = await SpotifyAPI.getPlaylist(parsed.id);
                     
-                    // Tampilkan preview
-                    showPlaylistPreview(playlistData);
-                    
-                    // Import semua track dengan preview
                     let addedCount = 0;
                     let noPreviewCount = 0;
                     
@@ -1660,7 +1872,7 @@
                     spotifyUrlInput.value = '';
                     userTokenInput.value = '';
                     
-                    let msg = `✓ ${addedCount} lagu ditambahkan dari "${playlistData.name}"`;
+                    let msg = `✓ ${addedCount} lagu dari "${playlistData.name}"`;
                     if (noPreviewCount > 0) {
                         msg += ` (${noPreviewCount} tanpa preview)`;
                     }
@@ -1670,7 +1882,14 @@
             } catch (error) {
                 console.error('Import error:', error);
                 updateConnectionStatus('error', error.message);
-                showToast('Gagal: ' + error.message, 'error');
+                
+                if (error.message.includes('401')) {
+                    showToast('Token expired atau tidak valid. Silakan cek token.', 'error');
+                    tokenDebug.style.display = 'block';
+                    tokenDebug.innerHTML = '<span class="debug-error">Token tidak valid. Klik "Dapatkan Token" untuk token baru.</span>';
+                } else {
+                    showToast('Gagal: ' + error.message, 'error');
+                }
             } finally {
                 importText.textContent = state.importMode === 'track' ? 'Ambil Data' : 'Import Playlist';
                 importBtn.disabled = false;
@@ -1679,7 +1898,6 @@
 
         // Tambah track ke playlist
         async function addTrackToPlaylist(trackData, showNotif = true) {
-            // Cek duplikat
             const exists = state.playlist.some(t => t.spotifyId === trackData.id);
             if (exists) return;
 
@@ -1706,30 +1924,6 @@
             }
         }
 
-        // Tampilkan preview playlist
-        function showPlaylistPreview(playlistData) {
-            playlistPreview.style.display = 'block';
-            playlistPreview.innerHTML = `
-                <div style="padding: 8px; border-bottom: 1px solid var(--border-gray); margin-bottom: 8px;">
-                    <strong>${playlistData.name}</strong> oleh ${playlistData.owner}<br>
-                    <span style="font-size: 11px; color: var(--text-muted);">
-                        ${playlistData.tracks.length} track (${playlistData.tracks.filter(t => t.previewUrl).length} dengan preview)
-                    </span>
-                </div>
-                ${playlistData.tracks.slice(0, 5).map(track => `
-                    <div class="playlist-preview-item">
-                        <img src="${track.cover || 'https://via.placeholder.com/32'}" alt="">
-                        <div class="playlist-preview-info">
-                            <div class="playlist-preview-title">${track.title}</div>
-                            <div class="playlist-preview-artist">${track.artist}</div>
-                        </div>
-                        ${track.previewUrl ? '✓' : '✕'}
-                    </div>
-                `).join('')}
-                ${playlistData.tracks.length > 5 ? `<div style="text-align: center; padding: 8px; color: var(--text-muted); font-size: 11px;">...dan ${playlistData.tracks.length - 5} lagu lainnya</div>` : ''}
-            `;
-        }
-
         // Switch mode import
         function switchMode(mode) {
             state.importMode = mode;
@@ -1744,12 +1938,14 @@
                 spotifyUrlInput.placeholder = 'https://open.spotify.com/playlist/...';
                 document.getElementById('import-text').textContent = 'Import Playlist';
                 playlistPreview.style.display = 'none';
+                updateConnectionStatus('warning', 'Perlu User Access Token');
             } else {
                 tokenSection.style.display = 'none';
                 urlLabel.textContent = 'Spotify Track URL';
                 spotifyUrlInput.placeholder = 'https://open.spotify.com/track/...';
                 document.getElementById('import-text').textContent = 'Ambil Data';
                 playlistPreview.style.display = 'none';
+                updateConnectionStatus('default', 'Siap');
             }
         }
 
@@ -2124,6 +2320,8 @@
         });
 
         document.getElementById('btn-import-spotify').addEventListener('click', importFromSpotify);
+        document.getElementById('btn-check-token').addEventListener('click', checkToken);
+        document.getElementById('btn-get-token').addEventListener('click', openSpotifyAuth);
 
         // Mode toggle
         document.querySelectorAll('.mode-btn').forEach(btn => {
