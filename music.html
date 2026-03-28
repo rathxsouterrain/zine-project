@@ -982,9 +982,10 @@
             isRepeating: false,
             currentTime: 0,
             duration: 0,
-            // FIX: Client ID yang diberikan user
-            spotifyClientId: 'cdce57759f7145878363947955afa2b6',
-            spotifyClientSecret: 'e7bac3f2c32e4e5bb8b1155f4305e919'
+            // Konfigurasi Spotify - GANTI DENGAN CREDENTIALS ANDA
+            spotifyClientId: '9b38509a05264494a417c63ebbe51d78',
+            spotifyClientSecret: 'ae6ee6fbfd0a48c9b58dc8146ab9ebed',
+            spotifyRefreshToken: 'BQDAEUzsBVBPRezYQ62m_fU2SZKP98zki7nOQ5AZjgsGFHoMMfwYq7CZKOtkUDstscp4QM-RyxUZoWDFxEwRCXwgoihtymd74smDG7m13Cwt93fH-wnndt2tsf6Byt-bzJoKbq7-ijY' // Dapatkan dari otorisasi pertama kali
         };
 
         // DOM Elements
@@ -1214,54 +1215,78 @@
             }
         }
 
-        // Spotify Integration dengan Client ID & Secret User
+        // Spotify Integration dengan Sistem Refresh Token
         const SpotifyAPI = {
-            clientId: 'cdce57759f7145878363947955afa2b6',
-            clientSecret: 'e7bac3f2c32e4e5bb8b1155f4305e919',
             accessToken: null,
             tokenExpiry: null,
             
-            // Get new access token using Client Credentials Flow
-            async getNewToken() {
+            // Mendapatkan Access Token baru menggunakan Refresh Token
+            async refreshAccessToken() {
                 try {
+                    console.log('Refreshing access token...');
+                    
                     const response = await fetch('https://accounts.spotify.com/api/token', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
-                            'Authorization': 'Basic ' + btoa(this.clientId + ':' + this.clientSecret)
+                            'Authorization': 'Basic ' + btoa(state.spotifyClientId + ':' + state.spotifyClientSecret)
                         },
-                        body: 'grant_type=client_credentials'
+                        body: new URLSearchParams({
+                            grant_type: 'refresh_token',
+                            refresh_token: state.spotifyRefreshToken
+                        })
                     });
                     
                     if (!response.ok) {
-                        throw new Error('Failed to get new token: ' + response.status);
+                        const errorData = await response.json();
+                        throw new Error(`Failed to refresh token: ${errorData.error_description || response.status}`);
                     }
                     
                     const data = await response.json();
                     this.accessToken = data.access_token;
-                    // Set expiry time (token valid for 3600 seconds, refresh 5 minutes early)
+                    // Set expiry time (token valid for 3600 seconds, refresh 5 menit sebelum expired)
                     this.tokenExpiry = Date.now() + (data.expires_in * 1000) - (5 * 60 * 1000);
-                    console.log('New Spotify token obtained successfully, expires in:', data.expires_in, 'seconds');
+                    
+                    console.log('Token refreshed successfully, expires in:', data.expires_in, 'seconds');
+                    
+                    // Simpan ke localStorage untuk persistensi
+                    localStorage.setItem('spotify_access_token', this.accessToken);
+                    localStorage.setItem('spotify_token_expiry', this.tokenExpiry);
+                    
                     return true;
                 } catch (error) {
-                    console.error('Failed to get new token:', error);
+                    console.error('Error refreshing token:', error);
+                    showToast('Gagal refresh token Spotify: ' + error.message, 'error');
                     return false;
                 }
             },
             
-            // Check if token needs refresh
+            // Memastikan token valid sebelum digunakan
             async ensureValidToken() {
-                if (!this.accessToken || Date.now() >= this.tokenExpiry) {
-                    return await this.getNewToken();
+                // Cek localStorage terlebih dahulu
+                if (!this.accessToken) {
+                    const savedToken = localStorage.getItem('spotify_access_token');
+                    const savedExpiry = localStorage.getItem('spotify_token_expiry');
+                    
+                    if (savedToken && savedExpiry && Date.now() < parseInt(savedExpiry)) {
+                        this.accessToken = savedToken;
+                        this.tokenExpiry = parseInt(savedExpiry);
+                        console.log('Using cached access token');
+                        return true;
+                    }
                 }
+                
+                // Jika token belum ada atau sudah expired, refresh
+                if (!this.accessToken || Date.now() >= this.tokenExpiry) {
+                    return await this.refreshAccessToken();
+                }
+                
                 return true;
             },
-
+            
             async fetchWebApi(endpoint, method = 'GET', body = null, retryCount = 0) {
-                // Ensure we have a valid token before making request
-                if (retryCount === 0) {
-                    await this.ensureValidToken();
-                }
+                // Pastikan token valid
+                await this.ensureValidToken();
                 
                 const options = {
                     headers: {
@@ -1277,14 +1302,14 @@
                 try {
                     const res = await fetch(`https://api.spotify.com/${endpoint}`, options);
                     
-                    // If token expired, get new token and retry once
+                    // Jika unauthorized, coba refresh token dan retry sekali
                     if (res.status === 401 && retryCount === 0) {
-                        console.log('Token expired, getting new token...');
-                        const newToken = await this.getNewToken();
-                        if (newToken) {
+                        console.log('Token expired, refreshing...');
+                        const refreshed = await this.refreshAccessToken();
+                        if (refreshed) {
                             return this.fetchWebApi(endpoint, method, body, retryCount + 1);
                         } else {
-                            throw new Error('Token expired and failed to refresh');
+                            throw new Error('Failed to refresh token');
                         }
                     }
                     
@@ -1401,8 +1426,8 @@
                 
             } catch (error) {
                 console.error('Import error:', error);
-                if (error.message.includes('Token expired')) {
-                    showToast('Token expired. Silakan perbarui token Anda.', 'error');
+                if (error.message.includes('refresh_token')) {
+                    showToast('Refresh token invalid. Periksa konfigurasi Spotify.', 'error');
                 } else {
                     showToast('Gagal mengambil data dari Spotify: ' + error.message, 'error');
                 }
@@ -1859,7 +1884,7 @@
         // Initialize
         Storage.load();
         
-        console.log('App initialized with Spotify Client Credentials Flow');
+        console.log('App initialized dengan Spotify Refresh Token System');
         console.log('Client ID:', state.spotifyClientId);
         console.log('Current playlist:', state.playlist);
     </script>
