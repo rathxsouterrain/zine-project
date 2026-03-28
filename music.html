@@ -1209,7 +1209,6 @@
 
         // Spotify Integration dengan Token User
         const SpotifyAPI = {
-            // Token yang diberikan user
             token: 'BQDzbYemClBwMcMPzSYwVh_eznMkFL-FJSRPDU62cX2cwuT0Oi8k2Yp0eRcIdunLjqcbewxL5UyWDN-mC67XSc6aAao1GIqu6WynrB3fzgJGAwgAAXveymJxvI8kq1KIqYO34fjF6GMHc_Pd-_p2kC1GhJv6sdhOZpS0TR6UG1dzYfAdQByAaV8YlycFrg18U1kWQpbzVm7Qr_W86vbSZFTb17leFsdMHEBKrLNludV1ilgQAcDR3jehZofX3ok1kRfVgAdrOoQnuOiA3IvhqqF3LFcDibKgKCY6QidFx-eYa72psiwsFbHbncpkPRv24D2nRw',
 
             async fetchWebApi(endpoint, method = 'GET', body = null) {
@@ -1295,6 +1294,7 @@
             }
         };
 
+        // FIX: Fungsi import Spotify yang diperbaiki
         async function importFromSpotify() {
             const url = spotifyUrlInput.value.trim();
             if (!url) {
@@ -1317,34 +1317,63 @@
             try {
                 const trackInfo = await SpotifyAPI.getTrackInfo(trackId);
                 
-                const track = {
-                    id: generateId(),
-                    title: trackInfo.title,
-                    artist: trackInfo.artist,
-                    duration: trackInfo.duration,
-                    durationFormatted: trackInfo.durationFormatted,
-                    cover: trackInfo.cover,
-                    url: trackInfo.previewUrl,
-                    source: 'spotify',
-                    spotifyId: trackId,
-                    spotifyUrl: trackInfo.spotifyUrl,
-                    addedAt: new Date().toISOString()
-                };
-
-                state.playlist.push(track);
-                Storage.save();
-                renderPlaylist();
-                
-                spotifyModal.classList.remove('active');
-                spotifyUrlInput.value = '';
-                showToast(`Ditambahkan: ${track.title}`, 'success');
-
+                // FIX: Cek apakah preview URL tersedia
                 if (!trackInfo.previewUrl) {
+                    // Tetap tambahkan track tapi tanpa URL (metadata only)
+                    const track = {
+                        id: generateId(),
+                        title: trackInfo.title,
+                        artist: trackInfo.artist,
+                        duration: trackInfo.duration,
+                        durationFormatted: trackInfo.durationFormatted,
+                        cover: trackInfo.cover,
+                        url: null, // Tidak ada preview URL
+                        source: 'spotify',
+                        spotifyId: trackId,
+                        spotifyUrl: trackInfo.spotifyUrl,
+                        addedAt: new Date().toISOString(),
+                        needsUpload: true // Flag bahwa perlu upload file manual
+                    };
+
+                    state.playlist.push(track);
+                    Storage.save();
+                    renderPlaylist();
+                    
+                    spotifyModal.classList.remove('active');
+                    spotifyUrlInput.value = '';
+                    
+                    // FIX: Tampilkan pesan sukses untuk metadata, info untuk upload
+                    showToast(`Metadata ditambahkan: ${track.title}`, 'success');
                     setTimeout(() => {
-                        showToast('Preview tidak tersedia. Upload file audio untuk memutar penuh.', 'error');
+                        showToast('Upload file audio untuk memutar lagu ini', 'error');
                     }, 1500);
+                } else {
+                    // Ada preview URL, tambahkan normal
+                    const track = {
+                        id: generateId(),
+                        title: trackInfo.title,
+                        artist: trackInfo.artist,
+                        duration: trackInfo.duration,
+                        durationFormatted: trackInfo.durationFormatted,
+                        cover: trackInfo.cover,
+                        url: trackInfo.previewUrl,
+                        source: 'spotify',
+                        spotifyId: trackId,
+                        spotifyUrl: trackInfo.spotifyUrl,
+                        addedAt: new Date().toISOString()
+                    };
+
+                    state.playlist.push(track);
+                    Storage.save();
+                    renderPlaylist();
+                    
+                    spotifyModal.classList.remove('active');
+                    spotifyUrlInput.value = '';
+                    showToast(`Ditambahkan: ${track.title}`, 'success');
                 }
+                
             } catch (error) {
+                console.error('Import error:', error);
                 showToast('Gagal mengambil data dari Spotify: ' + error.message, 'error');
             } finally {
                 importText.textContent = 'Ambil Metadata';
@@ -1369,12 +1398,26 @@
                 lucide.createIcons();
             }
             
+            // FIX: Cek apakah track memiliki URL dan tidak memerlukan upload
             if (track.url) {
                 audio.src = track.url;
                 audio.load();
                 
                 if (autoPlay) {
                     playAudio();
+                }
+            } else if (track.needsUpload || track.source === 'spotify' && !track.url) {
+                // FIX: Tampilkan pesan yang lebih jelas
+                showToast('Lagu dari Spotify memerlukan file audio lokal', 'error');
+                pauseAudio();
+                
+                // Auto buka modal upload jika track memerlukan upload
+                if (track.needsUpload) {
+                    setTimeout(() => {
+                        if (confirm('Lagu ini tidak memiliki preview. Upload file audio sekarang?')) {
+                            uploadModal.classList.add('active');
+                        }
+                    }, 500);
                 }
             } else {
                 showToast('Upload file audio untuk memutar lagu ini', 'error');
@@ -1486,6 +1529,10 @@
             let html = '';
             state.playlist.forEach((track, index) => {
                 const isActive = index === state.currentIndex;
+                // FIX: Tandai track yang memerlukan upload
+                const needsUploadIndicator = (track.needsUpload || (track.source === 'spotify' && !track.url)) ? 
+                    '<span style="color: #ff4444; font-size: 10px; margin-left: 4px;">(perlu upload)</span>' : '';
+                
                 html += `
                     <div class="playlist-item ${isActive ? 'active' : ''}" data-index="${index}">
                         <div class="playlist-item-art">
@@ -1495,7 +1542,7 @@
                             }
                         </div>
                         <div class="playlist-item-info">
-                            <div class="playlist-item-title">${track.title}</div>
+                            <div class="playlist-item-title">${track.title}${needsUploadIndicator}</div>
                             <div class="playlist-item-artist">${track.artist}</div>
                         </div>
                         <div class="playing-indicator">
