@@ -1294,7 +1294,6 @@
             }
         };
 
-        // FIX: Fungsi import Spotify yang diperbaiki
         async function importFromSpotify() {
             const url = spotifyUrlInput.value.trim();
             if (!url) {
@@ -1317,9 +1316,7 @@
             try {
                 const trackInfo = await SpotifyAPI.getTrackInfo(trackId);
                 
-                // FIX: Cek apakah preview URL tersedia
                 if (!trackInfo.previewUrl) {
-                    // Tetap tambahkan track tapi tanpa URL (metadata only)
                     const track = {
                         id: generateId(),
                         title: trackInfo.title,
@@ -1327,12 +1324,12 @@
                         duration: trackInfo.duration,
                         durationFormatted: trackInfo.durationFormatted,
                         cover: trackInfo.cover,
-                        url: null, // Tidak ada preview URL
+                        url: null,
                         source: 'spotify',
                         spotifyId: trackId,
                         spotifyUrl: trackInfo.spotifyUrl,
                         addedAt: new Date().toISOString(),
-                        needsUpload: true // Flag bahwa perlu upload file manual
+                        needsUpload: true
                     };
 
                     state.playlist.push(track);
@@ -1342,13 +1339,11 @@
                     spotifyModal.classList.remove('active');
                     spotifyUrlInput.value = '';
                     
-                    // FIX: Tampilkan pesan sukses untuk metadata, info untuk upload
                     showToast(`Metadata ditambahkan: ${track.title}`, 'success');
                     setTimeout(() => {
                         showToast('Upload file audio untuk memutar lagu ini', 'error');
                     }, 1500);
                 } else {
-                    // Ada preview URL, tambahkan normal
                     const track = {
                         id: generateId(),
                         title: trackInfo.title,
@@ -1381,16 +1376,18 @@
             }
         }
 
-        // Player Functions
+        // Player Functions - FIX: Perbaikan fungsi loadTrack dan playAudio
         function loadTrack(index, autoPlay = true) {
             if (index < 0 || index >= state.playlist.length) return;
             
             const track = state.playlist[index];
             state.currentIndex = index;
             
+            // Update UI
             trackTitle.textContent = track.title;
             trackArtist.textContent = track.artist;
             
+            // Update album art
             if (track.cover) {
                 albumArt.innerHTML = `<img src="${track.cover}" class="album-art" alt="${track.title}">`;
             } else {
@@ -1398,30 +1395,44 @@
                 lucide.createIcons();
             }
             
-            // FIX: Cek apakah track memiliki URL dan tidak memerlukan upload
-            if (track.url) {
-                audio.src = track.url;
-                audio.load();
-                
-                if (autoPlay) {
+            // FIX: Cek apakah track memiliki URL audio
+            if (!track.url) {
+                showToast('Lagu ini tidak memiliki file audio. Upload file untuk memutar.', 'error');
+                pauseAudio();
+                updateActivePlaylistItem();
+                Storage.save();
+                return;
+            }
+            
+            // FIX: Set audio source dengan benar
+            audio.src = track.url;
+            
+            // FIX: Tunggu audio siap sebelum play
+            audio.load();
+            
+            if (autoPlay) {
+                // FIX: Gunakan event canplaythrough untuk memastikan audio siap
+                const playWhenReady = () => {
                     playAudio();
-                }
-            } else if (track.needsUpload || track.source === 'spotify' && !track.url) {
-                // FIX: Tampilkan pesan yang lebih jelas
-                showToast('Lagu dari Spotify memerlukan file audio lokal', 'error');
-                pauseAudio();
+                    audio.removeEventListener('canplaythrough', playWhenReady);
+                    audio.removeEventListener('error', onError);
+                };
                 
-                // Auto buka modal upload jika track memerlukan upload
-                if (track.needsUpload) {
-                    setTimeout(() => {
-                        if (confirm('Lagu ini tidak memiliki preview. Upload file audio sekarang?')) {
-                            uploadModal.classList.add('active');
-                        }
-                    }, 500);
-                }
-            } else {
-                showToast('Upload file audio untuk memutar lagu ini', 'error');
-                pauseAudio();
+                const onError = (e) => {
+                    console.error('Audio load error:', e);
+                    showToast('Gagal memuat audio', 'error');
+                    audio.removeEventListener('canplaythrough', playWhenReady);
+                    audio.removeEventListener('error', onError);
+                };
+                
+                audio.addEventListener('canplaythrough', playWhenReady);
+                audio.addEventListener('error', onError);
+                
+                // Timeout jika terlalu lama
+                setTimeout(() => {
+                    audio.removeEventListener('canplaythrough', playWhenReady);
+                    audio.removeEventListener('error', onError);
+                }, 10000);
             }
             
             updateActivePlaylistItem();
@@ -1431,23 +1442,41 @@
         function playTrack(index) {
             if (state.currentIndex === index && state.isPlaying) {
                 pauseAudio();
-            } else if (state.currentIndex === index) {
-                playAudio();
+            } else if (state.currentIndex === index && !state.isPlaying) {
+                // FIX: Jika sudah di track yang sama tapi tidak playing, coba play lagi
+                if (audio.paused && audio.src) {
+                    playAudio();
+                } else {
+                    loadTrack(index, true);
+                }
             } else {
                 loadTrack(index, true);
             }
         }
 
+        // FIX: Fungsi playAudio yang lebih robust
         function playAudio() {
-            audio.play().then(() => {
-                state.isPlaying = true;
-                updatePlayButton();
-                visualizer.classList.add('active');
-                toggleVisualizer(true);
-            }).catch(err => {
-                console.error('Playback error:', err);
-                showToast('Gagal memutar audio', 'error');
-            });
+            // FIX: Cek jika audio tidak memiliki source
+            if (!audio.src || audio.src === window.location.href) {
+                showToast('Tidak ada lagu yang dipilih', 'error');
+                return;
+            }
+            
+            const playPromise = audio.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    state.isPlaying = true;
+                    updatePlayButton();
+                    visualizer.classList.add('active');
+                    toggleVisualizer(true);
+                }).catch(err => {
+                    console.error('Playback error:', err);
+                    state.isPlaying = false;
+                    updatePlayButton();
+                    showToast('Gagal memutar audio: ' + err.message, 'error');
+                });
+            }
         }
 
         function pauseAudio() {
@@ -1529,7 +1558,6 @@
             let html = '';
             state.playlist.forEach((track, index) => {
                 const isActive = index === state.currentIndex;
-                // FIX: Tandai track yang memerlukan upload
                 const needsUploadIndicator = (track.needsUpload || (track.source === 'spotify' && !track.url)) ? 
                     '<span style="color: #ff4444; font-size: 10px; margin-left: 4px;">(perlu upload)</span>' : '';
                 
@@ -1619,10 +1647,12 @@
             showToast('Lagu dihapus', 'success');
         }
 
-        // Event Listeners
+        // Event Listeners - FIX: Perbaikan event listener audio
         audio.addEventListener('timeupdate', () => {
+            if (!audio.duration) return;
+            
             state.currentTime = audio.currentTime;
-            state.duration = audio.duration || 0;
+            state.duration = audio.duration;
             
             const progress = (state.currentTime / state.duration) * 100;
             progressBar.style.width = `${progress}%`;
@@ -1641,7 +1671,21 @@
 
         audio.addEventListener('error', (e) => {
             console.error('Audio error:', e);
-            showToast('Error memuat audio', 'error');
+            console.error('Error code:', audio.error ? audio.error.code : 'unknown');
+            console.error('Error message:', audio.error ? audio.error.message : 'unknown');
+            showToast('Error memuat audio file', 'error');
+            state.isPlaying = false;
+            updatePlayButton();
+        });
+
+        // FIX: Event listener untuk metadata loaded
+        audio.addEventListener('loadedmetadata', () => {
+            console.log('Audio metadata loaded, duration:', audio.duration);
+        });
+
+        // FIX: Event listener untuk canplay
+        audio.addEventListener('canplay', () => {
+            console.log('Audio can play');
         });
 
         progressWrapper.addEventListener('click', (e) => {
@@ -1652,17 +1696,28 @@
             audio.currentTime = pos * audio.duration;
         });
 
+        // FIX: Event listener tombol play dengan cek yang lebih baik
         btnPlay.addEventListener('click', () => {
+            console.log('Play button clicked, current index:', state.currentIndex, 'isPlaying:', state.isPlaying);
+            
             if (state.playlist.length === 0) {
                 showToast('Tambahkan lagu terlebih dahulu', 'error');
                 return;
             }
+            
             if (state.currentIndex === -1) {
+                // Belum ada yang dipilih, pilih yang pertama
                 playTrack(0);
             } else if (state.isPlaying) {
+                // Sedang play, jadi pause
                 pauseAudio();
             } else {
-                playAudio();
+                // Tidak sedang play, coba play
+                if (audio.src && audio.src !== window.location.href) {
+                    playAudio();
+                } else {
+                    loadTrack(state.currentIndex, true);
+                }
             }
         });
 
@@ -1771,6 +1826,10 @@
 
         // Initialize
         Storage.load();
+        
+        // FIX: Log untuk debugging
+        console.log('App initialized, playlist:', state.playlist);
+        console.log('Audio element:', audio);
     </script>
 </body>
 </html>
