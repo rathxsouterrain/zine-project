@@ -1758,32 +1758,7 @@
             }
         }
 
-        async function fetchUserProfile() {
-            try {
-                const response = await fetch(`${SPOTIFY_CONFIG.apiEndpoint}/me`, {
-                    headers: { 'Authorization': `Bearer ${state.accessToken}` }
-                });
-                
-                if (!response.ok) throw new Error('Failed to fetch profile');
-                
-                state.user = await response.json();
-                state.isPremium = state.user.product === 'premium';
-                
-                console.log('User:', state.user.display_name, 'Premium:', state.isPremium);
-                
-                document.getElementById('user-name').textContent = state.user.display_name || state.user.id;
-                document.getElementById('logged-user-name').textContent = state.user.display_name || state.user.id;
-                
-                if (state.user.images && state.user.images[0]) {
-                    document.getElementById('user-avatar').src = state.user.images[0].url;
-                }
-                
-                document.getElementById('user-profile').style.display = 'flex';
-                
-            } catch (error) {
-                console.error('Profile error:', error);
-            }
-        }
+        
 
         // ============================================
         // PLAYBACK CONTROLS (FIXED)
