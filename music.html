@@ -2662,7 +2662,7 @@
         // Drag and drop
         const dropZone = document.querySelector('.file-input-label');
         ['dragenter', 'dragover'].forEach(eventName => {
-            dropZone.addEventListener(eventName', (e) => {
+            dropZone.addEventListener(eventName, (e) => {
                 e.preventDefault();
                 dropZone.style.borderColor = 'var(--text-primary)';
                 dropZone.style.backgroundColor = 'var(--medium-gray)';
@@ -2670,7 +2670,7 @@
         });
 
         ['dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName. (e) => {
+            dropZone.addEventListener(eventName, (e) => {
                 e.preventDefault();
                 dropZone.style.borderColor = '';
                 dropZone.style.backgroundColor = '';
