@@ -1363,14 +1363,15 @@
                 // ============================================
         // KONFIGURASI - URL ASLI SPOTIFY API
         // ============================================
-        const SPOTIFY_CONFIG = {
+                const SPOTIFY_CONFIG = {
             clientId: '9b38509a05264494a417c63ebbe51d78', 
             redirectUri: window.location.origin + window.location.pathname,
             scope: 'streaming user-read-email user-read-private playlist-read-private playlist-read-collaborative user-read-playback-state user-modify-playback-state user-read-currently-playing app-remote-control',
-            authEndpoint: 'https://accounts.spotify.com/authorize',
+            authEndpoint: 'https://accounts.spotify.com/authorize', 
             tokenEndpoint: 'https://accounts.spotify.com/api/token',
-            apiEndpoint: 'https://api.spotify.com/v1'
+            apiEndpoint: 'https://api.spotify.com/v1' 
         };
+
 
         // State Management
         const state = {
