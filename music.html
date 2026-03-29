@@ -129,30 +129,6 @@
             background-color: var(--medium-gray);
         }
 
-        /* User Profile */
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 4px 12px;
-            background-color: var(--medium-gray);
-            border-radius: 20px;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .user-profile:hover {
-            background-color: var(--light-gray);
-        }
-
-        .user-avatar {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
         /* Main Content */
         .main-content {
             flex: 1;
@@ -1112,10 +1088,6 @@
                 MONO
             </div>
             <div class="header-actions">
-                <div class="user-profile" id="user-profile" style="display: none;">
-                    <img src="" alt="" class="user-avatar" id="user-avatar">
-                    <span id="user-name">User</span>
-                </div>
                 <button class="icon-btn" id="btn-clear" title="Hapus Semua">
                     <i data-lucide="trash-2" style="width: 20px; height: 20px;"></i>
                 </button>
@@ -1573,9 +1545,18 @@
                 if (!paused) {
                     state.progressInterval = setInterval(() => {
                         state.currentTime += 1;
-                        if (state.currentTime > state.duration) {
-                            state.currentTime = state.duration;
+                        
+                        // FIX: Deteksi saat lagu Spotify selesai untuk lanjut ke lagu berikutnya
+                        if (state.duration > 0 && state.currentTime >= state.duration) {
+                            clearInterval(state.progressInterval);
+                            if (state.isRepeating) {
+                                playTrack(state.currentIndex);
+                            } else {
+                                playNext();
+                            }
+                            return;
                         }
+
                         const newProgress = state.duration > 0 ? (state.currentTime / state.duration) * 100 : 0;
                         progressBar.style.width = `${newProgress}%`;
                         currentTimeEl.textContent = formatTime(state.currentTime);
@@ -1775,14 +1756,7 @@
                 
                 console.log('User:', state.user.display_name, 'Premium:', state.isPremium);
                 
-                document.getElementById('user-name').textContent = state.user.display_name || state.user.id;
                 document.getElementById('logged-user-name').textContent = state.user.display_name || state.user.id;
-                
-                if (state.user.images && state.user.images[0]) {
-                    document.getElementById('user-avatar').src = state.user.images[0].url;
-                }
-                
-                document.getElementById('user-profile').style.display = 'flex';
                 
             } catch (error) {
                 console.error('Profile error:', error);
@@ -1806,11 +1780,6 @@
             
             console.log('Playing track:', track.title, 'Source:', track.source);
             
-                if (state.player) {
-        state.player.activateElement();
-    }
-
-    console.log('Play track called, index:', index);
             // Jika track lokal (uploaded file)
             if (track.source === 'local') {
                 playLocalTrack(track);
@@ -2250,8 +2219,6 @@
             document.getElementById('auth-logged').style.display = isLoggedIn ? 'block' : 'none';
             
             if (isLoggedIn && state.user) {
-                document.getElementById('user-profile').style.display = 'flex';
-                
                 const deviceText = document.getElementById('device-text');
                 if (deviceText) {
                     if (state.playerReady) {
@@ -2301,7 +2268,6 @@
             localStorage.removeItem('spotify_token_expiry');
             localStorage.removeItem('spotify_code_verifier');
             
-            document.getElementById('user-profile').style.display = 'none';
             document.getElementById('sdk-status').style.display = 'none';
             
             updateAuthUI();
