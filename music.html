@@ -1366,10 +1366,15 @@
         // ============================================
 
         // Global callback untuk SDK
+                // Global callback untuk SDK
         window.onSpotifyWebPlaybackSDKReady = () => {
             console.log('✅ Spotify Web Playback SDK Ready');
-            // Player akan diinisialisasi setelah login
-            if (state.accessToken) {
+            window.spotifySdkReady = true; // Tambahkan flag penanda SDK sudah siap
+            
+            // Ambil token dari state atau storage
+            const token = state.accessToken || localStorage.getItem('spotify_access_token');
+            if (token) {
+                state.accessToken = token;
                 initializePlayer();
             }
         };
@@ -1427,13 +1432,26 @@
                 });
 
                 // Playback status updates
+                                // Playback status updates
                 player.addListener('player_state_changed', (playbackState) => {
                     console.log('🎶 Player state changed:', playbackState);
                     if (!playbackState) return;
                     
+                    // FIX AUTOPLAY: Deteksi akurat saat lagu Spotify selesai
+                    if (state.isPlaying && playbackState.paused && playbackState.position === 0) {
+                        console.log('Lagu selesai, memutar selanjutnya...');
+                        if (state.isRepeating) {
+                            playTrack(state.currentIndex);
+                        } else {
+                            playNext();
+                        }
+                        return; // Hentikan proses UI sejenak agar tidak bentrok
+                    }
+
                     state.playbackState = playbackState;
                     updatePlaybackUI(playbackState);
                 });
+
 
                 // Ready - Device ID didapat
                 player.addListener('ready', ({ device_id }) => {
@@ -1541,22 +1559,13 @@
                 durationEl.textContent = formatTimeMs(duration);
                 
                 // Timer Progress Bar Real-time Update
+                                // Timer Progress Bar Real-time Update
                 clearInterval(state.progressInterval);
                 if (!paused) {
                     state.progressInterval = setInterval(() => {
                         state.currentTime += 1;
                         
-                        // FIX: Deteksi saat lagu Spotify selesai untuk lanjut ke lagu berikutnya
-                        if (state.duration > 0 && state.currentTime >= state.duration) {
-                            clearInterval(state.progressInterval);
-                            if (state.isRepeating) {
-                                playTrack(state.currentIndex);
-                            } else {
-                                playNext();
-                            }
-                            return;
-                        }
-
+                        // Logika lagu selesai sudah dipindah ke 'player_state_changed' agar akurat
                         const newProgress = state.duration > 0 ? (state.currentTime / state.duration) * 100 : 0;
                         progressBar.style.width = `${newProgress}%`;
                         currentTimeEl.textContent = formatTime(state.currentTime);
@@ -2642,6 +2651,7 @@
         });
 
         // Check existing auth
+                // Check existing auth
         async function checkExistingAuth() {
             const token = localStorage.getItem('spotify_access_token');
             const expiry = localStorage.getItem('spotify_token_expiry');
@@ -2663,11 +2673,11 @@
             await fetchUserProfile();
             updateAuthUI();
             
-            // Initialize player jika SDK sudah ready
-            if (window.Spotify && window.Spotify.Player) {
+            // FIX LOGIN PERSISTENCE: 
+            // Cek apakah SDK sudah meload dengan melihat flag window.spotifySdkReady
+            if (window.spotifySdkReady || (window.Spotify && window.Spotify.Player)) {
                 initializePlayer();
             }
-            // Jika belum, onSpotifyWebPlaybackSDKReady akan memanggil initializePlayer
         }
 
         // Initialize
