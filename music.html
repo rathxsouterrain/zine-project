@@ -1872,6 +1872,11 @@
             
             console.log('Playing track:', track.title, 'Source:', track.source);
             
+                if (state.player) {
+        state.player.activateElement();
+    }
+
+    console.log('Play track called, index:', index);
             // Jika track lokal (uploaded file)
             if (track.source === 'local') {
                 playLocalTrack(track);
