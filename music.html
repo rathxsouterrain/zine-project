@@ -25,6 +25,8 @@
             --text-muted: #666666;
             --accent: #ffffff;
             --spotify-green: #1db954;
+            --bandcamp-blue: #1da0c3;
+            --bandcamp-blue-hover: #29b8e0;
             --error-red: #ff4444;
             --warning-yellow: #ffa500;
         }
@@ -542,6 +544,17 @@
             transform: translateY(-1px);
         }
 
+        .btn-bandcamp {
+            background-color: var(--bandcamp-blue);
+            color: var(--black);
+            border: none;
+        }
+
+        .btn-bandcamp:hover {
+            background-color: var(--bandcamp-blue-hover);
+            transform: translateY(-1px);
+        }
+
         .btn-secondary {
             background-color: transparent;
             border: 1px solid var(--border-gray);
@@ -720,6 +733,24 @@
         }
 
         .spotify-info code {
+            background-color: var(--light-gray);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--text-primary);
+            font-family: 'Courier New', monospace;
+        }
+
+        .bandcamp-info {
+            background-color: var(--medium-gray);
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 16px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .bandcamp-info code {
             background-color: var(--light-gray);
             padding: 2px 6px;
             border-radius: 4px;
@@ -907,6 +938,19 @@
             border: 1px solid rgba(255, 215, 0, 0.3);
         }
 
+        /* Bandcamp Badge */
+        .bandcamp-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            background-color: rgba(29, 160, 195, 0.2);
+            color: var(--bandcamp-blue);
+        }
+
         /* Connection Status */
         .connection-status {
             display: flex;
@@ -1026,6 +1070,23 @@
             color: var(--black);
         }
 
+        .bandcamp-logo-large {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 24px;
+            background: var(--bandcamp-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bandcamp-logo-large i {
+            width: 32px;
+            height: 32px;
+            color: var(--black);
+        }
+
         /* Tabs */
         .tabs {
             display: flex;
@@ -1075,6 +1136,83 @@
 
         .sdk-status.connecting {
             border-left: 3px solid var(--warning-yellow);
+        }
+
+        /* Track Result Card */
+        .track-result {
+            background-color: var(--medium-gray);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 16px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .track-result-art {
+            width: 64px;
+            height: 64px;
+            border-radius: 8px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .track-result-art img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .track-result-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .track-result-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .track-result-artist {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .track-result-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-small {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: none;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-add {
+            background-color: var(--bandcamp-blue);
+            color: var(--black);
+        }
+
+        .btn-add:hover {
+            background-color: var(--bandcamp-blue-hover);
+        }
+
+        .btn-preview {
+            background-color: var(--light-gray);
+            color: var(--text-primary);
+        }
+
+        .btn-preview:hover {
+            background-color: var(--border-gray);
         }
     </style>
 </head>
@@ -1154,11 +1292,17 @@
                         Spotify
                     </button>
                 </div>
+                <div class="action-buttons">
+                    <button class="btn btn-bandcamp" id="btn-bandcamp">
+                        <i data-lucide="music-2" style="width: 16px; height: 16px;"></i>
+                        Import dari Bandcamp
+                    </button>
+                </div>
 
                 <div class="playlist" id="playlist">
                     <div class="empty-state">
                         <i data-lucide="headphones" style="width: 48px; height: 48px;"></i>
-                        <p>Belum ada lagu. Tambahkan dari perangkat atau Spotify.</p>
+                        <p>Belum ada lagu. Tambahkan dari perangkat, Spotify, atau Bandcamp.</p>
                     </div>
                 </div>
             </section>
@@ -1259,7 +1403,69 @@
             </div>
 
             <div class="spotify-info" style="margin-top: 16px;">
-                <strong>🎵 Premium Required:</strong> Web Playback SDK memerlukan akun Spotify Premium untuk streaming full track. Track akan diputar melalui browser sebagai Spotify Connect device.
+                <strong>Premium Required:</strong> Web Playback SDK memerlukan akun Spotify Premium untuk streaming full track. Track akan diputar melalui browser sebagai Spotify Connect device.
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="bandcamp-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Import dari Bandcamp</h3>
+                <button class="modal-close" id="close-bandcamp">
+                    <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+                </button>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" data-tab="bandcamp-url">Track/Album URL</button>
+                <button class="tab" data-tab="bandcamp-direct">Direct Audio URL</button>
+            </div>
+
+            <div id="tab-bandcamp-url" class="tab-content">
+                <div class="input-group">
+                    <label class="input-label">Bandcamp Track/Album URL</label>
+                    <input type="text" class="input-field" id="bandcamp-url" placeholder="https://bandcamp.com/track/... atau https://artist.bandcamp.com/album/...">
+                </div>
+                <button class="btn btn-bandcamp" id="btn-fetch-bandcamp" style="width: 100%;">
+                    <span id="bandcamp-fetch-text">Cari & Import</span>
+                </button>
+                
+                <div id="bandcamp-result" style="display: none;">
+                    <!-- Track result will be shown here -->
+                </div>
+            </div>
+
+            <div id="tab-bandcamp-direct" class="tab-content" style="display: none;">
+                <div class="input-group">
+                    <label class="input-label">Direct Audio URL</label>
+                    <input type="text" class="input-field" id="bandcamp-direct-url" placeholder="https://.../track.mp3">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Judul Lagu</label>
+                    <input type="text" class="input-field" id="bandcamp-direct-title" placeholder="Judul lagu">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Artis</label>
+                    <input type="text" class="input-field" id="bandcamp-direct-artist" placeholder="Nama artis">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">URL Cover Art (opsional)</label>
+                    <input type="text" class="input-field" id="bandcamp-direct-cover" placeholder="https://.../cover.jpg">
+                </div>
+                <button class="btn btn-bandcamp" id="btn-add-direct-bandcamp" style="width: 100%;">
+                    Tambah ke Antrian
+                </button>
+            </div>
+
+            <div class="bandcamp-info" style="margin-top: 16px;">
+                <strong>Cara Import:</strong>
+                <ol style="margin-left: 16px; margin-top: 8px; line-height: 1.8;">
+                    <li>Buka halaman track/album di Bandcamp</li>
+                    <li>Copy URL dari address bar</li>
+                    <li>Paste di kolom di atas dan klik "Cari & Import"</li>
+                    <li>Atau gunakan Direct Audio URL untuk URL audio langsung</li>
+                </ol>
             </div>
         </div>
     </div>
@@ -1304,7 +1510,9 @@
             currentTrack: null,
             playbackState: null,
             selectedPlaylist: null,
-            userPlaylists: []
+            userPlaylists: [],
+            // Bandcamp state
+            bandcampCurrentTrack: null
         };
 
         // DOM Elements
@@ -1368,7 +1576,7 @@
         // Global callback untuk SDK
                 // Global callback untuk SDK
         window.onSpotifyWebPlaybackSDKReady = () => {
-            console.log('✅ Spotify Web Playback SDK Ready');
+            console.log('Spotify Web Playback SDK Ready');
             window.spotifySdkReady = true; // Tambahkan flag penanda SDK sudah siap
             
             // Ambil token dari state atau storage
@@ -1385,7 +1593,7 @@
                 return;
             }
 
-            console.log('🎵 Initializing Spotify Player...');
+            console.log('Initializing Spotify Player...');
             showSDKStatus('connecting', 'Initializing player...');
 
             try {
@@ -1400,13 +1608,13 @@
 
                 // Error handling yang detail
                 player.addListener('initialization_error', ({ message }) => {
-                    console.error('❌ Init error:', message);
+                    console.error('Init error:', message);
                     showSDKStatus('error', 'Init failed: ' + message);
                     showToast('Gagal inisialisasi: ' + message, 'error');
                 });
 
                 player.addListener('authentication_error', ({ message }) => {
-                    console.error('❌ Auth error:', message);
+                    console.error('Auth error:', message);
                     showSDKStatus('error', 'Auth failed - Token expired?');
                     showToast('Token expired, mencoba refresh...', 'warning');
                     refreshAccessToken().then(success => {
@@ -1419,7 +1627,7 @@
                 });
 
                 player.addListener('account_error', ({ message }) => {
-                    console.error('❌ Account error:', message);
+                    console.error('Account error:', message);
                     showSDKStatus('error', 'Premium required!');
                     showToast('Akun Premium diperlukan!', 'error');
                     state.isPremium = false;
@@ -1427,14 +1635,14 @@
                 });
 
                 player.addListener('playback_error', ({ message }) => {
-                    console.error('❌ Playback error:', message);
+                    console.error('Playback error:', message);
                     showToast('Playback error: ' + message, 'error');
                 });
 
                 // Playback status updates
                                 // Playback status updates
                 player.addListener('player_state_changed', (playbackState) => {
-                    console.log('🎶 Player state changed:', playbackState);
+                    console.log('Player state changed:', playbackState);
                     if (!playbackState) return;
                     
                     // FIX AUTOPLAY: Deteksi akurat saat lagu Spotify selesai
@@ -1455,14 +1663,14 @@
 
                 // Ready - Device ID didapat
                 player.addListener('ready', ({ device_id }) => {
-                    console.log('✅ Player ready! Device ID:', device_id);
+                    console.log('Player ready! Device ID:', device_id);
                     state.deviceId = device_id;
                     state.playerReady = true;
                     state.isPremium = true;
                     state.playerInitialized = true;
                     
                     showSDKStatus('ready', 'Player ready! Device: ' + device_id.substring(0, 8));
-                    showToast('🎵 Spotify Connect aktif!', 'success');
+                    showToast('Spotify Connect aktif!', 'success');
                     
                     updateDeviceStatus(true, 'Spotify Connect');
                     updateAuthUI();
@@ -1473,7 +1681,7 @@
 
                 // Not Ready
                 player.addListener('not_ready', ({ device_id }) => {
-                    console.log('⚠️ Device offline:', device_id);
+                    console.log('Device offline:', device_id);
                     state.deviceId = null;
                     state.playerReady = false;
                     showSDKStatus('error', 'Player offline');
@@ -1484,10 +1692,10 @@
                 console.log('Connecting to Spotify...');
                 player.connect().then(success => {
                     if (success) {
-                        console.log('✅ Successfully connected to Spotify!');
+                        console.log('Successfully connected to Spotify!');
                         showSDKStatus('connecting', 'Waiting for device...');
                     } else {
-                        console.error('❌ Connection failed');
+                        console.error('Connection failed');
                         showSDKStatus('error', 'Connection failed');
                         showToast('Gagal terhubung ke Spotify', 'error');
                     }
@@ -1599,7 +1807,7 @@
                 });
                 
                 if (response.ok) {
-                    console.log('✅ Playback transferred');
+                    console.log('Playback transferred');
                 } else {
                     console.error('Failed to transfer playback:', response.status);
                 }
@@ -1692,7 +1900,7 @@
                 }
                 
                 const data = await response.json();
-                console.log('✅ Got access token');
+                console.log('Got access token');
                 
                 state.accessToken = data.access_token;
                 state.refreshToken = data.refresh_token;
@@ -1737,7 +1945,7 @@
                 if (!response.ok) throw new Error('Refresh failed');
                 
                 const data = await response.json();
-                console.log('✅ Token refreshed');
+                console.log('Token refreshed');
                 
                 state.accessToken = data.access_token;
                 state.tokenExpiry = Date.now() + (data.expires_in * 1000);
@@ -1794,6 +2002,12 @@
                 playLocalTrack(track);
                 return;
             }
+
+            // Jika track Bandcamp
+            if (track.source === 'bandcamp') {
+                playBandcampTrack(track);
+                return;
+            }
             
             // Jika Spotify track
             if (!state.playerReady || !state.deviceId) {
@@ -1820,7 +2034,7 @@
                 console.log('Play response status:', response.status);
                 
                 if (response.ok) {
-                    console.log('✅ Play command sent successfully');
+                    console.log('Play command sent successfully');
                     state.isPlaying = true;
                     updateActivePlaylistItem();
                     Storage.save();
@@ -1898,11 +2112,61 @@
             };
         }
 
+        function playBandcampTrack(track) {
+            console.log('Playing Bandcamp track:', track.title);
+            
+            // Pause Spotify player jika aktif
+            if (state.player) {
+                state.player.pause();
+            }
+            
+            // Clear interval
+            clearInterval(state.progressInterval);
+
+            audio.src = track.url;
+            audio.load();
+            
+            const playWhenReady = () => {
+                audio.play().then(() => {
+                    console.log('Bandcamp track playing');
+                    state.isPlaying = true;
+                    updatePlayButton();
+                    updateActivePlaylistItem();
+                    
+                    trackTitle.textContent = track.title;
+                    trackArtist.textContent = track.artist;
+                    
+                    if (track.cover) {
+                        albumArt.innerHTML = `<img src="${track.cover}" class="album-art" alt="${track.title}">`;
+                    } else {
+                        albumArt.innerHTML = `<div class="album-art-placeholder"><i data-lucide="music" style="width: 64px; height: 64px;"></i></div>`;
+                        lucide.createIcons();
+                    }
+                    
+                    document.getElementById('visualizer').classList.add('active');
+                    toggleVisualizer(true);
+                    
+                    showToast(`Memutar: ${track.title}`, 'success');
+                }).catch(err => {
+                    console.error('Bandcamp play error:', err);
+                    showToast('Gagal memutar: ' + err.message, 'error');
+                });
+                audio.removeEventListener('canplaythrough', playWhenReady);
+            };
+            
+            audio.addEventListener('canplaythrough', playWhenReady);
+            
+            audio.onloadedmetadata = () => {
+                durationEl.textContent = formatTime(audio.duration);
+            };
+        }
+
         function togglePlay() {
             console.log('Toggle play, current source:', state.playlist[state.currentIndex]?.source);
             
-            // Jika ada track lokal yang sedang diputar
-            if (state.playlist[state.currentIndex]?.source === 'local') {
+            // Jika ada track lokal atau Bandcamp yang sedang diputar
+            const currentSource = state.playlist[state.currentIndex]?.source;
+            if (currentSource === 'local' || currentSource === 'bandcamp') {
                 if (audio.paused) {
                     audio.play();
                     state.isPlaying = true;
@@ -2083,7 +2347,7 @@
                 renderPlaylist();
                 
                 document.getElementById('spotify-modal').classList.remove('active');
-                showToast(`✓ ${addedCount} lagu diimport dari "${state.selectedPlaylist.name}"`, 'success');
+                showToast(`${addedCount} lagu diimport dari "${state.selectedPlaylist.name}"`, 'success');
                 
             } catch (error) {
                 showToast('Gagal import: ' + error.message, 'error');
@@ -2140,7 +2404,7 @@
                     };
                     
                     state.playlist.push(trackData);
-                    showToast(`✓ ${track.name} ditambahkan ke antrian`, 'success');
+                    showToast(`${track.name} ditambahkan ke antrian`, 'success');
                     
                 } else if (albumMatch) {
                     const albumId = albumMatch[1];
@@ -2184,7 +2448,7 @@
                         }
                         tracksUrl = tracksData.next;
                     }
-                    showToast(`✓ ${addedCount} lagu dari album ditambahkan`, 'success');
+                    showToast(`${addedCount} lagu dari album ditambahkan`, 'success');
                 }
 
                 Storage.save();
@@ -2199,6 +2463,173 @@
                 importBtn.innerHTML = 'Tambah ke Antrian';
                 importBtn.disabled = false;
             }
+        }
+
+        // ============================================
+        // BANDCAMP FUNCTIONS
+        // ============================================
+
+        async function fetchBandcampData() {
+            const url = document.getElementById('bandcamp-url').value.trim();
+            
+            if (!url) {
+                showToast('Masukkan URL Bandcamp', 'error');
+                return;
+            }
+
+            // Validasi URL Bandcamp
+            if (!url.includes('bandcamp.com')) {
+                showToast('URL harus dari Bandcamp', 'error');
+                return;
+            }
+
+            const fetchBtn = document.getElementById('btn-fetch-bandcamp');
+            const fetchText = document.getElementById('bandcamp-fetch-text');
+            
+            fetchText.textContent = 'Mencari...';
+            fetchBtn.disabled = true;
+
+            try {
+                // Coba ekstrak informasi dari URL
+                // Format URL: https://artist.bandcamp.com/track/track-name
+                // atau: https://artist.bandcamp.com/album/album-name
+                
+                const isTrack = url.includes('/track/');
+                const isAlbum = url.includes('/album/');
+                
+                if (!isTrack && !isAlbum) {
+                    showToast('URL harus mengarah ke track atau album', 'error');
+                    fetchText.textContent = 'Cari & Import';
+                    fetchBtn.disabled = false;
+                    return;
+                }
+
+                // Karena Bandcamp tidak memiliki public API, kita akan menggunakan
+                // teknik scraping sederhana atau menyarankan user untuk menggunakan Direct URL
+                showToast('Menggunakan metode Direct URL untuk Bandcamp', 'info');
+                
+                // Tampilkan instruksi untuk Direct URL
+                document.getElementById('bandcamp-result').innerHTML = `
+                    <div class="bandcamp-info" style="margin-top: 16px;">
+                        <strong>Catatan:</strong> Karena keterbatasan API Bandcamp, silakan gunakan tab 
+                        <strong>"Direct Audio URL"</strong> untuk menambahkan lagu dari Bandcamp.
+                        <br><br>
+                        Caranya:
+                        <ol style="margin-left: 16px; margin-top: 8px; line-height: 1.8;">
+                            <li>Buka halaman track di Bandcamp</li>
+                            <li>Klik kanan pada tombol play dan pilih "Copy link address" atau gunakan browser dev tools</li>
+                            <li>Paste URL audio di tab Direct Audio URL</li>
+                        </ol>
+                    </div>
+                `;
+                document.getElementById('bandcamp-result').style.display = 'block';
+
+                // Auto switch ke tab Direct URL
+                setTimeout(() => {
+                    switchBandcampTab('bandcamp-direct');
+                }, 2000);
+
+            } catch (error) {
+                console.error('Bandcamp fetch error:', error);
+                showToast('Gagal mengambil data: ' + error.message, 'error');
+            } finally {
+                fetchText.textContent = 'Cari & Import';
+                fetchBtn.disabled = false;
+            }
+        }
+
+        function addDirectBandcampTrack() {
+            const url = document.getElementById('bandcamp-direct-url').value.trim();
+            const title = document.getElementById('bandcamp-direct-title').value.trim();
+            const artist = document.getElementById('bandcamp-direct-artist').value.trim();
+            const cover = document.getElementById('bandcamp-direct-cover').value.trim();
+
+            if (!url) {
+                showToast('Masukkan URL audio', 'error');
+                return;
+            }
+
+            if (!title) {
+                showToast('Masukkan judul lagu', 'error');
+                return;
+            }
+
+            if (!artist) {
+                showToast('Masukkan nama artis', 'error');
+                return;
+            }
+
+            // Validasi format URL audio
+            const validAudioExtensions = ['.mp3', '.wav', '.ogg', '.m4a', '.flac'];
+            const hasValidExtension = validAudioExtensions.some(ext => url.toLowerCase().includes(ext));
+            
+            if (!hasValidExtension && !url.includes('bandcamp')) {
+                showToast('URL tidak valid. Pastikan URL mengarah ke file audio.', 'warning');
+            }
+
+            const trackData = {
+                id: generateId(),
+                title: title,
+                artist: artist,
+                duration: 0,
+                durationFormatted: '0:00',
+                cover: cover || null,
+                url: url,
+                source: 'bandcamp',
+                bandcampUrl: url,
+                addedAt: new Date().toISOString()
+            };
+
+            // Coba dapatkan duration dari audio
+            const tempAudio = new Audio(url);
+            tempAudio.onloadedmetadata = () => {
+                trackData.duration = tempAudio.duration;
+                trackData.durationFormatted = formatTime(tempAudio.duration);
+                
+                state.playlist.push(trackData);
+                Storage.save();
+                renderPlaylist();
+                
+                // Reset form
+                document.getElementById('bandcamp-direct-url').value = '';
+                document.getElementById('bandcamp-direct-title').value = '';
+                document.getElementById('bandcamp-direct-artist').value = '';
+                document.getElementById('bandcamp-direct-cover').value = '';
+                
+                document.getElementById('bandcamp-modal').classList.remove('active');
+                showToast(`${title} ditambahkan ke antrian`, 'success');
+            };
+
+            tempAudio.onerror = () => {
+                // Tetap tambahkan meskipun tidak bisa dapat duration
+                state.playlist.push(trackData);
+                Storage.save();
+                renderPlaylist();
+                
+                // Reset form
+                document.getElementById('bandcamp-direct-url').value = '';
+                document.getElementById('bandcamp-direct-title').value = '';
+                document.getElementById('bandcamp-direct-artist').value = '';
+                document.getElementById('bandcamp-direct-cover').value = '';
+                
+                document.getElementById('bandcamp-modal').classList.remove('active');
+                showToast(`${title} ditambahkan (duration tidak diketahui)`, 'success');
+            };
+
+            // Trigger load untuk mendapatkan metadata
+            tempAudio.load();
+        }
+
+        function switchBandcampTab(tabName) {
+            document.querySelectorAll('#bandcamp-modal .tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.tab === tabName);
+            });
+            
+            document.querySelectorAll('#bandcamp-modal .tab-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            document.getElementById(`tab-${tabName}`).style.display = 'block';
         }
 
         // ============================================
@@ -2242,11 +2673,11 @@
         }
 
         function switchTab(tabName) {
-            document.querySelectorAll('.tab').forEach(tab => {
+            document.querySelectorAll('#spotify-modal .tab').forEach(tab => {
                 tab.classList.toggle('active', tab.dataset.tab === tabName);
             });
             
-            document.querySelectorAll('.tab-content').forEach(content => {
+            document.querySelectorAll('#spotify-modal .tab-content').forEach(content => {
                 content.style.display = 'none';
             });
             
@@ -2292,7 +2723,7 @@
                 playlistEl.innerHTML = `
                     <div class="empty-state">
                         <i data-lucide="headphones" style="width: 48px; height: 48px;"></i>
-                        <p>Belum ada lagu. Tambahkan dari perangkat atau Spotify.</p>
+                        <p>Belum ada lagu. Tambahkan dari perangkat, Spotify, atau Bandcamp.</p>
                     </div>
                 `;
                 document.getElementById('playlist-count').textContent = '0 lagu';
@@ -2307,10 +2738,12 @@
                 let statusBadge = '';
                 if (track.source === 'spotify') {
                     if (state.isPremium && state.playerReady) {
-                        statusBadge = '<span class="spotify-badge premium">♪ FULL</span>';
+                        statusBadge = '<span class="spotify-badge premium">FULL</span>';
                     } else {
-                        statusBadge = '<span class="spotify-badge available">♪ 30s</span>';
+                        statusBadge = '<span class="spotify-badge available">30s</span>';
                     }
+                } else if (track.source === 'bandcamp') {
+                    statusBadge = '<span class="bandcamp-badge">BC</span>';
                 }
                 
                 html += `
@@ -2427,6 +2860,8 @@
                     source: track.source,
                     spotifyId: track.spotifyId,
                     spotifyUrl: track.spotifyUrl,
+                    bandcampUrl: track.bandcampUrl,
+                    url: track.source === 'bandcamp' ? track.url : null, // Simpan URL Bandcamp
                     addedAt: track.addedAt,
                     isPlayable: track.isPlayable
                 }));
@@ -2441,8 +2876,15 @@
                 if (saved) {
                     try {
                         const parsed = JSON.parse(saved);
-                        state.playlist = parsed;
+                        // Filter out local tracks (they don't persist)
+                        state.playlist = parsed.filter(track => track.source !== 'local');
                         state.currentIndex = parseInt(savedIndex) || -1;
+                        
+                        // Adjust currentIndex if needed
+                        if (state.currentIndex >= state.playlist.length) {
+                            state.currentIndex = -1;
+                        }
+                        
                         renderPlaylist();
                     } catch (e) {
                         console.error('Error loading playlist:', e);
@@ -2531,6 +2973,10 @@
             document.getElementById('spotify-modal').classList.add('active');
         });
 
+        document.getElementById('btn-bandcamp').addEventListener('click', () => {
+            document.getElementById('bandcamp-modal').classList.add('active');
+        });
+
         document.getElementById('close-upload').addEventListener('click', () => {
             document.getElementById('upload-modal').classList.remove('active');
         });
@@ -2539,15 +2985,24 @@
             document.getElementById('spotify-modal').classList.remove('active');
         });
 
+        document.getElementById('close-bandcamp').addEventListener('click', () => {
+            document.getElementById('bandcamp-modal').classList.remove('active');
+        });
+
         document.getElementById('btn-clear').addEventListener('click', () => {
             if (confirm('Hapus semua lagu dari daftar putar?')) {
                 Storage.clear();
             }
         });
 
-        // Tabs
-        document.querySelectorAll('.tab').forEach(tab => {
+        // Tabs - Spotify
+        document.querySelectorAll('#spotify-modal .tab').forEach(tab => {
             tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+        });
+
+        // Tabs - Bandcamp
+        document.querySelectorAll('#bandcamp-modal .tab').forEach(tab => {
+            tab.addEventListener('click', () => switchBandcampTab(tab.dataset.tab));
         });
 
         // Auth
@@ -2555,6 +3010,10 @@
         document.getElementById('btn-logout').addEventListener('click', logout);
         document.getElementById('btn-import-track').addEventListener('click', importSingleTrack);
         document.getElementById('btn-import-playlist').addEventListener('click', importSelectedPlaylist);
+
+        // Bandcamp
+        document.getElementById('btn-fetch-bandcamp').addEventListener('click', fetchBandcampData);
+        document.getElementById('btn-add-direct-bandcamp').addEventListener('click', addDirectBandcampTrack);
 
         // File upload
         document.getElementById('file-input').addEventListener('change', (e) => {
@@ -2602,7 +3061,7 @@
                             renderPlaylist();
                         };
 
-                        showToast(`✓ ${track.title} ditambahkan`, 'success');
+                        showToast(`${track.title} ditambahkan`, 'success');
                     },
                     onError: () => {
                         const track = {
@@ -2619,7 +3078,7 @@
                         state.playlist.push(track);
                         Storage.save();
                         renderPlaylist();
-                        showToast(`✓ ${track.title} ditambahkan`, 'success');
+                        showToast(`${track.title} ditambahkan`, 'success');
                     }
                 });
             });
@@ -2681,12 +3140,11 @@
         }
 
         // Initialize
-        console.log('🚀 Initializing MONO Music Player...');
+        console.log('Initializing MONO Music Player...');
         handleAuthCallback();
         checkExistingAuth();
         Storage.load();
         
-        console.log('✅ MONO Music Player initialized');
+        console.log('MONO Music Player initialized');
     </script>
 </body>
-</html>
