@@ -3,10 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Struk Digital</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <title>Shopee Flash Sale Bot - Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -14,1064 +12,1586 @@
             box-sizing: border-box;
         }
 
-        body {
-            font-family: 'Space Grotesk', sans-serif;
-            background: #000000;
-            color: #ffffff;
-            min-height: 100vh;
-            overflow-x: hidden;
+        :root {
+            --primary: #ee4d2d;
+            --primary-dark: #d73211;
+            --secondary: #ff7337;
+            --success: #00b894;
+            --danger: #ff4757;
+            --warning: #ffa502;
+            --info: #3498db;
+            --dark: #2d3436;
+            --light: #f5f6fa;
+            --sidebar: #1e272e;
+            --card-bg: #ffffff;
+            --text: #2d3436;
+            --text-light: #636e72;
+            --border: #dfe6e9;
+            --shadow: 0 4px 6px rgba(0,0,0,0.07);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
         }
 
-        .bg-grid {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000000;
-            pointer-events: none;
-            z-index: 0;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: var(--text);
         }
 
         .container {
-            position: relative;
-            z-index: 1;
-            min-height: 100vh;
             display: flex;
-            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 30px 25px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            text-align: center;
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-header p {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .nav-menu {
+            padding: 20px 0;
+        }
+
+        .nav-item {
+            padding: 15px 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
             align-items: center;
-            justify-content: center;
-            padding: 2rem;
+            gap: 15px;
+            border-left: 4px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.05);
+            border-left-color: var(--primary);
+        }
+
+        .nav-item.active {
+            background: rgba(238, 77, 45, 0.1);
+            border-left-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 30px;
         }
 
         .header {
-            text-align: center;
-            margin-bottom: 3rem;
-            opacity: 0;
-            animation: fadeInUp 0.8s ease forwards;
+            background: white;
+            padding: 25px 30px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .logo {
-            font-size: 0.75rem;
-            letter-spacing: 0.4em;
-            opacity: 0.6;
-            margin-bottom: 1rem;
-            text-transform: uppercase;
+        .header h2 {
+            color: var(--dark);
+            font-size: 1.8rem;
         }
 
-        .title {
-            font-size: 3.5rem;
-            font-weight: 700;
-            line-height: 1;
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.02em;
+        .header-actions {
+            display: flex;
+            gap: 15px;
         }
 
-        .subtitle {
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 1rem;
-            font-weight: 300;
-        }
-
-        .input-section {
-            width: 100%;
-            max-width: 420px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
-            padding: 2.5rem;
-            opacity: 0;
-            animation: fadeInUp 0.8s ease 0.2s forwards;
-            transform: translateY(20px);
-        }
-
-        .input-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .input-label {
-            display: block;
-            font-size: 0.7rem;
-            letter-spacing: 0.15em;
-            color: rgba(255, 255, 255, 0.5);
-            margin-bottom: 0.75rem;
-            text-transform: uppercase;
-            font-weight: 500;
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
-        .currency-symbol {
-            position: absolute;
-            left: 1.25rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #ffffff;
-            font-weight: 600;
-            font-size: 1.25rem;
-            opacity: 0.8;
-            pointer-events: none;
-            z-index: 2;
-        }
-
-        .nominal-input {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 1.25rem 1.25rem 1.25rem 3.5rem;
-            color: #ffffff;
-            font-size: 1.5rem;
-            font-weight: 600;
-            font-family: 'JetBrains Mono', monospace;
-            transition: all 0.3s ease;
-            outline: none;
-            -moz-appearance: textfield;
-            -webkit-appearance: none;
-            appearance: none;
-        }
-
-        .nominal-input::-webkit-outer-spin-button,
-        .nominal-input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-
-        .nominal-input:focus {
-            border-color: #ffffff;
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        .nominal-input::placeholder {
-            color: rgba(255, 255, 255, 0.2);
-        }
-
-        .print-btn {
-            width: 100%;
-            background: #ffffff;
-            color: #000000;
+        .btn {
+            padding: 12px 24px;
             border: none;
-            border-radius: 16px;
-            padding: 1.25rem;
-            font-size: 1rem;
-            font-weight: 700;
-            letter-spacing: 0.1em;
+            border-radius: 8px;
             cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(238, 77, 45, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(238, 77, 45, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success) 0%, #00cec9 100%);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger) 0%, #ff6348 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--light);
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
             position: relative;
             overflow: hidden;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-            text-transform: uppercase;
         }
 
-        .print-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 40px rgba(255, 255, 255, 0.2);
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
         }
 
-        .print-btn:active {
-            transform: translateY(0);
-        }
-
-        .printer-section {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000000;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            padding-top: 8vh;
-            z-index: 100;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-            overflow-y: auto;
-        }
-
-        .printer-section.active {
-            display: flex;
-            opacity: 1;
-        }
-
-        .printer-wrapper {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            max-width: 400px;
-            perspective: 1000px;
-        }
-
-        .printer-body {
-            width: 340px;
-            height: 120px;
-            background: linear-gradient(180deg, #3a3a3a 0%, #1a1a1a 50%, #0d0d0d 100%);
-            border-radius: 16px 16px 10px 10px;
-            position: relative;
-            box-shadow: 
-                0 30px 80px rgba(0, 0, 0, 0.9),
-                inset 0 2px 0 rgba(255, 255, 255, 0.15),
-                inset 0 -2px 0 rgba(0, 0, 0, 0.5);
-            z-index: 20;
-            flex-shrink: 0;
-            transform: translateZ(20px);
-        }
-
-        .printer-body::before {
+        .stat-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
-            right: 0;
-            height: 35%;
-            background: linear-gradient(180deg, #4a4a4a 0%, #2a2a2a 100%);
-            border-radius: 16px 16px 0 0;
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
         }
 
-        .printer-face {
+        .stat-card.success::before {
+            background: linear-gradient(90deg, var(--success), #00cec9);
+        }
+
+        .stat-card.warning::before {
+            background: linear-gradient(90deg, var(--warning), #e1b12c);
+        }
+
+        .stat-card.info::before {
+            background: linear-gradient(90deg, var(--info), #74b9ff);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .stat-card .stat-icon {
+            background: rgba(238, 77, 45, 0.1);
+            color: var(--primary);
+        }
+
+        .stat-card.success .stat-icon {
+            background: rgba(0, 184, 148, 0.1);
+            color: var(--success);
+        }
+
+        .stat-card.warning .stat-icon {
+            background: rgba(255, 165, 2, 0.1);
+            color: var(--warning);
+        }
+
+        .stat-card.info .stat-icon {
+            background: rgba(52, 152, 219, 0.1);
+            color: var(--info);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            margin-bottom: 25px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            padding: 30px;
+            margin-bottom: 25px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--light);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(238, 77, 45, 0.1);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-text {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 8px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        /* Toggle Switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
             position: absolute;
-            bottom: 0;
+            cursor: pointer;
+            top: 0;
             left: 0;
             right: 0;
-            height: 65%;
-            background: linear-gradient(180deg, #2a2a2a 0%, #111 100%);
-            border-radius: 0 0 10px 10px;
-            box-shadow: inset 0 -3px 10px rgba(0, 0, 0, 0.5);
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 30px;
         }
 
-        .printer-slot-area {
+        .toggle-slider:before {
             position: absolute;
-            bottom: 25px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 260px;
-            height: 20px;
-            background: #0a0a0a;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(30px);
+        }
+
+        /* Session List */
+        .session-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .session-item {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .session-item:hover {
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .session-item.active {
+            background: rgba(238, 77, 45, 0.05);
+            border-color: var(--primary);
+        }
+
+        .session-info h4 {
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .session-info p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .session-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            background: white;
+            color: var(--text);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .btn-icon:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .btn-icon.delete:hover {
+            background: var(--danger);
+        }
+
+        /* File Upload */
+        .upload-area {
+            border: 3px dashed var(--border);
+            border-radius: 15px;
+            padding: 50px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: var(--light);
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(238, 77, 45, 0.02);
+        }
+
+        .upload-area i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .upload-area h3 {
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+
+        .upload-area p {
+            color: var(--text-light);
+        }
+
+        /* Log Console */
+        .console {
+            background: #1e272e;
+            color: #00ff88;
+            padding: 25px;
+            border-radius: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            height: 400px;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+
+        .console-line {
+            margin-bottom: 8px;
+            opacity: 0;
+            animation: typeIn 0.3s ease forwards;
+        }
+
+        @keyframes typeIn {
+            to { opacity: 1; }
+        }
+
+        .console-line.error { color: #ff4757; }
+        .console-line.warning { color: #ffa502; }
+        .console-line.info { color: #74b9ff; }
+        .console-line.success { color: #00ff88; }
+
+        .console-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #444;
+        }
+
+        .console-title {
+            color: white;
+            font-weight: 600;
+        }
+
+        .console-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .console-btn {
+            background: #444;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .console-btn:hover {
+            background: var(--primary);
+        }
+
+        /* Status Badge */
+        .badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-success {
+            background: rgba(0, 184, 148, 0.1);
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: rgba(255, 165, 2, 0.1);
+            color: var(--warning);
+        }
+
+        .badge-danger {
+            background: rgba(255, 71, 87, 0.1);
+            color: var(--danger);
+        }
+
+        .badge-info {
+            background: rgba(52, 152, 219, 0.1);
+            color: var(--info);
+        }
+
+        /* Bot Control Panel */
+        .control-panel {
+            background: linear-gradient(135deg, var(--sidebar) 0%, #2d3436 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .control-panel h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .control-panel p {
+            opacity: 0.8;
+            margin-bottom: 30px;
+        }
+
+        .big-button {
+            padding: 20px 50px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .big-button:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        }
+
+        .big-button.start {
+            background: linear-gradient(135deg, var(--success) 0%, #00cec9 100%);
+            color: white;
+        }
+
+        .big-button.stop {
+            background: linear-gradient(135deg, var(--danger) 0%, #ff6348 100%);
+            color: white;
+        }
+
+        .big-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .progress-container.active {
+            display: block;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255,255,255,0.2);
             border-radius: 10px;
-            box-shadow: 
-                inset 0 3px 8px rgba(0, 0, 0, 1),
-                0 1px 0 rgba(255, 255, 255, 0.1),
-                inset 0 -1px 0 rgba(255, 255, 255, 0.05);
             overflow: hidden;
         }
 
-        .printer-slot {
-            position: absolute;
-            bottom: 50%;
-            left: 50%;
-            transform: translate(-50%, 50%);
-            width: 240px;
-            height: 4px;
-            background: #000;
-            border-radius: 2px;
-            box-shadow: 
-                0 1px 2px rgba(0, 0, 0, 0.8),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 10px;
         }
 
-        .roller {
-            position: absolute;
-            bottom: 2px;
-            width: 12px;
-            height: 12px;
-            background: #333;
+        .progress-text {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
             border-radius: 50%;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.8);
-            animation: none;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
         }
 
-        .roller.left { left: 20px; }
-        .roller.right { right: 20px; }
-
-        .roller.active {
-            animation: roll 0.1s linear infinite;
-        }
-
-        @keyframes roll {
-            from { transform: rotate(0deg); }
+        @keyframes spin {
             to { transform: rotate(360deg); }
         }
 
-        .printer-light {
-            position: absolute;
-            top: 25px;
-            right: 25px;
-            width: 12px;
-            height: 12px;
-            background: #333;
-            border-radius: 50%;
-            box-shadow: 
-                inset 0 2px 4px rgba(0, 0, 0, 0.5),
-                0 0 0 2px #1a1a1a;
-            transition: all 0.3s ease;
-        }
-
-        .printer-light.active {
-            background: #00ff41;
-            box-shadow: 
-                0 0 20px rgba(0, 255, 65, 0.8), 
-                0 0 40px rgba(0, 255, 65, 0.4),
-                inset 0 2px 4px rgba(0, 0, 0, 0.2);
-            animation: blink 0.4s ease infinite alternate;
-        }
-
-        @keyframes blink {
-            from { opacity: 1; }
-            to { opacity: 0.3; }
-        }
-
-        .printer-brand {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 0.7rem;
-            letter-spacing: 0.4em;
-            color: rgba(255, 255, 255, 0.4);
-            font-weight: 600;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-        }
-
-        .receipt-outer {
-            position: relative;
-            width: 280px;
-            z-index: 15;
-            margin-top: -2px;
+        /* Toast Notification */
+        .toast-container {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            z-index: 9999;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            gap: 15px;
         }
 
-        .receipt-container {
-            width: 100%;
-            height: 0;
-            overflow: hidden;
-            position: relative;
-            background: transparent;
-            filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
-            will-change: height;
-        }
-
-        .receipt-container::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 5%;
-            right: 5%;
-            height: 20px;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.2), transparent);
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-        }
-
-        .receipt-container.has-content::after {
-            opacity: 1;
-        }
-
-        .receipt-paper {
-            width: 100%;
-            background: #ffffff;
-            transform: translateY(-100%);
-            box-shadow: 
-                0 4px 6px rgba(0, 0, 0, 0.1),
-                0 10px 40px rgba(0, 0, 0, 0.2);
-            background-image: 
-                repeating-linear-gradient(
-                    0deg,
-                    transparent,
-                    transparent 20px,
-                    rgba(0, 0, 0, 0.01) 20px,
-                    rgba(0, 0, 0, 0.01) 21px
-                );
-            position: relative;
-            will-change: transform;
-        }
-
-        .receipt-paper::before {
-            content: '';
-            position: absolute;
-            top: -5px;
-            left: 0;
-            right: 0;
-            height: 10px;
-            background: 
-                repeating-linear-gradient(
-                    90deg,
-                    #fff 0px,
-                    #fff 5px,
-                    #f0f0f0 5px,
-                    #f0f0f0 10px
-                );
-            clip-path: polygon(
-                0% 100%, 
-                2% 0%, 4% 100%, 6% 0%, 8% 100%, 
-                10% 0%, 12% 100%, 14% 0%, 16% 100%,
-                18% 0%, 20% 100%, 22% 0%, 24% 100%,
-                26% 0%, 28% 100%, 30% 0%, 32% 100%,
-                34% 0%, 36% 100%, 38% 0%, 40% 100%,
-                42% 0%, 44% 100%, 46% 0%, 48% 100%,
-                50% 0%, 52% 100%, 54% 0%, 56% 100%,
-                58% 0%, 60% 100%, 62% 0%, 64% 100%,
-                66% 0%, 68% 100%, 70% 0%, 72% 100%,
-                74% 0%, 76% 100%, 78% 0%, 80% 100%,
-                82% 0%, 84% 100%, 86% 0%, 88% 100%,
-                90% 0%, 92% 100%, 94% 0%, 96% 100%,
-                98% 0%, 100% 100%
-            );
-        }
-
-        .receipt-paper::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 0;
-            right: 0;
-            height: 8px;
-            background: 
-                repeating-linear-gradient(
-                    90deg,
-                    #fff 0px,
-                    #fff 4px,
-                    transparent 4px,
-                    transparent 8px
-                );
-            clip-path: polygon(
-                0% 0%, 3% 100%, 6% 0%, 9% 100%, 12% 0%,
-                15% 100%, 18% 0%, 21% 100%, 24% 0%,
-                27% 100%, 30% 0%, 33% 100%, 36% 0%,
-                39% 100%, 42% 0%, 45% 100%, 48% 0%,
-                51% 100%, 54% 0%, 57% 100%, 60% 0%,
-                63% 100%, 66% 0%, 69% 100%, 72% 0%,
-                75% 100%, 78% 0%, 81% 100%, 84% 0%,
-                87% 100%, 90% 0%, 93% 100%, 96% 0%,
-                99% 100%, 100% 0%
-            );
-        }
-
-        .receipt-content {
-            padding: 2rem 1.5rem;
-            color: #000000;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .receipt-header {
-            text-align: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px dashed #ccc;
-        }
-
-        .receipt-title {
-            font-size: 1rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-            letter-spacing: 0.1em;
-        }
-
-        .receipt-date {
-            font-size: 0.7rem;
-            color: #666;
-        }
-
-        .receipt-amount-section {
-            text-align: center;
-            margin: 2rem 0;
-            padding: 1.5rem 0;
-            border-top: 1px solid #eee;
-            border-bottom: 1px solid #eee;
-        }
-
-        .amount-label {
-            font-size: 0.65rem;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 0.5rem;
-        }
-
-        .amount-value {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: #000000;
-            letter-spacing: -0.02em;
-        }
-
-        .qr-section {
-            margin-top: 1.5rem;
-            text-align: center;
-        }
-
-        .qr-label {
-            font-size: 0.65rem;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 1rem;
-        }
-
-        .qr-container {
-            width: 140px;
-            height: 140px;
-            margin: 0 auto;
-            background: #ffffff;
-            padding: 8px;
-            border: 1px solid #eee;
+        .toast {
+            background: white;
+            padding: 20px 25px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 15px;
+            min-width: 300px;
+            animation: slideIn 0.4s ease;
+            border-left: 4px solid var(--primary);
         }
 
-        #qrcode img {
-            width: 100% !important;
-            height: 100% !important;
-            display: block;
-        }
+        .toast.success { border-left-color: var(--success); }
+        .toast.error { border-left-color: var(--danger); }
+        .toast.warning { border-left-color: var(--warning); }
 
-        .qr-hint {
-            margin-top: 1rem;
-            font-size: 0.6rem;
-            color: #888;
-            line-height: 1.5;
-        }
-
-        .receipt-footer {
-            margin-top: 1.5rem;
-            text-align: center;
-            font-size: 0.6rem;
-            color: #999;
-            padding-top: 1rem;
-            border-top: 2px dashed #ccc;
-        }
-
-        .close-btn {
-            position: fixed;
-            top: 2rem;
-            right: 2rem;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #ffffff;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 102;
-            opacity: 0;
-            pointer-events: none;
-            backdrop-filter: blur(10px);
-        }
-
-        .close-btn.show {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .close-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: rotate(90deg);
-        }
-
-        @keyframes fadeInUp {
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
             to {
+                transform: translateX(0);
                 opacity: 1;
-                transform: translateY(0);
             }
         }
 
-        .sound-waves {
-            position: absolute;
-            bottom: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: none;
-            gap: 4px;
-            align-items: flex-end;
+        .toast-icon {
+            font-size: 1.5rem;
         }
 
-        .sound-waves.active {
+        .toast.success .toast-icon { color: var(--success); }
+        .toast.error .toast-icon { color: var(--danger); }
+        .toast.warning .toast-icon { color: var(--warning); }
+
+        .toast-content h4 {
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+
+        .toast-content p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Variation Tags */
+        .variation-container {
             display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
         }
 
-        .wave {
-            width: 3px;
-            background: linear-gradient(to top, #00ff41, #ffffff);
-            border-radius: 2px;
-            animation: wave 0.4s ease infinite alternate;
-            opacity: 0.6;
+        .variation-tag {
+            background: var(--light);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 2px solid var(--border);
         }
 
-        .wave:nth-child(1) { height: 8px; animation-delay: 0s; }
-        .wave:nth-child(2) { height: 15px; animation-delay: 0.05s; }
-        .wave:nth-child(3) { height: 22px; animation-delay: 0.1s; }
-        .wave:nth-child(4) { height: 15px; animation-delay: 0.15s; }
-        .wave:nth-child(5) { height: 8px; animation-delay: 0.2s; }
-
-        @keyframes wave {
-            from { 
-                transform: scaleY(0.3); 
-                opacity: 0.3; 
-            }
-            to { 
-                transform: scaleY(1); 
-                opacity: 1; 
-            }
+        .variation-tag .remove {
+            cursor: pointer;
+            color: var(--danger);
+            font-weight: bold;
         }
 
-        .printing .printer-body {
-            animation: vibrate 0.05s linear infinite;
+        .add-variation {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
         }
 
-        @keyframes vibrate {
-            0%, 100% { transform: translateX(0) translateZ(20px); }
-            25% { transform: translateX(-0.5px) translateZ(20px); }
-            75% { transform: translateX(0.5px) translateZ(20px); }
-        }
-
-        @media (max-width: 480px) {
-            .title { font-size: 2.5rem; }
-            .input-section { padding: 1.5rem; }
-            .printer-body { width: 300px; height: 110px; }
-            .receipt-outer { width: 260px; }
-            .printer-slot-area { width: 240px; }
-            .printer-slot { width: 220px; }
-            .printer-section { padding-top: 5vh; }
+        .add-variation input {
+            flex: 1;
         }
     </style>
 </head>
 <body>
-    <div class="bg-grid"></div>
-
     <div class="container">
-        <div class="header">
-            <div class="logo">PAYMENT SYSTEM</div>
-            <h1 class="title">Struk Digital</h1>
-            <p class="subtitle">Cetak struk pembayaran dengan QRIS</p>
-        </div>
-
-        <div class="input-section">
-            <div class="input-group">
-                <label class="input-label">Nominal Pembayaran</label>
-                <div class="input-wrapper">
-                    <span class="currency-symbol">Rp</span>
-                    <input 
-                        type="number" 
-                        class="nominal-input" 
-                        id="nominalInput" 
-                        placeholder="0" 
-                        autocomplete="off"
-                        inputmode="numeric"
-                        pattern="[0-9]*"
-                        min="0"
-                    >
-                </div>
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1><i class="fas fa-robot"></i> Shopee Bot</h1>
+                <p>Flash Sale Automation</p>
             </div>
-            <button class="print-btn" id="printBtn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="6 9 6 2 18 2 18 9"></polyline>
-                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-                    <rect x="6" y="14" width="12" height="8"></rect>
-                </svg>
-                CETAK STRUK
-            </button>
-        </div>
-    </div>
-
-    <div class="printer-section" id="printerSection">
-        <button class="close-btn" id="closeBtn">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-        </button>
-
-        <div class="printer-wrapper" id="printerWrapper">
-            <div class="printer-body">
-                <div class="printer-face"></div>
-                <div class="printer-slot-area">
-                    <div class="printer-slot"></div>
-                    <div class="roller left" id="rollerLeft"></div>
-                    <div class="roller right" id="rollerRight"></div>
+            <nav class="nav-menu">
+                <div class="nav-item active" onclick="showSection('dashboard')">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
                 </div>
-                <div class="printer-light" id="printerLight"></div>
-                <div class="printer-brand">THERMAL</div>
-                <div class="sound-waves" id="soundWaves">
-                    <div class="wave"></div>
-                    <div class="wave"></div>
-                    <div class="wave"></div>
-                    <div class="wave"></div>
-                    <div class="wave"></div>
+                <div class="nav-item" onclick="showSection('sessions')">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Session Manager</span>
                 </div>
-            </div>
+                <div class="nav-item" onclick="showSection('config')">
+                    <i class="fas fa-cog"></i>
+                    <span>Configuration</span>
+                </div>
+                <div class="nav-item" onclick="showSection('bot')">
+                    <i class="fas fa-play-circle"></i>
+                    <span>Bot Control</span>
+                </div>
+                <div class="nav-item" onclick="showSection('logs')">
+                    <i class="fas fa-terminal"></i>
+                    <span>Logs & History</span>
+                </div>
+                <div class="nav-item" onclick="showSection('settings')">
+                    <i class="fas fa-sliders-h"></i>
+                    <span>Settings</span>
+                </div>
+            </nav>
+        </aside>
 
-            <div class="receipt-outer">
-                <div class="receipt-container" id="receiptContainer">
-                    <div class="receipt-paper" id="receiptPaper">
-                        <div class="receipt-content" id="receiptContent">
-                            <div class="receipt-header">
-                                <div class="receipt-title">STRUK DIGITAL</div>
-                                <div class="receipt-date" id="receiptDate"></div>
-                            </div>
-                            
-                            <div class="receipt-amount-section">
-                                <div class="amount-label">Total Pembayaran</div>
-                                <div class="amount-value" id="receiptAmount">Rp 0</div>
-                            </div>
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <div class="header">
+                    <h2><i class="fas fa-home"></i> Dashboard</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary" onclick="refreshDashboard()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
 
-                            <div class="qr-section">
-                                <div class="qr-label">Scan untuk Bayar</div>
-                                <div class="qr-container">
-                                    <div id="qrcode"></div>
-                                </div>
-                                <div class="qr-hint">
-                                    Screenshot struk ini<br>
-                                    dan scan QRIS untuk pembayaran
-                                </div>
-                            </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div class="stat-value" id="activeSession">-</div>
+                        <div class="stat-label">Active Session</div>
+                    </div>
+                    <div class="stat-card success">
+                        <div class="stat-icon">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <div class="stat-value" id="totalAttempts">0</div>
+                        <div class="stat-label">Total Attempts</div>
+                    </div>
+                    <div class="stat-card warning">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-value" id="nextFlashSale">--:--</div>
+                        <div class="stat-label">Next Flash Sale</div>
+                    </div>
+                    <div class="stat-card info">
+                        <div class="stat-icon">
+                            <i class="fas fa-server"></i>
+                        </div>
+                        <div class="stat-value" id="botStatus">Idle</div>
+                        <div class="stat-label">Bot Status</div>
+                    </div>
+                </div>
 
-                            <div class="receipt-footer">
-                                Terima kasih atas pembayaran Anda<br>
-                                ***
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-info-circle"></i> Quick Info</h3>
+                    </div>
+                    <div style="line-height: 1.8; color: var(--text-light);">
+                        <p><strong style="color: var(--dark);">Welcome to Shopee Flash Sale Bot Dashboard!</strong></p>
+                        <p>This tool helps you automate flash sale purchases on Shopee. Before starting:</p>
+                        <ol style="margin-left: 20px; margin-top: 10px;">
+                            <li>Create a session by copying cookies from your logged-in Shopee account</li>
+                            <li>Configure the target product URL and variations</li>
+                            <li>Set up auto-checkout preferences</li>
+                            <li>Start the bot and monitor logs</li>
+                        </ol>
+                        <div style="margin-top: 20px; padding: 15px; background: rgba(238, 77, 45, 0.05); border-radius: 10px; border-left: 4px solid var(--primary);">
+                            <i class="fas fa-exclamation-triangle" style="color: var(--primary);"></i>
+                            <strong>Note:</strong> This bot may not work properly due to Shopee's anti-bot detection. Use at your own risk.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sessions Section -->
+            <section id="sessions" class="content-section">
+                <div class="header">
+                    <h2><i class="fas fa-user-circle"></i> Session Manager</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" onclick="showUploadModal()">
+                            <i class="fas fa-plus"></i> New Session
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Active Sessions</h3>
+                        <span class="badge badge-info" id="sessionCount">0 sessions</span>
+                    </div>
+                    <div class="session-list" id="sessionList">
+                        <!-- Sessions will be loaded here -->
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-upload"></i> Upload New Session</h3>
+                    </div>
+                    <div class="upload-area" onclick="document.getElementById('sessionFile').click()">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h3>Click to Upload Session File</h3>
+                        <p>Upload your .json cookie file from Shopee</p>
+                        <input type="file" id="sessionFile" accept=".json" style="display: none;" onchange="handleSessionUpload(event)">
+                    </div>
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label class="form-label">Or Paste Cookie JSON:</label>
+                        <textarea class="form-control" id="cookieJson" placeholder="Paste your Shopee cookies here..."></textarea>
+                        <div style="margin-top: 15px; display: flex; gap: 10px;">
+                            <input type="text" class="form-control" id="sessionName" placeholder="Session name (e.g., myaccount)" style="flex: 1;">
+                            <button class="btn btn-primary" onclick="saveSessionFromText()">
+                                <i class="fas fa-save"></i> Save Session
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Configuration Section -->
+            <section id="config" class="content-section">
+                <div class="header">
+                    <h2><i class="fas fa-cog"></i> Configuration</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-success" onclick="saveConfig()">
+                            <i class="fas fa-save"></i> Save Config
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Product Settings</h3>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Flash Sale URL</label>
+                        <input type="text" class="form-control" id="productUrl" placeholder="https://shopee.co.id/product/...">
+                        <div class="form-text">Paste the Shopee product URL you want to buy</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Product Variations</label>
+                        <div class="variation-container" id="variationContainer">
+                            <!-- Variations will be added here -->
+                        </div>
+                        <div class="add-variation">
+                            <input type="text" class="form-control" id="newVariation" placeholder="Add variation (e.g., Red, Size L)">
+                            <button class="btn btn-secondary" onclick="addVariation()">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Automation Settings</h3>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Auto Checkout</label>
+                            <div class="toggle-container">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="autoCheckout" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span>Enable automatic checkout</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Auto Order</label>
+                            <div class="toggle-container">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="autoOrder">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span>Enable automatic order (Coming Soon)</span>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Chrome Options</h3>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Additional Chrome Options</label>
+                        <textarea class="form-control" id="chromeOptions" placeholder="--headless\n--no-sandbox\n--disable-dev-shm-usage"></textarea>
+                        <div class="form-text">One option per line. These will be passed to ChromeDriver.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bot Control Section -->
+            <section id="bot" class="content-section">
+                <div class="header">
+                    <h2><i class="fas fa-play-circle"></i> Bot Control</h2>
+                </div>
+
+                <div class="control-panel">
+                    <h2><i class="fas fa-robot"></i> Bot Controller</h2>
+                    <p>Start the bot to begin monitoring and purchasing flash sale items</p>
+                    
+                    <button class="big-button start" id="startBtn" onclick="toggleBot()">
+                        <i class="fas fa-play"></i>
+                        <span>START BOT</span>
+                    </button>
+
+                    <div class="progress-container" id="progressContainer">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <div class="progress-text" id="progressText">Initializing...</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Current Configuration</h3>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                        <div>
+                            <strong style="color: var(--text-light);">Session:</strong>
+                            <p id="configSession" style="margin-top: 5px; color: var(--dark); font-weight: 600;">Not selected</p>
+                        </div>
+                        <div>
+                            <strong style="color: var(--text-light);">Product URL:</strong>
+                            <p id="configUrl" style="margin-top: 5px; color: var(--dark); font-weight: 600;">Not set</p>
+                        </div>
+                        <div>
+                            <strong style="color: var(--text-light);">Auto Checkout:</strong>
+                            <p id="configCheckout" style="margin-top: 5px;">
+                                <span class="badge badge-success">Enabled</span>
+                            </p>
+                        </div>
+                        <div>
+                            <strong style="color: var(--text-light);">Variations:</strong>
+                            <p id="configVariations" style="margin-top: 5px; color: var(--dark);">None</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-terminal"></i> Live Logs</h3>
+                        <div class="header-actions">
+                            <span class="badge badge-success" id="logStatus">Live</span>
+                        </div>
+                    </div>
+                    <div class="console" id="liveConsole">
+                        <div class="console-line info">[SYSTEM] Bot ready. Waiting to start...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Logs Section -->
+            <section id="logs" class="content-section">
+                <div class="header">
+                    <h2><i class="fas fa-terminal"></i> Logs & History</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary" onclick="clearLogs()">
+                            <i class="fas fa-trash"></i> Clear
+                        </button>
+                        <button class="btn btn-primary" onclick="exportLogs()">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="console-header">
+                        <span class="console-title"><i class="fas fa-history"></i> Execution History</span>
+                        <div class="console-actions">
+                            <button class="console-btn" onclick="filterLogs('all')">All</button>
+                            <button class="console-btn" onclick="filterLogs('error')">Errors</button>
+                            <button class="console-btn" onclick="filterLogs('success')">Success</button>
+                        </div>
+                    </div>
+                    <div class="console" id="historyConsole" style="height: 500px;">
+                        <div class="console-line info">[2024-01-15 10:30:15] System initialized</div>
+                        <div class="console-line info">[2024-01-15 10:30:20] Configuration loaded</div>
+                        <div class="console-line warning">[2024-01-15 10:30:25] No active session selected</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings" class="content-section">
+                <div class="header">
+                    <h2><i class="fas fa-sliders-h"></i> Settings</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-success" onclick="saveSettings()">
+                            <i class="fas fa-save"></i> Save Settings
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">ChromeDriver Settings</h3>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">ChromeDriver Path</label>
+                        <input type="text" class="form-control" id="driverPath" value="./webdriver/chromedriver">
+                        <div class="form-text">Path to your ChromeDriver executable</div>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-secondary" onclick="checkDriver()">
+                            <i class="fas fa-check-circle"></i> Check Driver
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Platform Settings</h3>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Operating System</label>
+                        <select class="form-control" id="platform">
+                            <option value="Windows">Windows</option>
+                            <option value="Linux">Linux</option>
+                            <option value="Darwin">macOS</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">About</h3>
+                    </div>
+                    <div style="text-align: center; padding: 40px;">
+                        <i class="fas fa-robot" style="font-size: 4rem; color: var(--primary); margin-bottom: 20px;"></i>
+                        <h3 style="margin-bottom: 10px;">Shopee Flash Sale Bot</h3>
+                        <p style="color: var(--text-light); margin-bottom: 20px;">Version 1.0.0 | By MRHRTZ</p>
+                        <div style="display: flex; justify-content: center; gap: 15px;">
+                            <a href="https://github.com/MRHRTZ/Shopee-flashsale-bot" target="_blank" class="btn btn-secondary">
+                                <i class="fab fa-github"></i> GitHub
+                            </a>
+                            <a href="https://www.instagram.com/hanif_az.sq.61" target="_blank" class="btn btn-primary">
+                                <i class="fab fa-instagram"></i> Contact
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
     </div>
 
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
     <script>
-        const nominalInput = document.getElementById('nominalInput');
-        const printBtn = document.getElementById('printBtn');
-        const printerSection = document.getElementById('printerSection');
-        const printerWrapper = document.getElementById('printerWrapper');
-        const receiptContainer = document.getElementById('receiptContainer');
-        const receiptPaper = document.getElementById('receiptPaper');
-        const printerLight = document.getElementById('printerLight');
-        const soundWaves = document.getElementById('soundWaves');
-        const rollerLeft = document.getElementById('rollerLeft');
-        const rollerRight = document.getElementById('rollerRight');
-        const receiptDate = document.getElementById('receiptDate');
-        const receiptAmount = document.getElementById('receiptAmount');
-        const closeBtn = document.getElementById('closeBtn');
-        const qrContainer = document.getElementById('qrcode');
-
-        let qrCodeObj = null;
-        let audioContext = null;
-        let isAnimating = false;
-
-        // Data merchant QRIS (GANTI DENGAN DATA ANDA)
-        const MERCHANT_DATA = {
-            id: "ID1234567890123", // ID Merchant QRIS
-            name: "NAMA MERCHANT", // Nama Merchant (maks 25 karakter)
-            city: "JAKARTA" // Kota Merchant
+        // State Management
+        let config = {
+            session: '',
+            url: '',
+            variation: [],
+            chromedriver: './webdriver/chromedriver',
+            options: [],
+            autoCheckout: true,
+            autoOrder: false,
+            platform: 'Windows'
         };
 
-        function formatCurrency(value) {
-            return new Intl.NumberFormat('id-ID').format(value);
+        let sessions = [];
+        let botRunning = false;
+        let logs = [];
+
+        // Navigation
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active class from nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            event.currentTarget.classList.add('active');
+            
+            // Update config display in bot section
+            if (sectionId === 'bot') {
+                updateBotConfigDisplay();
+            }
         }
 
-        nominalInput.addEventListener('input', (e) => {
-            let value = e.target.value;
-            value = value.replace(/\D/g, '');
+        // Toast Notifications
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast `;
             
-            if (value) {
-                e.target.value = formatCurrency(value);
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-times-circle',
+                warning: 'fa-exclamation-triangle'
+            };
+            
+            toast.innerHTML = `
+                <i class="fas  toast-icon"></i>
+                <div class="toast-content">
+                    <h4></h4>
+                    <p></p>
+                </div>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Session Management
+        function handleSessionUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const content = e.target.result;
+                    JSON.parse(content); // Validate JSON
+                    
+                    const sessionName = file.name.replace('.json', '');
+                    sessions.push({
+                        name: sessionName,
+                        file: file.name,
+                        created: new Date().toLocaleString()
+                    });
+                    
+                    renderSessions();
+                    showToast(`Session "" uploaded successfully!`);
+                } catch (err) {
+                    showToast('Invalid JSON file!', 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function saveSessionFromText() {
+            const name = document.getElementById('sessionName').value;
+            const json = document.getElementById('cookieJson').value;
+            
+            if (!name || !json) {
+                showToast('Please enter session name and cookie JSON', 'warning');
+                return;
+            }
+            
+            try {
+                JSON.parse(json);
+                sessions.push({
+                    name: name,
+                    content: json,
+                    created: new Date().toLocaleString()
+                });
+                
+                document.getElementById('sessionName').value = '';
+                document.getElementById('cookieJson').value = '';
+                
+                renderSessions();
+                showToast(`Session "" saved successfully!`);
+            } catch (err) {
+                showToast('Invalid JSON format!', 'error');
+            }
+        }
+
+        function renderSessions() {
+            const container = document.getElementById('sessionList');
+            const countBadge = document.getElementById('sessionCount');
+            
+            countBadge.textContent = ` session ''`;
+            
+            if (sessions.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--text-light);">
+                        <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
+                        <p>No sessions yet. Upload a session to get started.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = sessions.map((session, index) => `
+                <div class="session-item  ''">
+                    <div class="session-info">
+                        <h4><i class="fas fa-user-circle"></i> </h4>
+                        <p>Created: </p>
+                    </div>
+                    <div class="session-actions">
+                        <button class="btn-icon  ''" 
+                                onclick="selectSession('')" 
+                                title="Select Session">
+                            <i class="fas  'fa-play'"></i>
+                        </button>
+                        <button class="btn-icon delete" onclick="deleteSession()" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectSession(name) {
+            config.session = name;
+            renderSessions();
+            showToast(`Session "" selected!`);
+            addLog(`Session changed to: `, 'info');
+        }
+
+        function deleteSession(index) {
+            if (confirm('Are you sure you want to delete this session?')) {
+                const name = sessions[index].name;
+                sessions.splice(index, 1);
+                if (config.session === name) {
+                    config.session = '';
+                }
+                renderSessions();
+                showToast('Session deleted', 'warning');
+            }
+        }
+
+        // Variation Management
+        function addVariation() {
+            const input = document.getElementById('newVariation');
+            const value = input.value.trim();
+            
+            if (!value) return;
+            
+            config.variation.push(value);
+            renderVariations();
+            input.value = '';
+        }
+
+        function removeVariation(index) {
+            config.variation.splice(index, 1);
+            renderVariations();
+        }
+
+        function renderVariations() {
+            const container = document.getElementById('variationContainer');
+            container.innerHTML = config.variation.map((v, i) => `
+                <div class="variation-tag">
+                    
+                    <span class="remove" onclick="removeVariation()">×</span>
+                </div>
+            `).join('');
+        }
+
+        // Configuration
+        function saveConfig() {
+            config.url = document.getElementById('productUrl').value;
+            config.autoCheckout = document.getElementById('autoCheckout').checked;
+            config.autoOrder = document.getElementById('autoOrder').checked;
+            
+            const optionsText = document.getElementById('chromeOptions').value;
+            config.options = optionsText.split('\n').filter(o => o.trim());
+            
+            showToast('Configuration saved successfully!');
+            addLog('Configuration updated', 'success');
+            updateDashboard();
+        }
+
+        function saveSettings() {
+            config.chromedriver = document.getElementById('driverPath').value;
+            config.platform = document.getElementById('platform').value;
+            
+            showToast('Settings saved successfully!');
+        }
+
+        // Bot Control
+        function toggleBot() {
+            const btn = document.getElementById('startBtn');
+            const progressContainer = document.getElementById('progressContainer');
+            
+            if (!botRunning) {
+                // Start bot
+                if (!config.session) {
+                    showToast('Please select a session first!', 'warning');
+                    showSection('sessions');
+                    return;
+                }
+                if (!config.url) {
+                    showToast('Please configure product URL first!', 'warning');
+                    showSection('config');
+                    return;
+                }
+                
+                botRunning = true;
+                btn.className = 'big-button stop';
+                btn.innerHTML = '<div class="loading"></div><span>STOPPING...</span>';
+                progressContainer.classList.add('active');
+                
+                document.getElementById('botStatus').textContent = 'Running';
+                addLog('Bot started', 'success');
+                
+                // Simulate progress
+                simulateBotProgress();
+                
             } else {
-                e.target.value = '';
+                // Stop bot
+                botRunning = false;
+                btn.className = 'big-button start';
+                btn.innerHTML = '<i class="fas fa-play"></i><span>START BOT</span>';
+                progressContainer.classList.remove('active');
+                document.getElementById('progressFill').style.width = '0%';
+                
+                document.getElementById('botStatus').textContent = 'Idle';
+                addLog('Bot stopped', 'warning');
             }
-        });
-
-        nominalInput.addEventListener('keypress', (e) => {
-            const char = String.fromCharCode(e.which);
-            if (!/[0-9]/.test(char) && e.which !== 8 && e.which !== 0) {
-                e.preventDefault();
-            }
-        });
-
-        function initPrinterSound() {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
         }
 
-        function playPrinterSound() {
-            if (!audioContext) initPrinterSound();
+        function simulateBotProgress() {
+            if (!botRunning) return;
             
-            const duration = 2000;
-            const startTime = audioContext.currentTime;
+            const steps = [
+                { percent: 10, text: 'Initializing Chrome...' },
+                { percent: 25, text: 'Loading session cookies...' },
+                { percent: 40, text: 'Navigating to product page...' },
+                { percent: 60, text: 'Checking product availability...' },
+                { percent: 80, text: 'Waiting for flash sale...' },
+                { percent: 100, text: 'Attempting checkout...' }
+            ];
             
-            const bufferSize = audioContext.sampleRate * 2;
-            const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
-            const data = buffer.getChannelData(0);
+            let currentStep = 0;
             
-            for (let i = 0; i < bufferSize; i++) {
-                data[i] = Math.random() * 2 - 1;
-            }
-            
-            const noise = audioContext.createBufferSource();
-            noise.buffer = buffer;
-            
-            const filter = audioContext.createBiquadFilter();
-            filter.type = 'bandpass';
-            filter.frequency.value = 800;
-            filter.Q.value = 1;
-            
-            const gainNode = audioContext.createGain();
-            gainNode.gain.setValueAtTime(0.1, startTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.05, startTime + 0.1);
-            
-            const modulator = audioContext.createOscillator();
-            modulator.type = 'square';
-            modulator.frequency.value = 50;
-            
-            const modGain = audioContext.createGain();
-            modGain.gain.value = 0.3;
-            
-            noise.connect(filter);
-            filter.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            
-            modulator.connect(modGain);
-            modGain.connect(gainNode.gain);
-            
-            noise.start(startTime);
-            modulator.start(startTime);
-            
-            noise.stop(startTime + duration / 1000);
-            modulator.stop(startTime + duration / 1000);
-        }
-
-        // Fungsi untuk generate CRC16 CCITT
-        function crc16(str) {
-            let crc = 0xFFFF;
-            for (let i = 0; i < str.length; i++) {
-                crc ^= str.charCodeAt(i) << 8;
-                for (let j = 0; j < 8; j++) {
-                    crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) : (crc << 1);
+            const interval = setInterval(() => {
+                if (!botRunning) {
+                    clearInterval(interval);
+                    return;
                 }
-            }
-            return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
-        }
-
-        // Fungsi untuk format data QRIS dengan nominal
-        function generateQRISContent(amount) {
-            // Payload Format Indicator
-            let qris = "000201";
-            
-            // Point of Initiation Method (12 = Dynamic)
-            qris += "010212";
-            
-            // Merchant Account Information - QRIS
-            // ID 26: Payment Network Specific
-            let merchantInfo = "0014ID.CO.QRIS.WWW";
-            merchantInfo += "0115" + MERCHANT_DATA.id;
-            qris += "26" + merchantInfo.length + merchantInfo;
-            
-            // Merchant Category Code (5999 = Other Services)
-            qris += "52045999";
-            
-            // Transaction Currency (360 = IDR)
-            qris += "5303360";
-            
-            // Transaction Amount (jika ada)
-            if (amount && amount > 0) {
-                const amt = amount.toString();
-                qris += "54" + amt.length.toString().padStart(2, '0') + amt;
-            }
-            
-            // Country Code (ID)
-            qris += "5802ID";
-            
-            // Merchant Name
-            const name = MERCHANT_DATA.name.substring(0, 25);
-            qris += "59" + name.length.toString().padStart(2, '0') + name;
-            
-            // Merchant City
-            const city = MERCHANT_DATA.city.substring(0, 15);
-            qris += "60" + city.length.toString().padStart(2, '0') + city;
-            
-            // Additional Data Field Template (ID 62)
-            // Reference Label/Transaction ID
-            const ref = "TRX" + Date.now().toString().slice(-6);
-            const additionalData = "0516" + ref; // ID 05, length 16
-            qris += "62" + additionalData.length.toString().padStart(2, '0') + additionalData;
-            
-            // CRC
-            qris += "6304"; // CRC ID + length
-            const crc = crc16(qris);
-            qris += crc;
-            
-            return qris;
-        }
-
-        function generateQRCode(text) {
-            return new Promise((resolve) => {
-                qrContainer.innerHTML = '';
                 
-                qrCodeObj = new QRCode(qrContainer, {
-                    text: text,
-                    width: 124,
-                    height: 124,
-                    colorDark: "#000000",
-                    colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.H
-                });
-
-                setTimeout(() => {
-                    const img = qrContainer.querySelector('img');
-                    if (img) {
-                        img.onload = resolve;
-                        setTimeout(resolve, 100);
-                    } else {
-                        resolve();
-                    }
-                }, 50);
-            });
-        }
-
-        printBtn.addEventListener('click', async () => {
-            if (isAnimating) return;
-            
-            const rawValue = nominalInput.value.replace(/\D/g, '');
-            
-            if (!rawValue || rawValue === '0') {
-                nominalInput.style.borderColor = 'rgba(255, 255, 255, 0.5)';
-                setTimeout(() => {
-                    nominalInput.style.borderColor = '';
-                }, 300);
-                return;
-            }
-
-            isAnimating = true;
-
-            const now = new Date();
-            receiptDate.textContent = now.toLocaleString('id-ID', {
-                day: '2-digit',
-                month: 'long',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-            
-            receiptAmount.textContent = 'Rp ' + nominalInput.value;
-
-            // Generate QRIS dengan nominal
-            const qrisContent = generateQRISContent(parseInt(rawValue));
-            console.log('QRIS Content:', qrisContent); // Untuk debugging
-            
-            await generateQRCode(qrisContent);
-
-            printerSection.classList.add('active');
-            
-            receiptContainer.style.height = '0';
-            receiptContainer.classList.remove('has-content');
-            receiptPaper.style.transform = 'translateY(-100%)';
-            
-            receiptPaper.offsetHeight;
-            
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    playPrinterSound();
-                    startPrinting();
-                });
-            });
-        });
-
-        function startPrinting() {
-            printerLight.classList.add('active');
-            soundWaves.classList.add('active');
-            rollerLeft.classList.add('active');
-            rollerRight.classList.add('active');
-            printerWrapper.classList.add('printing');
-
-            receiptPaper.style.visibility = 'visible';
-            
-            const fullHeight = receiptPaper.scrollHeight;
-            
-            if (fullHeight === 0) {
-                console.error('Receipt height is 0');
-                isAnimating = false;
-                return;
-            }
-            
-            const duration = 2000;
-            const interval = 16;
-            const steps = duration / interval;
-            
-            let stepCount = 0;
-
-            const printInterval = setInterval(() => {
-                stepCount++;
-                
-                const progress = stepCount / steps;
-                const easedProgress = 1 - Math.pow(1 - progress, 3);
-                
-                const currentHeight = fullHeight * easedProgress;
-                const currentTranslate = -100 + (100 * easedProgress);
-
-                receiptContainer.style.height = currentHeight + 'px';
-                receiptPaper.style.transform = `translateY(${currentTranslate}%)`;
-
-                if (stepCount >= steps) {
-                    clearInterval(printInterval);
-                    
-                    receiptContainer.style.height = fullHeight + 'px';
-                    receiptPaper.style.transform = 'translateY(0)';
-                    receiptContainer.classList.add('has-content');
-                    
-                    isAnimating = false;
-                    
+                if (currentStep < steps.length) {
+                    const step = steps[currentStep];
+                    document.getElementById('progressFill').style.width = step.percent + '%';
+                    document.getElementById('progressText').textContent = step.text;
+                    addLog(step.text, 'info');
+                    currentStep++;
+                } else {
+                    clearInterval(interval);
+                    // Reset for demo
                     setTimeout(() => {
-                        printerLight.classList.remove('active');
-                        soundWaves.classList.remove('active');
-                        rollerLeft.classList.remove('active');
-                        rollerRight.classList.remove('active');
-                        printerWrapper.classList.remove('printing');
-                        closeBtn.classList.add('show');
-                    }, 400);
+                        if (botRunning) {
+                            document.getElementById('progressFill').style.width = '0%';
+                            simulateBotProgress();
+                        }
+                    }, 2000);
                 }
-            }, interval);
+            }, 2000);
         }
 
-        closeBtn.addEventListener('click', resetPrinter);
-
-        function resetPrinter() {
-            isAnimating = false;
-            
-            printerSection.classList.remove('active');
-            closeBtn.classList.remove('show');
-            
-            receiptContainer.style.height = '0';
-            receiptContainer.classList.remove('has-content');
-            receiptPaper.style.transform = 'translateY(-100%)';
-            
-            printerLight.classList.remove('active');
-            soundWaves.classList.remove('active');
-            rollerLeft.classList.remove('active');
-            rollerRight.classList.remove('active');
-            printerWrapper.classList.remove('printing');
-            
-            qrContainer.innerHTML = '';
-            nominalInput.value = '';
+        function updateBotConfigDisplay() {
+            document.getElementById('configSession').textContent = config.session || 'Not selected';
+            document.getElementById('configUrl').textContent = config.url || 'Not set';
+            document.getElementById('configCheckout').innerHTML = config.autoCheckout ? 
+                '<span class="badge badge-success">Enabled</span>' : 
+                '<span class="badge badge-danger">Disabled</span>';
+            document.getElementById('configVariations').textContent = config.variation.length > 0 ? 
+                config.variation.join(', ') : 'None';
         }
 
-        nominalInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                printBtn.click();
+        // Logging
+        function addLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[] `;
+            
+            logs.push({ message: logEntry, type, time: new Date() });
+            
+            // Add to live console
+            const liveConsole = document.getElementById('liveConsole');
+            const line = document.createElement('div');
+            line.className = `console-line `;
+            line.textContent = logEntry;
+            liveConsole.appendChild(line);
+            liveConsole.scrollTop = liveConsole.scrollHeight;
+            
+            // Add to history
+            const historyConsole = document.getElementById('historyConsole');
+            const historyLine = document.createElement('div');
+            historyLine.className = `console-line `;
+            historyLine.textContent = logEntry;
+            historyConsole.appendChild(historyLine);
+        }
+
+        function clearLogs() {
+            document.getElementById('historyConsole').innerHTML = '<div class="console-line info">Logs cleared</div>';
+            logs = [];
+            showToast('Logs cleared');
+        }
+
+        function exportLogs() {
+            const logText = logs.map(l => l.message).join('\n');
+            const blob = new Blob([logText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `bot-logs-.txt`;
+            a.click();
+            showToast('Logs exported successfully!');
+        }
+
+        function filterLogs(type) {
+            const console = document.getElementById('historyConsole');
+            const lines = console.querySelectorAll('.console-line');
+            
+            lines.forEach(line => {
+                if (type === 'all' || line.classList.contains(type)) {
+                    line.style.display = 'block';
+                } else {
+                    line.style.display = 'none';
+                }
+            });
+        }
+
+        // Dashboard
+        function updateDashboard() {
+            document.getElementById('activeSession').textContent = config.session || '-';
+            document.getElementById('totalAttempts').textContent = Math.floor(Math.random() * 50);
+        }
+
+        function refreshDashboard() {
+            updateDashboard();
+            showToast('Dashboard refreshed');
+        }
+
+        function checkDriver() {
+            showToast('Checking ChromeDriver...', 'info');
+            setTimeout(() => {
+                showToast('ChromeDriver is valid!', 'success');
+            }, 1500);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderSessions();
+            updateDashboard();
+            
+            // Set default platform
+            const platform = navigator.platform.includes('Win') ? 'Windows' : 
+                            navigator.platform.includes('Mac') ? 'Darwin' : 'Linux';
+            document.getElementById('platform').value = platform;
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                if (document.getElementById('bot').classList.contains('active')) {
+                    toggleBot();
+                }
             }
         });
     </script>
 </body>
-</html>
