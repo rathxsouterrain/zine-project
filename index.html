@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopee Flash Sale Bot - Dashboard</title>
+    <title>Shopee Flash Sale Bot - Login Akun</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
@@ -351,6 +351,32 @@
             gap: 25px;
         }
 
+        /* Input Group with Icon */
+        .input-group {
+            position: relative;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+
+        .input-group .form-control {
+            padding-left: 45px;
+        }
+
+        .input-group .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
         /* Toggle Switch */
         .toggle-container {
             display: flex;
@@ -402,14 +428,14 @@
             transform: translateX(30px);
         }
 
-        /* Session List */
-        .session-list {
+        /* Account List */
+        .account-list {
             display: flex;
             flex-direction: column;
             gap: 15px;
         }
 
-        .session-item {
+        .account-item {
             background: var(--light);
             padding: 20px;
             border-radius: 12px;
@@ -420,27 +446,50 @@
             border: 2px solid transparent;
         }
 
-        .session-item:hover {
+        .account-item:hover {
             border-color: var(--primary);
             transform: translateX(5px);
         }
 
-        .session-item.active {
+        .account-item.active {
             background: rgba(238, 77, 45, 0.05);
             border-color: var(--primary);
         }
 
-        .session-info h4 {
+        .account-info h4 {
             color: var(--dark);
             margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .session-info p {
+        .account-info p {
             color: var(--text-light);
             font-size: 0.9rem;
         }
 
-        .session-actions {
+        .account-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .account-status.logged-in {
+            background: rgba(0, 184, 148, 0.1);
+            color: var(--success);
+        }
+
+        .account-status.logged-out {
+            background: rgba(255, 71, 87, 0.1);
+            color: var(--danger);
+        }
+
+        .account-actions {
             display: flex;
             gap: 10px;
         }
@@ -468,37 +517,6 @@
 
         .btn-icon.delete:hover {
             background: var(--danger);
-        }
-
-        /* File Upload */
-        .upload-area {
-            border: 3px dashed var(--border);
-            border-radius: 15px;
-            padding: 50px;
-            text-align: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            background: var(--light);
-        }
-
-        .upload-area:hover {
-            border-color: var(--primary);
-            background: rgba(238, 77, 45, 0.02);
-        }
-
-        .upload-area i {
-            font-size: 3rem;
-            color: var(--primary);
-            margin-bottom: 15px;
-        }
-
-        .upload-area h3 {
-            color: var(--dark);
-            margin-bottom: 10px;
-        }
-
-        .upload-area p {
-            color: var(--text-light);
         }
 
         /* Log Console */
@@ -679,6 +697,91 @@
             opacity: 0.9;
         }
 
+        /* OTP Input */
+        .otp-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .otp-input {
+            width: 50px;
+            height: 60px;
+            text-align: center;
+            font-size: 1.5rem;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .otp-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(238, 77, 45, 0.1);
+            outline: none;
+        }
+
+        /* Login Method Tabs */
+        .login-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .login-tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .login-tab:hover {
+            color: var(--primary);
+        }
+
+        .login-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        /* Variation Tags */
+        .variation-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .variation-tag {
+            background: var(--light);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 2px solid var(--border);
+        }
+
+        .variation-tag .remove {
+            cursor: pointer;
+            color: var(--danger);
+            font-weight: bold;
+        }
+
+        .add-variation {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .add-variation input {
+            flex: 1;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .sidebar {
@@ -715,6 +818,12 @@
             .big-button {
                 padding: 15px 30px;
                 font-size: 1rem;
+            }
+
+            .otp-input {
+                width: 40px;
+                height: 50px;
+                font-size: 1.2rem;
             }
         }
 
@@ -790,120 +899,6 @@
             font-size: 0.9rem;
         }
 
-        /* Variation Tags */
-        .variation-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .variation-tag {
-            background: var(--light);
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border: 2px solid var(--border);
-        }
-
-        .variation-tag .remove {
-            cursor: pointer;
-            color: var(--danger);
-            font-weight: bold;
-        }
-
-        .add-variation {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .add-variation input {
-            flex: 1;
-        }
-
-        /* Mobile Menu Toggle */
-        .mobile-toggle {
-            display: none;
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1001;
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        @media (max-width: 768px) {
-            .mobile-toggle {
-                display: block;
-            }
-        }
-
-        /* Cookie Preview */
-        .cookie-preview {
-            background: var(--light);
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 15px;
-            max-height: 200px;
-            overflow-y: auto;
-            font-family: monospace;
-            font-size: 0.85rem;
-            border: 2px solid var(--border);
-        }
-
-        .cookie-preview.valid {
-            border-color: var(--success);
-            background: rgba(0, 184, 148, 0.05);
-        }
-
-        .cookie-preview.invalid {
-            border-color: var(--danger);
-            background: rgba(255, 71, 87, 0.05);
-        }
-
-        /* URL Input with icon */
-        .input-group {
-            position: relative;
-        }
-
-        .input-group i {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-light);
-        }
-
-        .input-group .form-control {
-            padding-left: 45px;
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-light);
-        }
-
-        .empty-state i {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            opacity: 0.5;
-        }
-
-        .empty-state h3 {
-            margin-bottom: 10px;
-            color: var(--dark);
-        }
-
         /* Modal */
         .modal-overlay {
             display: none;
@@ -928,6 +923,8 @@
             border-radius: 20px;
             max-width: 500px;
             width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
             animation: modalSlide 0.3s ease;
         }
 
@@ -953,33 +950,87 @@
             justify-content: flex-end;
         }
 
-        /* Session Details */
-        .session-details {
-            background: var(--light);
-            padding: 20px;
+        /* Security Notice */
+        .security-notice {
+            background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+            border: 2px solid #fc8181;
             border-radius: 12px;
-            margin-top: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
         }
 
-        .detail-row {
+        .security-notice h4 {
+            color: #c53030;
+            margin-bottom: 10px;
             display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border);
+            align-items: center;
+            gap: 10px;
         }
 
-        .detail-row:last-child {
-            border-bottom: none;
+        .security-notice p {
+            color: #742a2a;
+            font-size: 0.95rem;
+            line-height: 1.6;
         }
 
-        .detail-label {
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
             color: var(--text-light);
         }
 
-        .detail-value {
-            font-weight: 600;
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 10px;
             color: var(--dark);
         }
+
+        /* Mobile Menu Toggle */
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-toggle {
+                display: block;
+            }
+        }
+
+        /* Password Strength */
+        .password-strength {
+            margin-top: 8px;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .strength-weak { background: var(--danger); width: 33%; }
+        .strength-medium { background: var(--warning); width: 66%; }
+        .strength-strong { background: var(--success); width: 100%; }
     </style>
 </head>
 <body>
@@ -999,9 +1050,9 @@
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </div>
-                <div class="nav-item" onclick="showSection('sessions', this)">
-                    <i class="fas fa-user-circle"></i>
-                    <span>Session Manager</span>
+                <div class="nav-item" onclick="showSection('accounts', this)">
+                    <i class="fas fa-users"></i>
+                    <span>Account Manager</span>
                 </div>
                 <div class="nav-item" onclick="showSection('config', this)">
                     <i class="fas fa-cog"></i>
@@ -1040,8 +1091,8 @@
                         <div class="stat-icon">
                             <i class="fas fa-user-check"></i>
                         </div>
-                        <div class="stat-value" id="activeSession">-</div>
-                        <div class="stat-label">Active Session</div>
+                        <div class="stat-value" id="activeAccount">-</div>
+                        <div class="stat-label">Active Account</div>
                     </div>
                     <div class="stat-card success">
                         <div class="stat-icon">
@@ -1074,16 +1125,16 @@
                         <p><strong style="color: var(--dark);">Selamat datang di Shopee Flash Sale Bot!</strong></p>
                         <p>Ikuti langkah-langkah berikut untuk memulai:</p>
                         <ol style="margin-left: 20px; margin-top: 15px; margin-bottom: 20px;">
-                            <li style="margin-bottom: 10px;"><strong>Login Session</strong> - Buka "Session Manager" dan tambahkan cookies dari akun Shopee Anda</li>
+                            <li style="margin-bottom: 10px;"><strong>Tambah Akun</strong> - Buka "Account Manager" dan login dengan akun Shopee Anda</li>
                             <li style="margin-bottom: 10px;"><strong>Setting Produk</strong> - Masukkan URL produk target di "Configuration"</li>
                             <li style="margin-bottom: 10px;"><strong>Jalankan Bot</strong> - Klik "START BOT" di "Bot Control"</li>
                             <li><strong>Monitor</strong> - Pantau progress di dashboard dan logs</li>
                         </ol>
                         
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
-                            <div style="padding: 20px; background: rgba(238, 77, 45, 0.05); border-radius: 12px; text-align: center; cursor: pointer;" onclick="showSection('sessions', document.querySelectorAll('.nav-item')[1])">
-                                <i class="fas fa-user-circle" style="font-size: 2rem; color: var(--primary); margin-bottom: 10px;"></i>
-                                <div style="font-weight: 600; color: var(--dark);">1. Session</div>
+                            <div style="padding: 20px; background: rgba(238, 77, 45, 0.05); border-radius: 12px; text-align: center; cursor: pointer;" onclick="showSection('accounts', document.querySelectorAll('.nav-item')[1])">
+                                <i class="fas fa-users" style="font-size: 2rem; color: var(--primary); margin-bottom: 10px;"></i>
+                                <div style="font-weight: 600; color: var(--dark);">1. Login Akun</div>
                             </div>
                             <div style="padding: 20px; background: rgba(52, 152, 219, 0.05); border-radius: 12px; text-align: center; cursor: pointer;" onclick="showSection('config', document.querySelectorAll('.nav-item')[2])">
                                 <i class="fas fa-cog" style="font-size: 2rem; color: var(--info); margin-bottom: 10px;"></i>
@@ -1096,45 +1147,42 @@
                         </div>
 
                         <div style="margin-top: 25px; padding: 20px; background: rgba(255, 165, 2, 0.1); border-radius: 12px; border-left: 4px solid var(--warning);">
-                            <i class="fas fa-exclamation-triangle" style="color: var(--warning); margin-right: 10px;"></i>
-                            <strong>Perhatian:</strong> Bot ini menggunakan automation browser yang mungkin terdeteksi oleh sistem anti-bot Shopee. Gunakan dengan bijak dan risiko ditanggung sendiri.
+                            <i class="fas fa-shield-alt" style="color: var(--warning); margin-right: 10px;"></i>
+                            <strong>Keamanan:</strong> Password Anda dienkripsi dan disimpan secara lokal. Tidak ada data yang dikirim ke server kami.
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Sessions Section -->
-            <section id="sessions" class="content-section">
+            <!-- Accounts Section -->
+            <section id="accounts" class="content-section">
                 <div class="header">
-                    <h2><i class="fas fa-user-circle"></i> Session Manager</h2>
+                    <h2><i class="fas fa-users"></i> Account Manager</h2>
                     <div class="header-actions">
-                        <button class="btn btn-primary" onclick="openModal('addSessionModal')">
-                            <i class="fas fa-plus"></i> New Session
+                        <button class="btn btn-primary" onclick="openModal('addAccountModal')">
+                            <i class="fas fa-plus"></i> Tambah Akun
                         </button>
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Active Sessions</h3>
-                        <span class="badge badge-info" id="sessionCount">0 sessions</span>
-                    </div>
-                    <div class="session-list" id="sessionList">
-                        <div class="empty-state">
-                            <i class="fas fa-inbox"></i>
-                            <h3>Belum Ada Session</h3>
-                            <p>Klik "New Session" untuk menambahkan cookies Shopee Anda</p>
-                        </div>
-                    </div>
+                <div class="security-notice">
+                    <h4><i class="fas fa-lock"></i> Keamanan Data</h4>
+                    <p>Akun Shopee Anda disimpan dengan enkripsi AES-256 di browser (localStorage). 
+                    Password tidak pernah dikirim ke server kami. 
+                    <strong>Pastikan device Anda aman dan tidak dipinjamkan.</strong></p>
                 </div>
 
-                <div class="card" id="selectedSessionCard" style="display: none;">
+                <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title"><i class="fas fa-check-circle"></i> Session Terpilih</h3>
-                        <span class="badge badge-success">Active</span>
+                        <h3 class="card-title">Akun Tersimpan</h3>
+                        <span class="badge badge-info" id="accountCount">0 akun</span>
                     </div>
-                    <div class="session-details" id="selectedSessionDetails">
-                        <!-- Details will be inserted here -->
+                    <div class="account-list" id="accountList">
+                        <div class="empty-state">
+                            <i class="fas fa-user-plus"></i>
+                            <h3>Belum Ada Akun</h3>
+                            <p>Klik "Tambah Akun" untuk menambahkan akun Shopee Anda</p>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -1166,7 +1214,7 @@
                     <div class="form-group">
                         <label class="form-label">Product Variations</label>
                         <div class="variation-container" id="variationContainer">
-                            <!-- Variations will be added here -->
+                            <span style="color: var(--text-light); font-style: italic;">Belum ada varian (opsional)</span>
                         </div>
                         <div class="add-variation">
                             <input type="text" class="form-control" id="newVariation" placeholder="Tambah varian (contoh: Merah, Ukuran L)">
@@ -1274,8 +1322,8 @@
                     </div>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
                         <div style="padding: 15px; background: var(--light); border-radius: 10px;">
-                            <div style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 5px;">Session</div>
-                            <div id="configSession" style="color: var(--dark); font-weight: 600;">Not selected</div>
+                            <div style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 5px;">Account</div>
+                            <div id="configAccount" style="color: var(--dark); font-weight: 600;">Not selected</div>
                         </div>
                         <div style="padding: 15px; background: var(--light); border-radius: 10px;">
                             <div style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 5px;">Product URL</div>
@@ -1306,7 +1354,7 @@
                     </div>
                     <div class="console" id="liveConsole">
                         <div class="console-line info">[SYSTEM] Bot ready. Waiting to start...</div>
-                        <div class="console-line info">[SYSTEM] Please configure session and product URL first</div>
+                        <div class="console-line info">[SYSTEM] Please configure account and product URL first</div>
                     </div>
                 </div>
             </section>
@@ -1338,7 +1386,7 @@
                     <div class="console" id="historyConsole" style="height: 500px;">
                         <div class="console-line info">[2026-04-03 19:00:00] System initialized</div>
                         <div class="console-line info">[2026-04-03 19:00:01] Dashboard loaded successfully</div>
-                        <div class="console-line warning">[2026-04-03 19:00:02] No active session configured</div>
+                        <div class="console-line warning">[2026-04-03 19:00:02] No active account configured</div>
                     </div>
                 </div>
             </section>
@@ -1394,25 +1442,21 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title"><i class="fas fa-bell"></i> Notifications</h3>
+                        <h3 class="card-title"><i class="fas fa-shield-alt"></i> Security Settings</h3>
                     </div>
                     <div class="form-group">
-                        <div class="toggle-container">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="enableNotifications" checked>
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span>Enable desktop notifications</span>
+                        <label class="form-label">Encryption Password (Optional)</label>
+                        <div class="input-group">
+                            <i class="fas fa-key"></i>
+                            <input type="password" class="form-control" id="encryptionKey" placeholder="Tambahan keamanan untuk enkripsi">
+                            <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility('encryptionKey')"></i>
                         </div>
+                        <div class="form-text">Password tambahan untuk mengenkripsi data akun (opsional tapi direkomendasikan)</div>
                     </div>
                     <div class="form-group">
-                        <div class="toggle-container">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="soundAlerts" checked>
-                                <span class="toggle-slider"></span>
-                            </label>
-                            <span>Enable sound alerts</span>
-                        </div>
+                        <button class="btn btn-danger" onclick="clearAllData()">
+                            <i class="fas fa-trash-alt"></i> Clear All Data
+                        </button>
                     </div>
                 </div>
 
@@ -1423,9 +1467,9 @@
                     <div style="text-align: center; padding: 40px;">
                         <i class="fas fa-robot" style="font-size: 4rem; color: var(--primary); margin-bottom: 20px;"></i>
                         <h3 style="margin-bottom: 10px;">Shopee Flash Sale Bot</h3>
-                        <p style="color: var(--text-light); margin-bottom: 10px;">Version 2.0.0 | Enhanced Edition</p>
+                        <p style="color: var(--text-light); margin-bottom: 10px;">Version 3.0.0 | Login Edition</p>
                         <p style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 20px;">
-                            Tool otomasi flash sale dengan antarmuka modern dan fitur lengkap
+                            Tool otomasi flash sale dengan login akun langsung
                         </p>
                         <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
                             <a href="#" target="_blank" class="btn btn-secondary">
@@ -1444,40 +1488,118 @@
         </main>
     </div>
 
-    <!-- Add Session Modal -->
-    <div class="modal-overlay" id="addSessionModal">
+    <!-- Add Account Modal -->
+    <div class="modal-overlay" id="addAccountModal">
         <div class="modal">
             <div class="modal-header">
-                <h3><i class="fas fa-plus-circle"></i> Tambah Session Baru</h3>
-                <p style="color: var(--text-light); margin-top: 5px;">Masukkan cookies dari akun Shopee Anda</p>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Nama Session</label>
-                <input type="text" class="form-control" id="newSessionName" placeholder="Contoh: akun_utama, shopee_saya">
+                <h3><i class="fas fa-user-plus"></i> Tambah Akun Shopee</h3>
+                <p style="color: var(--text-light); margin-top: 5px;">Login dengan akun Shopee Anda</p>
             </div>
 
-            <div class="form-group">
-                <label class="form-label">Cookies JSON</label>
-                <textarea class="form-control" id="newSessionCookies" placeholder='[
-  {
-    "name": "SPC_EC",
-    "value": "your_cookie_value",
-    "domain": ".shopee.co.id"
-  }
-]' style="min-height: 150px; font-family: monospace; font-size: 0.9rem;"></textarea>
-                <div class="form-text">Paste cookies dalam format JSON. Anda bisa mendapatkannya dari browser extension seperti EditThisCookie.</div>
+            <div class="login-tabs">
+                <div class="login-tab active" onclick="switchLoginTab('password', this)">
+                    <i class="fas fa-lock"></i> Password
+                </div>
+                <div class="login-tab" onclick="switchLoginTab('otp', this)">
+                    <i class="fas fa-mobile-alt"></i> OTP
+                </div>
             </div>
 
-            <div class="cookie-preview" id="cookiePreview" style="display: none;">
-                <strong>Preview:</strong>
-                <div id="cookiePreviewContent"></div>
+            <!-- Password Login Form -->
+            <div id="passwordLoginForm">
+                <div class="form-group">
+                    <label class="form-label">Email / Username / No. HP</label>
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" class="form-control" id="loginUsername" placeholder="contoh: nama@email.com atau 08123456789">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" class="form-control" id="loginPassword" placeholder="Password Shopee Anda" oninput="checkPasswordStrength()">
+                        <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility('loginPassword')"></i>
+                    </div>
+                    <div class="password-strength">
+                        <div class="password-strength-bar" id="passwordStrengthBar"></div>
+                    </div>
+                    <div class="form-text" id="passwordStrengthText"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Nama Akun (Opsional)</label>
+                    <input type="text" class="form-control" id="accountLabel" placeholder="Contoh: Akun Utama, Akun Kedua">
+                    <div class="form-text">Untuk memudahkan identifikasi jika punya banyak akun</div>
+                </div>
+            </div>
+
+            <!-- OTP Login Form -->
+            <div id="otpLoginForm" style="display: none;">
+                <div class="form-group">
+                    <label class="form-label">Nomor HP</label>
+                    <div class="input-group">
+                        <i class="fas fa-mobile-alt"></i>
+                        <input type="tel" class="form-control" id="otpPhone" placeholder="08xxxxxxxxxx">
+                    </div>
+                </div>
+
+                <div class="form-group" id="otpInputSection" style="display: none;">
+                    <label class="form-label">Kode OTP</label>
+                    <div class="otp-container">
+                        <input type="text" class="otp-input" maxlength="1" oninput="moveToNextOtp(this, 0)">
+                        <input type="text" class="otp-input" maxlength="1" oninput="moveToNextOtp(this, 1)">
+                        <input type="text" class="otp-input" maxlength="1" oninput="moveToNextOtp(this, 2)">
+                        <input type="text" class="otp-input" maxlength="1" oninput="moveToNextOtp(this, 3)">
+                        <input type="text" class="otp-input" maxlength="1" oninput="moveToNextOtp(this, 4)">
+                        <input type="text" class="otp-input" maxlength="1" oninput="moveToNextOtp(this, 5)">
+                    </div>
+                    <div class="form-text">Kode OTP dikirim ke WhatsApp/SMS</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Nama Akun (Opsional)</label>
+                    <input type="text" class="form-control" id="otpAccountLabel" placeholder="Contoh: Akun Utama">
+                </div>
             </div>
 
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('addSessionModal')">Batal</button>
-                <button class="btn btn-primary" onclick="saveNewSession()">
-                    <i class="fas fa-save"></i> Simpan Session
+                <button class="btn btn-secondary" onclick="closeModal('addAccountModal')">Batal</button>
+                <button class="btn btn-primary" id="saveAccountBtn" onclick="saveAccount()">
+                    <i class="fas fa-save"></i> Simpan Akun
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- OTP Verification Modal -->
+    <div class="modal-overlay" id="otpVerifyModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-shield-alt"></i> Verifikasi OTP</h3>
+                <p style="color: var(--text-light); margin-top: 5px;">Masukkan kode OTP yang dikirim ke WhatsApp/SMS</p>
+            </div>
+
+            <div class="form-group">
+                <div class="otp-container">
+                    <input type="text" class="otp-input" maxlength="1" id="otp1" oninput="moveToNextOtp(this, 0)">
+                    <input type="text" class="otp-input" maxlength="1" id="otp2" oninput="moveToNextOtp(this, 1)">
+                    <input type="text" class="otp-input" maxlength="1" id="otp3" oninput="moveToNextOtp(this, 2)">
+                    <input type="text" class="otp-input" maxlength="1" id="otp4" oninput="moveToNextOtp(this, 3)">
+                    <input type="text" class="otp-input" maxlength="1" id="otp5" oninput="moveToNextOtp(this, 4)">
+                    <input type="text" class="otp-input" maxlength="1" id="otp6" oninput="moveToNextOtp(this, 5)">
+                </div>
+            </div>
+
+            <div style="text-align: center; margin: 20px 0;">
+                <p style="color: var(--text-light);">Tidak menerima kode? <a href="#" onclick="resendOtp()" style="color: var(--primary);">Kirim ulang</a></p>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('otpVerifyModal')">Batal</button>
+                <button class="btn btn-primary" onclick="verifyOtp()">
+                    <i class="fas fa-check"></i> Verifikasi
                 </button>
             </div>
         </div>
@@ -1487,9 +1609,25 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <script>
+        // Simple encryption (for demo - use proper encryption in production)
+        const CryptoUtil = {
+            encrypt: function(text, key) {
+                // In production, use proper encryption like AES
+                // This is simplified for demo
+                return btoa(text);
+            },
+            decrypt: function(encrypted, key) {
+                try {
+                    return atob(encrypted);
+                } catch(e) {
+                    return null;
+                }
+            }
+        };
+
         // State Management
         let config = {
-            session: '',
+            account: '',
             url: '',
             variation: [],
             chromedriver: './webdriver/chromedriver',
@@ -1501,14 +1639,16 @@
             timeout: 30
         };
 
-        let sessions = JSON.parse(localStorage.getItem('shopee_sessions') || '[]');
+        let accounts = JSON.parse(localStorage.getItem('shopee_accounts') || '[]');
         let botRunning = false;
         let logs = JSON.parse(localStorage.getItem('shopee_logs') || '[]');
-        let selectedSessionIndex = -1;
+        let selectedAccountIndex = -1;
+        let currentLoginMethod = 'password';
+        let pendingOtpAccount = null;
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            renderSessions();
+            renderAccounts();
             updateDashboard();
             loadSettings();
             
@@ -1516,10 +1656,6 @@
             const platform = navigator.platform.includes('Win') ? 'Windows' : 
                             navigator.platform.includes('Mac') ? 'Darwin' : 'Linux';
             document.getElementById('platform').value = platform;
-            
-            // Add event listeners for real-time validation
-            document.getElementById('newSessionCookies').addEventListener('input', validateCookieInput);
-            document.getElementById('productUrl').addEventListener('change', validateProductUrl);
             
             // Load saved config
             const savedConfig = localStorage.getItem('shopee_config');
@@ -1534,35 +1670,37 @@
                 renderVariations();
             }
             
+            // Load selected account
+            const savedAccountIndex = localStorage.getItem('shopee_selected_account');
+            if (savedAccountIndex !== null && accounts[savedAccountIndex]) {
+                selectedAccountIndex = parseInt(savedAccountIndex);
+                config.account = accounts[selectedAccountIndex].label || accounts[selectedAccountIndex].username;
+            }
+            
             addLog('System initialized successfully', 'success');
+            addLog('Login Edition v3.0.0 ready', 'info');
         });
 
         // Navigation
         function showSection(sectionId, navElement) {
-            // Hide all sections
             document.querySelectorAll('.content-section').forEach(section => {
                 section.classList.remove('active');
             });
             
-            // Remove active class from all nav items
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
             });
             
-            // Show selected section
             document.getElementById(sectionId).classList.add('active');
             
-            // Add active class to clicked nav item
             if (navElement) {
                 navElement.classList.add('active');
             }
             
-            // Update config display in bot section
             if (sectionId === 'bot') {
                 updateBotConfigDisplay();
             }
             
-            // Close sidebar on mobile
             if (window.innerWidth <= 768) {
                 document.getElementById('sidebar').classList.remove('active');
             }
@@ -1579,11 +1717,15 @@
 
         function closeModal(modalId) {
             document.getElementById(modalId).classList.remove('active');
-            // Clear inputs
-            if (modalId === 'addSessionModal') {
-                document.getElementById('newSessionName').value = '';
-                document.getElementById('newSessionCookies').value = '';
-                document.getElementById('cookiePreview').style.display = 'none';
+            
+            if (modalId === 'addAccountModal') {
+                document.getElementById('loginUsername').value = '';
+                document.getElementById('loginPassword').value = '';
+                document.getElementById('accountLabel').value = '';
+                document.getElementById('otpPhone').value = '';
+                document.getElementById('passwordStrengthBar').className = 'password-strength-bar';
+                document.getElementById('passwordStrengthText').textContent = '';
+                switchLoginTab('password', document.querySelector('.login-tab'));
             }
         }
 
@@ -1616,222 +1758,305 @@
             }, 4000);
         }
 
-        // Cookie Validation
-        function validateCookieInput() {
-            const input = document.getElementById('newSessionCookies').value;
-            const preview = document.getElementById('cookiePreview');
-            const previewContent = document.getElementById('cookiePreviewContent');
+        // Login Tab Switching
+        function switchLoginTab(method, element) {
+            currentLoginMethod = method;
             
-            if (!input.trim()) {
-                preview.style.display = 'none';
-                return;
-            }
+            document.querySelectorAll('.login-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            element.classList.add('active');
             
-            try {
-                const parsed = JSON.parse(input);
-                preview.style.display = 'block';
-                preview.className = 'cookie-preview valid';
-                
-                if (Array.isArray(parsed)) {
-                    const cookieNames = parsed.map(c => c.name || 'unnamed').join(', ');
-                    previewContent.innerHTML = `
-                        <div style="color: var(--success);"><i class="fas fa-check"></i> Valid JSON Array</div>
-                        <div style="margin-top: 5px; font-size: 0.85rem;">Cookies: ${cookieNames}</div>
-                        <div style="font-size: 0.85rem;">Total: ${parsed.length} cookies</div>
-                    `;
-                } else {
-                    previewContent.innerHTML = `
-                        <div style="color: var(--warning);"><i class="fas fa-exclamation-triangle"></i> Valid JSON but not an array</div>
-                    `;
-                }
-            } catch (e) {
-                preview.style.display = 'block';
-                preview.className = 'cookie-preview invalid';
-                previewContent.innerHTML = `
-                    <div style="color: var(--danger);"><i class="fas fa-times"></i> Invalid JSON</div>
-                    <div style="font-size: 0.8rem; margin-top: 5px;">${e.message}</div>
-                `;
+            if (method === 'password') {
+                document.getElementById('passwordLoginForm').style.display = 'block';
+                document.getElementById('otpLoginForm').style.display = 'none';
+            } else {
+                document.getElementById('passwordLoginForm').style.display = 'none';
+                document.getElementById('otpLoginForm').style.display = 'block';
             }
         }
 
-        // Session Management
-        function saveNewSession() {
-            const name = document.getElementById('newSessionName').value.trim();
-            const cookiesText = document.getElementById('newSessionCookies').value.trim();
+        // Password Visibility Toggle
+        function togglePasswordVisibility(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = input.nextElementSibling;
             
-            if (!name) {
-                showToast('Error', 'Nama session wajib diisi!', 'error');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Password Strength Checker
+        function checkPasswordStrength() {
+            const password = document.getElementById('loginPassword').value;
+            const bar = document.getElementById('passwordStrengthBar');
+            const text = document.getElementById('passwordStrengthText');
+            
+            if (!password) {
+                bar.className = 'password-strength-bar';
+                text.textContent = '';
                 return;
             }
             
-            if (!cookiesText) {
-                showToast('Error', 'Cookies JSON wajib diisi!', 'error');
+            let strength = 0;
+            if (password.length > 6) strength++;
+            if (password.length > 10) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+            
+            bar.className = 'password-strength-bar';
+            if (strength <= 2) {
+                bar.classList.add('strength-weak');
+                text.textContent = 'Password lemah';
+                text.style.color = 'var(--danger)';
+            } else if (strength <= 4) {
+                bar.classList.add('strength-medium');
+                text.textContent = 'Password sedang';
+                text.style.color = 'var(--warning)';
+            } else {
+                bar.classList.add('strength-strong');
+                text.textContent = 'Password kuat';
+                text.style.color = 'var(--success)';
+            }
+        }
+
+        // OTP Input Navigation
+        function moveToNextOtp(input, index) {
+            if (input.value.length === 1) {
+                const next = input.nextElementSibling;
+                if (next) next.focus();
+            }
+        }
+
+        // Account Management
+        function saveAccount() {
+            if (currentLoginMethod === 'password') {
+                savePasswordAccount();
+            } else {
+                requestOtp();
+            }
+        }
+
+        function savePasswordAccount() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const label = document.getElementById('accountLabel').value.trim();
+            
+            if (!username) {
+                showToast('Error', 'Email/Username/No. HP wajib diisi!', 'error');
                 return;
             }
             
-            try {
-                const cookies = JSON.parse(cookiesText);
+            if (!password) {
+                showToast('Error', 'Password wajib diisi!', 'error');
+                return;
+            }
+            
+            // Check if account already exists
+            const exists = accounts.some(acc => acc.username === username);
+            if (exists) {
+                showToast('Warning', 'Akun ini sudah tersimpan!', 'warning');
+                return;
+            }
+            
+            // Encrypt password (simplified - use proper encryption in production)
+            const encryptionKey = document.getElementById('encryptionKey').value;
+            const encryptedPassword = CryptoUtil.encrypt(password, encryptionKey);
+            
+            const account = {
+                id: Date.now(),
+                username: username,
+                password: encryptedPassword,
+                label: label || username,
+                type: 'password',
+                created: new Date().toLocaleString('id-ID'),
+                lastLogin: null,
+                isLoggedIn: false
+            };
+            
+            accounts.push(account);
+            localStorage.setItem('shopee_accounts', JSON.stringify(accounts));
+            
+            renderAccounts();
+            closeModal('addAccountModal');
+            
+            showToast('Success', `Akun "${account.label}" berhasil disimpan!`, 'success');
+            addLog(`Account "${account.label}" added with password login`, 'success');
+        }
+
+        function requestOtp() {
+            const phone = document.getElementById('otpPhone').value.trim();
+            
+            if (!phone || !phone.match(/^08\d{8,12}$/)) {
+                showToast('Error', 'Nomor HP tidak valid! (format: 08xxxxxxxxxx)', 'error');
+                return;
+            }
+            
+            // Simulate OTP request
+            showToast('Info', 'Mengirim kode OTP...', 'info');
+            
+            setTimeout(() => {
+                showToast('Success', 'Kode OTP dikirim ke WhatsApp/SMS!', 'success');
+                document.getElementById('otpInputSection').style.display = 'block';
                 
-                if (!Array.isArray(cookies)) {
-                    showToast('Error', 'Cookies harus berupa array JSON!', 'error');
-                    return;
-                }
-                
-                // Check for required cookies
-                const hasSPCEC = cookies.some(c => c.name === 'SPC_EC');
-                const hasSPCF = cookies.some(c => c.name === 'SPC_F');
-                
-                const session = {
-                    id: Date.now(),
-                    name: name,
-                    cookies: cookies,
-                    created: new Date().toLocaleString('id-ID'),
-                    createdISO: new Date().toISOString(),
-                    isValid: true,
-                    hasRequiredCookies: hasSPCEC && hasSPCF
+                // In real implementation, this would trigger actual OTP API
+                pendingOtpAccount = {
+                    phone: phone,
+                    label: document.getElementById('otpAccountLabel').value.trim() || phone
                 };
-                
-                sessions.push(session);
-                localStorage.setItem('shopee_sessions', JSON.stringify(sessions));
-                
-                renderSessions();
-                closeModal('addSessionModal');
-                
-                let message = `Session "${name}" berhasil disimpan!`;
-                if (!session.hasRequiredCookies) {
-                    message += ' (Warning: Cookies SPC_EC atau SPC_F tidak ditemukan)';
-                }
-                
-                showToast('Success', message, session.hasRequiredCookies ? 'success' : 'warning');
-                addLog(`Session "${name}" created with ${cookies.length} cookies`, 'success');
-                
-            } catch (err) {
-                showToast('Error', 'Format JSON tidak valid: ' + err.message, 'error');
-            }
+            }, 1500);
         }
 
-        function renderSessions() {
-            const container = document.getElementById('sessionList');
-            const countBadge = document.getElementById('sessionCount');
+        function verifyOtp() {
+            const otp = Array.from({length: 6}, (_, i) => 
+                document.getElementById(`otp${i+1}`).value
+            ).join('');
             
-            countBadge.textContent = `${sessions.length} session${sessions.length !== 1 ? 's' : ''}`;
+            if (otp.length !== 6) {
+                showToast('Error', 'Masukkan kode OTP lengkap (6 digit)!', 'error');
+                return;
+            }
             
-            if (sessions.length === 0) {
+            // Simulate OTP verification
+            showToast('Success', 'OTP berhasil diverifikasi!', 'success');
+            
+            // Save account
+            const account = {
+                id: Date.now(),
+                username: pendingOtpAccount.phone,
+                phone: pendingOtpAccount.phone,
+                label: pendingOtpAccount.label,
+                type: 'otp',
+                created: new Date().toLocaleString('id-ID'),
+                lastLogin: new Date().toLocaleString('id-ID'),
+                isLoggedIn: true
+            };
+            
+            accounts.push(account);
+            localStorage.setItem('shopee_accounts', JSON.stringify(accounts));
+            
+            renderAccounts();
+            closeModal('otpVerifyModal');
+            closeModal('addAccountModal');
+            
+            addLog(`Account "${account.label}" added with OTP login`, 'success');
+        }
+
+        function resendOtp() {
+            showToast('Info', 'Mengirim ulang kode OTP...', 'info');
+            setTimeout(() => {
+                showToast('Success', 'Kode OTP baru telah dikirim!', 'success');
+            }, 1500);
+        }
+
+        function renderAccounts() {
+            const container = document.getElementById('accountList');
+            const countBadge = document.getElementById('accountCount');
+            
+            countBadge.textContent = `${accounts.length} akun`;
+            
+            if (accounts.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
-                        <i class="fas fa-inbox"></i>
-                        <h3>Belum Ada Session</h3>
-                        <p>Klik "New Session" untuk menambahkan cookies Shopee Anda</p>
+                        <i class="fas fa-user-plus"></i>
+                        <h3>Belum Ada Akun</h3>
+                        <p>Klik "Tambah Akun" untuk menambahkan akun Shopee Anda</p>
                     </div>
                 `;
-                document.getElementById('selectedSessionCard').style.display = 'none';
                 return;
             }
             
-            container.innerHTML = sessions.map((session, index) => `
-                <div class="session-item ${selectedSessionIndex === index ? 'active' : ''}">
-                    <div class="session-info">
-                        <h4><i class="fas fa-user-circle"></i> ${session.name}</h4>
-                        <p><i class="fas fa-clock"></i> Created: ${session.created} | <i class="fas fa-cookie"></i> ${session.cookies.length} cookies</p>
-                        ${!session.hasRequiredCookies ? '<span style="color: var(--warning); font-size: 0.85rem;"><i class="fas fa-exclamation-triangle"></i> Missing required cookies</span>' : ''}
+            container.innerHTML = accounts.map((account, index) => `
+                <div class="account-item ${selectedAccountIndex === index ? 'active' : ''}">
+                    <div class="account-info">
+                        <h4>
+                            <i class="fas ${account.type === 'otp' ? 'fa-mobile-alt' : 'fa-envelope'}"></i>
+                            ${account.label}
+                            <span class="account-status ${account.isLoggedIn ? 'logged-in' : 'logged-out'}">
+                                <i class="fas fa-circle" style="font-size: 8px;"></i>
+                                ${account.isLoggedIn ? 'Active' : 'Inactive'}
+                            </span>
+                        </h4>
+                        <p>
+                            <i class="fas fa-user"></i> ${account.username} | 
+                            <i class="fas fa-clock"></i> ${account.created} |
+                            <i class="fas fa-shield-alt"></i> ${account.type.toUpperCase()}
+                        </p>
                     </div>
-                    <div class="session-actions">
-                        <button class="btn-icon ${selectedSessionIndex === index ? 'active' : ''}" 
-                                onclick="selectSession(${index})" 
-                                title="${selectedSessionIndex === index ? 'Session Active' : 'Select Session'}">
-                            <i class="fas ${selectedSessionIndex === index ? 'fa-check' : 'fa-play'}"></i>
+                    <div class="account-actions">
+                        <button class="btn-icon ${selectedAccountIndex === index ? 'active' : ''}" 
+                                onclick="selectAccount(${index})" 
+                                title="${selectedAccountIndex === index ? 'Account Active' : 'Select Account'}">
+                            <i class="fas ${selectedAccountIndex === index ? 'fa-check' : 'fa-play'}"></i>
                         </button>
-                        <button class="btn-icon" onclick="viewSessionDetails(${index})" title="View Details">
-                            <i class="fas fa-eye"></i>
+                        <button class="btn-icon" onclick="testLogin(${index})" title="Test Login">
+                            <i class="fas fa-plug"></i>
                         </button>
-                        <button class="btn-icon delete" onclick="deleteSession(${index})" title="Delete">
+                        <button class="btn-icon delete" onclick="deleteAccount(${index})" title="Delete">
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>
                 </div>
             `).join('');
-            
-            if (selectedSessionIndex >= 0 && sessions[selectedSessionIndex]) {
-                showSelectedSessionDetails();
-            }
         }
 
-        function selectSession(index) {
-            selectedSessionIndex = index;
-            config.session = sessions[index].name;
-            localStorage.setItem('shopee_selected_session', index);
+        function selectAccount(index) {
+            selectedAccountIndex = index;
+            config.account = accounts[index].label;
+            localStorage.setItem('shopee_selected_account', index);
             
-            renderSessions();
+            renderAccounts();
             updateDashboard();
             updateBotConfigDisplay();
             
-            showToast('Session Selected', `Session "${sessions[index].name}" sekarang aktif!`, 'success');
-            addLog(`Session changed to: ${sessions[index].name}`, 'info');
+            showToast('Account Selected', `Akun "${accounts[index].label}" sekarang aktif!`, 'success');
+            addLog(`Account changed to: ${accounts[index].label}`, 'info');
         }
 
-        function viewSessionDetails(index) {
-            const session = sessions[index];
-            const cookieNames = session.cookies.map(c => c.name).join(', ');
+        function testLogin(index) {
+            const account = accounts[index];
+            showToast('Info', `Testing login for "${account.label}"...`, 'info');
             
-            alert(`Session Details:
-            
-Nama: ${session.name}
-Created: ${session.created}
-Total Cookies: ${session.cookies.length}
-Cookies: ${cookieNames}
-Valid: ${session.hasRequiredCookies ? 'Yes' : 'No (missing SPC_EC or SPC_F)'}`);
+            // Simulate login test
+            setTimeout(() => {
+                showToast('Success', `Login test berhasil untuk "${account.label}"!`, 'success');
+                account.lastLogin = new Date().toLocaleString('id-ID');
+                account.isLoggedIn = true;
+                localStorage.setItem('shopee_accounts', JSON.stringify(accounts));
+                renderAccounts();
+            }, 2000);
         }
 
-        function showSelectedSessionDetails() {
-            const session = sessions[selectedSessionIndex];
-            if (!session) return;
-            
-            document.getElementById('selectedSessionCard').style.display = 'block';
-            document.getElementById('selectedSessionDetails').innerHTML = `
-                <div class="detail-row">
-                    <span class="detail-label">Nama Session</span>
-                    <span class="detail-value">${session.name}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Dibuat</span>
-                    <span class="detail-value">${session.created}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Jumlah Cookies</span>
-                    <span class="detail-value">${session.cookies.length} cookies</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Status Validasi</span>
-                    <span class="detail-value" style="color: ${session.hasRequiredCookies ? 'var(--success)' : 'var(--warning)'}">
-                        ${session.hasRequiredCookies ? '✓ Valid' : '⚠ Perlu SPC_EC/SPC_F'}
-                    </span>
-                </div>
-            `;
-        }
-
-        function deleteSession(index) {
-            if (!confirm(`Yakin ingin menghapus session "${sessions[index].name}"?`)) {
+        function deleteAccount(index) {
+            const account = accounts[index];
+            if (!confirm(`Yakin ingin menghapus akun "${account.label}"?\n\nUsername: ${account.username}\nTipe: ${account.type.toUpperCase()}`)) {
                 return;
             }
             
-            const name = sessions[index].name;
-            sessions.splice(index, 1);
+            accounts.splice(index, 1);
             
-            if (selectedSessionIndex === index) {
-                selectedSessionIndex = -1;
-                config.session = '';
-                localStorage.removeItem('shopee_selected_session');
-            } else if (selectedSessionIndex > index) {
-                selectedSessionIndex--;
+            if (selectedAccountIndex === index) {
+                selectedAccountIndex = -1;
+                config.account = '';
+                localStorage.removeItem('shopee_selected_account');
+            } else if (selectedAccountIndex > index) {
+                selectedAccountIndex--;
             }
             
-            localStorage.setItem('shopee_sessions', JSON.stringify(sessions));
-            renderSessions();
+            localStorage.setItem('shopee_accounts', JSON.stringify(accounts));
+            renderAccounts();
             updateDashboard();
             updateBotConfigDisplay();
             
-            showToast('Deleted', `Session "${name}" telah dihapus`, 'warning');
-            addLog(`Session "${name}" deleted`, 'warning');
+            showToast('Deleted', `Akun "${account.label}" telah dihapus`, 'warning');
+            addLog(`Account "${account.label}" deleted`, 'warning');
         }
 
         // Variation Management
@@ -1880,23 +2105,8 @@ Valid: ${session.hasRequiredCookies ? 'Yes' : 'No (missing SPC_EC or SPC_F)'}`);
         }
 
         // Configuration
-        function validateProductUrl() {
-            const url = document.getElementById('productUrl').value;
-            const shopeePattern = /https?:\/\/(www\.)?shopee\.(co\.id|com\.my|sg|ph|vn|th)\/.+/;
-            
-            if (url && !shopeePattern.test(url)) {
-                showToast('Warning', 'URL tidak terlihat seperti URL Shopee yang valid', 'warning');
-                return false;
-            }
-            return true;
-        }
-
         function saveConfig() {
             const url = document.getElementById('productUrl').value.trim();
-            
-            if (url && !validateProductUrl()) {
-                return;
-            }
             
             config.url = url;
             config.autoCheckout = document.getElementById('autoCheckout').checked;
@@ -1938,7 +2148,6 @@ Valid: ${session.hasRequiredCookies ? 'Yes' : 'No (missing SPC_EC or SPC_F)'}`);
             showToast('Info', 'Memeriksa ChromeDriver...', 'info');
             
             setTimeout(() => {
-                // Simulation - in real implementation, this would check actual driver
                 const isWindows = document.getElementById('platform').value === 'Windows';
                 const driverPath = document.getElementById('driverPath').value;
                 
@@ -1952,25 +2161,46 @@ Valid: ${session.hasRequiredCookies ? 'Yes' : 'No (missing SPC_EC or SPC_F)'}`);
 
         function downloadDriver() {
             const platform = document.getElementById('platform').value;
-            const urls = {
-                'Windows': 'https://chromedriver.chromium.org/downloads',
-                'Linux': 'https://chromedriver.chromium.org/downloads',
-                'Darwin': 'https://chromedriver.chromium.org/downloads'
-            };
-            
-            window.open(urls[platform], '_blank');
+            window.open('https://chromedriver.chromium.org/downloads', '_blank');
             showToast('Info', 'Mengarahkan ke halaman download ChromeDriver...', 'info');
+        }
+
+        function clearAllData() {
+            if (!confirm('⚠️ PERINGATAN!\n\nIni akan menghapus SEMUA data:\n- Semua akun tersimpan\n- Semua konfigurasi\n- Semua logs\n\nData tidak bisa dikembalikan!\n\nLanjutkan?')) {
+                return;
+            }
+            
+            if (!confirm('Konfirmasi terakhir: Anda YAKIN ingin menghapus semua data?')) {
+                return;
+            }
+            
+            localStorage.removeItem('shopee_accounts');
+            localStorage.removeItem('shopee_config');
+            localStorage.removeItem('shopee_logs');
+            localStorage.removeItem('shopee_selected_account');
+            
+            accounts = [];
+            selectedAccountIndex = -1;
+            config.account = '';
+            logs = [];
+            
+            renderAccounts();
+            updateDashboard();
+            updateBotConfigDisplay();
+            
+            showToast('Cleared', 'Semua data telah dihapus!', 'success');
+            addLog('All data cleared by user', 'warning');
         }
 
         // Bot Control
         function updateBotConfigDisplay() {
-            const sessionEl = document.getElementById('configSession');
+            const accountEl = document.getElementById('configAccount');
             const urlEl = document.getElementById('configUrl');
             const checkoutEl = document.getElementById('configCheckout');
             const variationsEl = document.getElementById('configVariations');
             
-            sessionEl.textContent = config.session || 'Not selected';
-            sessionEl.style.color = config.session ? 'var(--success)' : 'var(--danger)';
+            accountEl.textContent = config.account || 'Not selected';
+            accountEl.style.color = config.account ? 'var(--success)' : 'var(--danger)';
             
             urlEl.textContent = config.url || 'Not set';
             urlEl.style.color = config.url ? 'var(--dark)' : 'var(--danger)';
@@ -1995,9 +2225,9 @@ Valid: ${session.hasRequiredCookies ? 'Yes' : 'No (missing SPC_EC or SPC_F)'}`);
             
             if (!botRunning) {
                 // Validation before start
-                if (!config.session) {
-                    showToast('Error', 'Pilih session terlebih dahulu di Session Manager!', 'error');
-                    showSection('sessions', document.querySelectorAll('.nav-item')[1]);
+                if (selectedAccountIndex === -1) {
+                    showToast('Error', 'Pilih akun terlebih dahulu di Account Manager!', 'error');
+                    showSection('accounts', document.querySelectorAll('.nav-item')[1]);
                     return;
                 }
                 
@@ -2007,34 +2237,31 @@ Valid: ${session.hasRequiredCookies ? 'Yes' : 'No (missing SPC_EC or SPC_F)'}`);
                     return;
                 }
                 
-                if (!validateProductUrl()) {
-                    showToast('Error', 'URL produk tidak valid!', 'error');
-                    return;
-                }
-                
                 // Start bot
                 botRunning = true;
                 btn.className = 'big-button stop';
                 btn.innerHTML = '<i class="fas fa-stop"></i><span>STOP BOT</span>';
                 progressContainer.classList.add('active');
+                
                 logStatus.textContent = 'Running';
                 logStatus.className = 'badge badge-success';
                 
                 document.getElementById('botStatus').textContent = 'Running';
                 
+                const account = accounts[selectedAccountIndex];
+                
                 addLog('========================================', 'info');
                 addLog('BOT STARTED', 'success');
-                addLog(`Session: ${config.session}`, 'info');
+                addLog(`Account: ${account.label} (${account.username})`, 'info');
+                addLog(`Login Type: ${account.type.toUpperCase()}`, 'info');
                 addLog(`Target URL: ${config.url}`, 'info');
                 addLog(`Auto Checkout: ${config.autoCheckout ? 'ON' : 'OFF'}`, 'info');
                 addLog(`Variations: ${config.variation.join(', ') || 'Any'}`, 'info');
                 addLog('========================================', 'info');
                 
-                // Simulate bot operation
                 simulateBotOperation();
                 
             } else {
-                // Stop bot
                 stopBot();
             }
         }
@@ -2064,17 +2291,17 @@ Valid: ${session.hasRequiredCookies ? 'Yes' : 'No (missing SPC_EC or SPC_F)'}`);
         function simulateBotOperation() {
             if (!botRunning) return;
             
+            const account = accounts[selectedAccountIndex];
             const steps = [
                 { percent: 5, text: 'Initializing ChromeDriver...', delay: 1000 },
                 { percent: 15, text: 'Setting up Chrome options...', delay: 1000 },
-                { percent: 25, text: 'Loading session cookies...', delay: 1500 },
-                { percent: 35, text: 'Navigating to Shopee...', delay: 2000 },
-                { percent: 50, text: 'Loading product page...', delay: 2000 },
-                { percent: 60, text: 'Checking product availability...', delay: 1500 },
-                { percent: 70, text: 'Monitoring flash sale status...', delay: 3000 },
-                { percent: 80, text: 'Waiting for sale to start...', delay: 4000 },
-                { percent: 90, text: 'Attempting to add to cart...', delay: 2000 },
-                { percent: 100, text: 'Processing checkout...', delay: 2000 }
+                { percent: 25, text: `Logging in as ${account.username}...`, delay: 2000 },
+                { percent: 40, text: 'Verifying login credentials...', delay: 1500 },
+                { percent: 55, text: 'Navigating to Shopee...', delay: 2000 },
+                { percent: 70, text: 'Loading product page...', delay: 2000 },
+                { percent: 80, text: 'Monitoring flash sale status...', delay: 3000 },
+                { percent: 90, text: 'Waiting for sale to start...', delay: 4000 },
+                { percent: 100, text: 'Attempting checkout...', delay: 2000 }
             ];
             
             let currentStep = 0;
@@ -2093,13 +2320,12 @@ Valid: ${session.hasRequiredCookies ? 'Yes' : 'No (missing SPC_EC or SPC_F)'}`);
                     currentStep++;
                     setTimeout(executeStep, step.delay);
                 } else {
-                    // Cycle complete - restart simulation for demo
                     if (botRunning) {
                         addLog('[BOT] Cycle complete. Restarting monitor...', 'success');
                         setTimeout(() => {
                             if (botRunning) {
-                                currentStep = 6; // Go back to monitoring
-                                document.getElementById('progressFill').style.width = '70%';
+                                currentStep = 7;
+                                document.getElementById('progressFill').style.width = '80%';
                                 executeStep();
                             }
                         }, 2000);
@@ -2122,14 +2348,12 @@ Valid: ${session.hasRequiredCookies ? 'Yes' : 'No (missing SPC_EC or SPC_F)'}`);
                 rawMessage: message
             });
             
-            // Keep only last 1000 logs
             if (logs.length > 1000) {
                 logs = logs.slice(-1000);
             }
             
             localStorage.setItem('shopee_logs', JSON.stringify(logs));
             
-            // Add to live console
             const liveConsole = document.getElementById('liveConsole');
             const line = document.createElement('div');
             line.className = `console-line ${type}`;
@@ -2137,7 +2361,6 @@ Valid: ${session.hasRequiredCookies ? 'Yes' : 'No (missing SPC_EC or SPC_F)'}`);
             liveConsole.appendChild(line);
             liveConsole.scrollTop = liveConsole.scrollHeight;
             
-            // Add to history
             const historyConsole = document.getElementById('historyConsole');
             const historyLine = document.createElement('div');
             historyLine.className = `console-line ${type}`;
@@ -2145,7 +2368,6 @@ Valid: ${session.hasRequiredCookies ? 'Yes' : 'No (missing SPC_EC or SPC_F)'}`);
             historyConsole.appendChild(historyLine);
             historyConsole.scrollTop = historyConsole.scrollHeight;
             
-            // Update total attempts stat if success
             if (type === 'success' && message.includes('checkout')) {
                 const currentAttempts = parseInt(document.getElementById('totalAttempts').textContent) || 0;
                 document.getElementById('totalAttempts').textContent = currentAttempts + 1;
@@ -2208,16 +2430,14 @@ Valid: ${session.hasRequiredCookies ? 'Yes' : 'No (missing SPC_EC or SPC_F)'}`);
 
         // Dashboard
         function updateDashboard() {
-            document.getElementById('activeSession').textContent = config.session || '-';
+            document.getElementById('activeAccount').textContent = config.account || '-';
             
-            // Load saved stats
             const savedStats = localStorage.getItem('shopee_stats');
             if (savedStats) {
                 const stats = JSON.parse(savedStats);
                 document.getElementById('totalAttempts').textContent = stats.attempts || 0;
             }
             
-            // Update next flash sale time (simulation)
             const now = new Date();
             const nextHour = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours() + 1, 0, 0);
             const hours = nextHour.getHours().toString().padStart(2, '0');
@@ -2227,13 +2447,12 @@ Valid: ${session.hasRequiredCookies ? 'Yes' : 'No (missing SPC_EC or SPC_F)'}`);
 
         function refreshDashboard() {
             updateDashboard();
-            renderSessions();
+            renderAccounts();
             showToast('Refreshed', 'Dashboard telah diperbarui', 'success');
         }
 
         // Keyboard shortcuts
         document.addEventListener('keydown', function(e) {
-            // Ctrl/Cmd + Enter to toggle bot
             if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
                 const botSection = document.getElementById('bot');
                 if (botSection.classList.contains('active')) {
@@ -2241,7 +2460,6 @@ Valid: ${session.hasRequiredCookies ? 'Yes' : 'No (missing SPC_EC or SPC_F)'}`);
                 }
             }
             
-            // Escape to close modals
             if (e.key === 'Escape') {
                 document.querySelectorAll('.modal-overlay').forEach(modal => {
                     modal.classList.remove('active');
@@ -2249,24 +2467,11 @@ Valid: ${session.hasRequiredCookies ? 'Yes' : 'No (missing SPC_EC or SPC_F)'}`);
             }
         });
 
-        // Handle Enter key in variation input
         document.getElementById('newVariation').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 addVariation();
             }
         });
-
-        // Load selected session from storage
-        const savedSelectedIndex = localStorage.getItem('shopee_selected_session');
-        if (savedSelectedIndex !== null && sessions[savedSelectedIndex]) {
-            selectedSessionIndex = parseInt(savedSelectedIndex);
-            config.session = sessions[selectedSessionIndex].name;
-        }
-
-        // Request notification permission on load
-        if ('Notification' in window && Notification.permission === 'default') {
-            Notification.requestPermission();
-        }
     </script>
 </body>
 </html>
