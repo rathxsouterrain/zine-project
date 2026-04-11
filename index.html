@@ -13,6 +13,8 @@
             --bg-dark: #0a0a0a;
             --primary: #ffffff;
             --secondary: #a0a0a0;
+            --accent: #00d4ff;
+            --shopee: #ee4d2d;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -24,19 +26,13 @@
             min-height: 100vh;
         }
 
-        /* Background */
         .liquid-bg {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            overflow: hidden;
-            background: #050505;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; overflow: hidden; background: #050505;
         }
         .blob {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.4;
+            position: absolute; border-radius: 50%;
+            filter: blur(80px); opacity: 0.4;
             animation: float 20s infinite ease-in-out;
         }
         .blob-1 {
@@ -46,7 +42,7 @@
         }
         .blob-2 {
             width: 500px; height: 500px;
-            background: radial-gradient(circle, rgba(200,200,200,0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(0,212,255,0.1) 0%, transparent 70%);
             bottom: -150px; right: -150px;
             animation-delay: -5s;
         }
@@ -55,54 +51,35 @@
             50% { transform: translate(-30px, 30px) scale(0.9); }
         }
 
-        /* Glass Nav */
         .glass-nav {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            height: 70px;
+            position: fixed; top: 0; left: 0; right: 0; height: 70px;
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--glass-border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 30px;
-            z-index: 1000;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 30px; z-index: 1000;
         }
-        .logo {
-            display: flex; align-items: center; gap: 12px;
-            font-size: 1.5rem; font-weight: 700;
-            cursor: pointer;
-        }
-        .nav-actions { display: flex; gap: 12px; }
+        .logo { display: flex; align-items: center; gap: 12px; font-size: 1.5rem; font-weight: 700; cursor: pointer; }
         
+        .nav-actions { display: flex; gap: 12px; }
         .glass-btn {
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
             color: var(--primary);
-            padding: 10px 20px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            padding: 10px 20px; border-radius: 12px;
+            cursor: pointer; transition: all 0.3s ease;
             backdrop-filter: blur(10px);
-            font-size: 1rem;
-            display: flex; align-items: center; gap: 8px;
+            font-size: 1rem; display: flex; align-items: center; gap: 8px;
         }
-        .glass-btn:hover {
-            background: var(--glass-highlight);
-            transform: translateY(-2px);
-        }
+        .glass-btn:hover { background: var(--glass-highlight); transform: translateY(-2px); }
 
-        /* Category Panel */
         .category-panel {
-            position: fixed;
-            top: 0; right: -400px;
+            position: fixed; top: 0; right: -400px;
             width: 380px; height: 100vh;
             background: rgba(10, 10, 10, 0.98);
             backdrop-filter: blur(30px);
             border-left: 1px solid var(--glass-border);
-            z-index: 2000;
-            transition: right 0.4s ease;
+            z-index: 2000; transition: right 0.4s ease;
             padding: 30px;
         }
         .category-panel.active { right: 0; }
@@ -111,46 +88,36 @@
             position: fixed; inset: 0;
             background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(5px);
-            z-index: 1999;
-            opacity: 0; visibility: hidden;
+            z-index: 1999; opacity: 0; visibility: hidden;
             transition: all 0.3s ease;
         }
         .panel-overlay.active { opacity: 1; visibility: visible; }
 
         .panel-header {
             display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
+            margin-bottom: 30px; padding-bottom: 20px;
             border-bottom: 1px solid var(--glass-border);
         }
         .close-panel {
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
             color: var(--primary);
-            width: 40px; height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            width: 40px; height: 40px; border-radius: 50%;
+            cursor: pointer; transition: all 0.3s ease;
         }
         .close-panel:hover { transform: rotate(90deg); }
 
         .category-list { display: flex; flex-direction: column; gap: 16px; }
         .category-item {
             display: flex; align-items: center; gap: 16px;
-            padding: 20px;
-            background: var(--glass-bg);
+            padding: 20px; background: var(--glass-bg);
             border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            cursor: pointer;
+            border-radius: 16px; cursor: pointer;
             transition: all 0.3s ease;
         }
-        .category-item:hover {
-            background: var(--glass-highlight);
-            transform: translateX(-5px);
-        }
+        .category-item:hover { background: var(--glass-highlight); transform: translateX(-5px); }
         .cat-icon {
-            width: 50px; height: 50px;
-            border-radius: 12px;
+            width: 50px; height: 50px; border-radius: 12px;
             display: flex; align-items: center; justify-content: center;
             font-size: 1.3rem;
         }
@@ -158,20 +125,10 @@
         .bocil-icon { background: rgba(200, 200, 200, 0.15); }
         .abg-icon { background: rgba(150, 150, 150, 0.2); }
 
-        /* Main Content */
-        .main-content {
-            padding: 90px 30px 50px;
-            max-width: 1600px;
-            margin: 0 auto;
-        }
-
-        .section-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 24px;
-        }
+        .main-content { padding: 90px 30px 50px; max-width: 1600px; margin: 0 auto; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
         .section-header h2 { font-size: 1.5rem; font-weight: 600; }
 
-        /* Video Grid */
         .video-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -182,9 +139,7 @@
             background: var(--glass-bg);
             backdrop-filter: blur(15px);
             border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            overflow: hidden;
-            cursor: pointer;
+            border-radius: 20px; overflow: hidden;
             transition: all 0.4s ease;
             position: relative;
         }
@@ -194,15 +149,14 @@
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
         }
         .video-card.hidden { display: none; }
+        .video-card.ready { border-color: var(--accent); }
 
         .video-thumbnail {
-            position: relative;
-            width: 100%; aspect-ratio: 16/9;
-            overflow: hidden;
+            position: relative; width: 100%; aspect-ratio: 16/9;
+            overflow: hidden; cursor: pointer;
         }
         .video-thumbnail img {
-            width: 100%; height: 100%;
-            object-fit: cover;
+            width: 100%; height: 100%; object-fit: cover;
             filter: grayscale(100%) contrast(1.1);
             transition: all 0.5s ease;
         }
@@ -215,26 +169,60 @@
             position: absolute; inset: 0;
             background: rgba(0, 0, 0, 0.4);
             display: flex; align-items: center; justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            opacity: 0; transition: opacity 0.3s ease;
         }
         .video-card:hover .play-overlay { opacity: 1; }
         .play-overlay i {
             font-size: 3rem; color: white;
             background: rgba(255, 255, 255, 0.2);
-            width: 70px; height: 70px;
-            border-radius: 50%;
+            width: 70px; height: 70px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             backdrop-filter: blur(10px);
             border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .shopee-overlay {
+            position: absolute; inset: 0;
+            background: rgba(238, 77, 45, 0.95);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            opacity: 0; visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .video-card.show-shopee .shopee-overlay {
+            opacity: 1; visibility: visible;
+        }
+        .shopee-overlay i { font-size: 3rem; margin-bottom: 10px; }
+        .shopee-overlay span { font-weight: 600; font-size: 1.1rem; }
+
+        .watch-btn {
+            position: absolute; bottom: 12px; left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--accent);
+            color: #000; border: none;
+            padding: 12px 24px; border-radius: 25px;
+            font-weight: 600; cursor: pointer;
+            opacity: 0; visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
+            display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 4px 20px rgba(0,212,255,0.3);
+        }
+        .video-card.ready .watch-btn {
+            opacity: 1; visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+        .watch-btn:hover {
+            background: #fff;
+            box-shadow: 0 6px 30px rgba(0,212,255,0.5);
+            transform: translateX(-50%) translateY(-2px);
         }
 
         .category-badge {
             position: absolute; top: 12px; left: 12px;
             background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(10px);
-            padding: 6px 12px;
-            border-radius: 20px;
+            padding: 6px 12px; border-radius: 20px;
             font-size: 0.75rem; font-weight: 600;
             text-transform: uppercase;
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -243,8 +231,7 @@
         .video-info { padding: 20px; }
         .video-info h3 {
             font-size: 1.1rem; font-weight: 600;
-            margin-bottom: 8px;
-            line-height: 1.4;
+            margin-bottom: 8px; line-height: 1.4;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
@@ -252,21 +239,25 @@
         }
         .video-meta {
             display: flex; justify-content: space-between;
-            color: var(--secondary);
-            font-size: 0.85rem;
+            color: var(--secondary); font-size: 0.85rem;
         }
+        .ready-badge {
+            color: var(--accent);
+            font-size: 0.75rem;
+            display: none; align-items: center; gap: 4px;
+        }
+        .video-card.ready .ready-badge { display: flex; }
 
         /* Player Modal */
         .player-modal {
             position: fixed; inset: 0;
             background: rgba(0, 0, 0, 0.95);
             backdrop-filter: blur(20px);
-            z-index: 3000;
-            display: none; align-items: center; justify-content: center;
+            z-index: 3000; display: none;
+            align-items: center; justify-content: center;
             padding: 40px;
         }
         .player-modal.active { display: flex; }
-        
         .player-container {
             width: 100%; max-width: 1000px;
             position: relative;
@@ -278,16 +269,175 @@
             border: 1px solid var(--glass-border);
             border-radius: 50%; color: var(--primary);
             cursor: pointer; font-size: 1.2rem;
+            transition: all 0.3s ease;
         }
+        .player-close:hover { transform: rotate(90deg); background: rgba(255,50,50,0.3); }
+        
         .video-wrapper {
             position: relative; padding-bottom: 56.25%;
             border-radius: 20px; overflow: hidden;
+            background: #000;
         }
         .video-wrapper iframe {
             position: absolute; inset: 0;
-            width: 100%; height: 100%;
-            border: none;
+            width: 100%; height: 100%; border: none;
         }
+        .video-error {
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            color: var(--secondary);
+            text-align: center; padding: 40; overflow: hidden;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+        .video-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: var(--glass-highlight);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+        .video-card.hidden { display: none; }
+        .video-card.ready { border-color: var(--accent); }
+
+        .video-thumbnail {
+            position: relative; width: 100%; aspect-ratio: 16/9;
+            overflow: hidden; cursor: pointer;
+        }
+        .video-thumbnail img {
+            width: 100%; height: 100%; object-fit: cover;
+            filter: grayscale(100%) contrast(1.1);
+            transition: all 0.5s ease;
+        }
+        .video-card:hover .video-thumbnail img {
+            transform: scale(1.1);
+            filter: grayscale(0%) contrast(1.2);
+        }
+
+        .play-overlay {
+            position: absolute; inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .video-card:hover .play-overlay { opacity: 1; }
+        .play-overlay i {
+            font-size: 3rem; color: white;
+            background: rgba(255, 255, 255, 0.2);
+            width: 70px; height: 70px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .shopee-overlay {
+            position: absolute; inset: 0;
+            background: rgba(238, 77, 45, 0.95);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            opacity: 0; visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .video-card.show-shopee .shopee-overlay {
+            opacity: 1; visibility: visible;
+        }
+        .shopee-overlay i { font-size: 3rem; margin-bottom: 10px; }
+        .shopee-overlay span { font-weight: 600; font-size: 1.1rem; }
+
+        .watch-btn {
+            position: absolute; bottom: 12px; left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--accent);
+            color: #000; border: none;
+            padding: 12px 24px; border-radius: 25px;
+            font-weight: 600; cursor: pointer;
+            opacity: 0; visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
+            display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 4px 20px rgba(0,212,255,0.3);
+        }
+        .video-card.ready .watch-btn {
+            opacity: 1; visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+        .watch-btn:hover {
+            background: #fff;
+            box-shadow: 0 6px 30px rgba(0,212,255,0.5);
+            transform: translateX(-50%) translateY(-2px);
+        }
+
+        .category-badge {
+            position: absolute; top: 12px; left: 12px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            padding: 6px 12px; border-radius: 20px;
+            font-size: 0.75rem; font-weight: 600;
+            text-transform: uppercase;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .video-info { padding: 20px; }
+        .video-info h3 {
+            font-size: 1.1rem; font-weight: 600;
+            margin-bottom: 8px; line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .video-meta {
+            display: flex; justify-content: space-between;
+            color: var(--secondary); font-size: 0.85rem;
+        }
+        .ready-badge {
+            color: var(--accent);
+            font-size: 0.75rem;
+            display: none; align-items: center; gap: 4px;
+        }
+        .video-card.ready .ready-badge { display: flex; }
+
+        /* Player Modal */
+        .player-modal {
+            position: fixed; inset: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 3000; display: none;
+            align-items: center; justify-content: center;
+            padding: 40px;
+        }
+        .player-modal.active { display: flex; }
+        .player-container {
+            width: 100%; max-width: 1000px;
+            position: relative;
+        }
+        .player-close {
+            position: absolute; top: -50px; right: 0;
+            width: 40px; height: 40px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%; color: var(--primary);
+            cursor: pointer; font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        .player-close:hover { transform: rotate(90deg); background: rgba(255,50,50,0.3); }
+        
+        .video-wrapper {
+            position: relative; padding-bottom: 56.25%;
+            border-radius: 20px; overflow: hidden;
+            background: #000;
+        }
+        .video-wrapper iframe {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%; border: none;
+        }
+        .video-error {
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            color: var(--secondary);
+            text-align: center; padding: 40px;
+        }
+        .video-error i { font-size: 4rem; margin-bottom: 20px; color: #ff4444; }
 
         /* Toast */
         .toast {
@@ -297,17 +447,16 @@
             backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
             color: var(--primary);
-            padding: 16px 32px;
-            border-radius: 12px;
-            font-weight: 500;
-            z-index: 4000;
-            opacity: 0;
-            transition: all 0.3s ease;
+            padding: 16px 32px; border-radius: 12px;
+            font-weight: 500; z-index: 4000;
+            opacity: 0; transition: all 0.3s ease;
+            display: flex; align-items: center; gap: 12px;
         }
-        .toast.active {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
+        .toast.active { transform: translateX(-50%) translateY(0); opacity: 1; }
+        .toast.success { border-color: rgba(0, 255, 136, 0.3); }
+        .toast.success i { color: #00ff88; }
+        .toast.error { border-color: rgba(255, 68, 68, 0.3); }
+        .toast.error i { color: #ff4444; }
 
         @media (max-width: 768px) {
             .category-panel { width: 100%; right: -100%; }
@@ -316,13 +465,11 @@
     </style>
 </head>
 <body>
-    <!-- Background -->
     <div class="liquid-bg">
         <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
     </div>
 
-    <!-- Navigation -->
     <nav class="glass-nav">
         <div class="logo" onclick="location.reload()">
             <i class="fas fa-play-circle"></i>
@@ -336,7 +483,6 @@
         </div>
     </nav>
 
-    <!-- Category Panel -->
     <div class="category-panel" id="categoryPanel">
         <div class="panel-header">
             <h3><i class="fas fa-folders"></i> Kategori</h3>
@@ -365,7 +511,6 @@
     </div>
     <div class="panel-overlay" id="panelOverlay" onclick="toggleCategoryPanel()"></div>
 
-    <!-- Main Content -->
     <main class="main-content">
         <div class="section-header">
             <h2 id="currentCategory">Semua Video</h2>
@@ -374,101 +519,75 @@
         <div class="video-grid" id="videoGrid">
             
             <!-- ==========================================
-                 TAMBAHKAN VIDEO BARU DI BAWAH INI
-                 Copy template di bawah dan paste di sini
+                 TAMBAH VIDEO BARU DI BAWAH INI
+                 
+                 Cara:
+                 1. Copy template di bawah
+                 2. Ganti ID_GOOGLE_DRIVE dengan ID asli
+                 3. Ganti kategori (hijab/bocil/abg)
+                 4. Ganti judul
+                 
+                 Format ID: 25-44 karakter (contoh: 1APSRoW8XLWShNkeuC7--84XSoyMdcPrP)
                  ========================================== -->
 
-            <!-- TEMPLATE VIDEO (Copy dari sini) -->
-            <!-- 
+            <!-- TEMPLATE (Copy dari sini) -->
+            <!--
             <div class="video-card" 
                  data-category="hijab" 
-                 data-drive-id="GANTI_DENGAN_ID_DRIVE" 
-                 data-shopee="https://s.shopee.co.id/1gEa1RAN5w"
-                 onclick="handleVideoClick(this)">
-                <div class="video-thumbnail">
-                    <img src="https://drive.google.com/thumbnail?id=GANTI_DENGAN_ID_DRIVE&sz=s4000" alt="Judul Video">
+                 data-drive-id="ID_GOOGLE_DRIVE"
+                 data-shopee="https://s.shopee.co.id/1gEa1RAN5w">
+                <div class="video-thumbnail" onclick="handleThumbnailClick(this)">
+                    <img src="https://drive.google.com/thumbnail?id=ID_GOOGLE_DRIVE&sz=s4000" 
+                         alt="Judul Video"
+                         onerror="this.src='https://via.placeholder.com/640x360/1a1a1a/666?text=Video+Not+Found'">
                     <div class="play-overlay"><i class="fas fa-play"></i></div>
-                    <span class="category-badge">hijab</span>
+                    <div class="shopee-overlay"><i class="fas fa-shopping-bag"></i><span>Ke Shopee...</span></div>
+                    <button class="watch-btn" onclick="watchVideo(event, this)"><i class="fas fa-play"></i> Tonton Video</button>
                 </div>
+                <span class="category-badge">hijab</span>
                 <div class="video-info">
-                    <h3>Judul Video Di Sini</h3>
+                    <h3>Judul Video</h3>
                     <div class="video-meta">
                         <span><i class="fas fa-calendar"></i> 11 Apr 2026</span>
+                        <span class="ready-badge"><i class="fas fa-check-circle"></i> Siap tonton</span>
                     </div>
                 </div>
             </div>
             -->
-            <!-- (Sampai sini) -->
+            <!-- SAMPAI SINI -->
 
-            <!-- CONTOH VIDEO 1 - HIJAB -->
+            <!-- CONTOH VIDEO 1 -->
             <div class="video-card" 
                  data-category="hijab" 
-                 data-drive-id="11jw4bxAKW-AhG5S93IIF6DeE0zIcem42" 
-                 data-shopee="https://s.shopee.co.id/1gEa1RAN5w"
-                 onclick="handleVideoClick(this)">
-                <div class="video-thumbnail">
-                    <img src="https://drive.google.com/thumbnail?id=11jw4bxAKW-AhG5S93IIF6DeE0zIcem42&sz=s4000" alt="Tutorial Hijab">
+                 data-drive-id="11jw4bxAKW-AhG5S93IIF6DeE0zIcem42"
+                 data-shopee="https://s.shopee.co.id/1gEa1RAN5w">
+                <div class="video-thumbnail" onclick="handleThumbnailClick(this)">
+                    <img src="https://drive.google.com/thumbnail?id=11jw4bxAKW-AhG5S93IIF6DeE0zIcem42&sz=s4000" 
+                         alt="Tutorial Hijab"
+                         onerror="this.src='https://via.placeholder.com/640x360/1a1a1a/666?text=Video+Not+Found'">
                     <div class="play-overlay"><i class="fas fa-play"></i></div>
-                    <span class="category-badge">hijab</span>
+                    <div class="shopee-overlay"><i class="fas fa-shopping-bag"></i><span>Ke Shopee...</span></div>
+                    <button class="watch-btn" onclick="watchVideo(event, this)"><i class="fas fa-play"></i> Tonton Video</button>
                 </div>
+                <span class="category-badge">hijab</span>
                 <div class="video-info">
-                    <h3>Tutorial Hijab Modern Elegan</h3>
+                    <h3>Tutorial Hijab Modern</h3>
                     <div class="video-meta">
                         <span><i class="fas fa-calendar"></i> 11 Apr 2026</span>
+                        <span class="ready-badge"><i class="fas fa-check-circle"></i> Siap tonton</span>
                     </div>
                 </div>
             </div>
 
-            <!-- CONTOH VIDEO 2 - BOCIL -->
-            <div class="video-card" 
-                 data-category="bocil" 
-                 data-drive-id="1BQSRTm9YMXTIhNkevD8--95YTozNedQs" 
-                 data-shopee="https://s.shopee.co.id/1gEa1RAN5w"
-                 onclick="handleVideoClick(this)">
-                <div class="video-thumbnail">
-                    <img src="https://drive.google.com/thumbnail?id=1BQSRTm9YMXTIhNkevD8--95YTozNedQs&sz=s4000" alt="Video Bocil">
-                    <div class="play-overlay"><i class="fas fa-play"></i></div>
-                    <span class="category-badge">bocil</span>
-                </div>
-                <div class="video-info">
-                    <h3>Video Lucu Anak Kecil</h3>
-                    <div class="video-meta">
-                        <span><i class="fas fa-calendar"></i> 11 Apr 2026</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- CONTOH VIDEO 3 - ABG -->
-            <div class="video-card" 
-                 data-category="abg" 
-                 data-drive-id="1CRTSn0ZNYLUJkevE9--06ZUpzOefRt" 
-                 data-shopee="https://s.shopee.co.id/1gEa1RAN5w"
-                 onclick="handleVideoClick(this)">
-                <div class="video-thumbnail">
-                    <img src="https://drive.google.com/thumbnail?id=1CRTSn0ZNYLUJkevE9--06ZUpzOefRt&sz=s4000" alt="Video ABG">
-                    <div class="play-overlay"><i class="fas fa-play"></i></div>
-                    <span class="category-badge">abg</span>
-                </div>
-                <div class="video-info">
-                    <h3>Vlog ABG Sekolah</h3>
-                    <div class="video-meta">
-                        <span><i class="fas fa-calendar"></i> 11 Apr 2026</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAMBAHKAN VIDEO BARU ANDA DI BAWAH INI -->
+            <!-- TAMBAH VIDEO BARU DI BAWAH INI -->
 
 
         </div>
     </main>
 
-    <!-- Player Modal -->
     <div class="player-modal" id="playerModal">
         <div class="player-container">
-            <button class="player-close" onclick="closePlayer()">
-                <i class="fas fa-times"></i>
-            </button>
+            <button class="player-close" onclick="closePlayer()"><i class="fas fa-times"></i></button>
             <div class="video-wrapper" id="playerWrapper"></div>
         </div>
     </div>
@@ -476,50 +595,59 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        // ==========================================
-        // CARA MENAMBAH VIDEO BARU:
-        // 1. Copy template di atas (yang dalam komentar)
-        // 2. Paste di bagian "TAMBAHKAN VIDEO BARU DI BAWAH INI"
-        // 3. Ganti nilai-nilai berikut:
-        //    - data-category: "hijab" / "bocil" / "abg"
-        //    - data-drive-id: ID file Google Drive (dari link share)
-        //    - data-shopee: Link Shopee (bisa pakai default)
-        //    - src thumbnail: Ganti ID di URL thumbnail
-        //    - Judul video: Ganti teks di <h3>
-        // ==========================================
+        // Cek status saat load
+        document.addEventListener('DOMContentLoaded', () => {
+            const ready = JSON.parse(localStorage.getItem('readyVideos') || '[]');
+            document.querySelectorAll('.video-card').forEach(card => {
+                const driveId = card.getAttribute('data-drive-id');
+                if (ready.includes(driveId)) {
+                    card.classList.add('ready');
+                }
+            });
+        });
 
-        let clickHistory = {};
+        function handleThumbnailClick(thumbnail) {
+            const card = thumbnail.closest('.video-card');
+            const driveId = card.getAttribute('data-drive-id');
+            const shopeeLink = card.getAttribute('data-shopee');
+            const ready = JSON.parse(localStorage.getItem('readyVideos') || '[]');
 
-        function handleVideoClick(element) {
-            const driveId = element.getAttribute('data-drive-id');
-            const shopeeLink = element.getAttribute('data-shopee');
-            const videoId = driveId; // Use driveId as unique identifier
-            
-            const now = Date.now();
-            const lastClick = clickHistory[videoId];
-            
-            // Klik kedua dalam 3 detik -> buka player
-            if (lastClick && (now - lastClick) < 3000) {
+            if (ready.includes(driveId)) {
                 openPlayer(driveId);
-                delete clickHistory[videoId];
-                showToast('Memutar video...');
             } else {
-                // Klik pertama -> buka Shopee
-                clickHistory[videoId] = now;
-                window.open(shopeeLink || 'https://s.shopee.co.id/1gEa1RAN5w', '_blank');
-                showToast('Klik lagi untuk menonton video');
+                // Tandai ready dan buka Shopee
+                localStorage.setItem('readyVideos', JSON.stringify([...ready, driveId]));
+                card.classList.add('ready');
+                
+                card.classList.add('show-shopee');
+                window.open(shopeeLink, '_blank');
+                
+                setTimeout(() => {
+                    card.classList.remove('show-shopee');
+                    showToast('✓ Redirect berhasil! Klik "Tonton Video"', 'success');
+                }, 1200);
             }
         }
 
+        function watchVideo(event, btn) {
+            event.stopPropagation();
+            const card = btn.closest('.video-card');
+            const driveId = card.getAttribute('data-drive-id');
+            openPlayer(driveId);
+        }
+
         function openPlayer(driveId) {
+            if (!driveId || driveId.length < 25) {
+                showToast('❌ ID Video tidak valid!', 'error');
+                return;
+            }
+
             const modal = document.getElementById('playerModal');
             const wrapper = document.getElementById('playerWrapper');
             
             wrapper.innerHTML = `
-                <iframe src="https://drive.google.com/file/d/${driveId}/preview" 
-                        allowfullscreen 
-                        allow="autoplay; encrypted-media">
-                </iframe>
+                <iframe src="https://drive.google.com/file/d/${driveId}/preview?usp=sharing" 
+                        allowfullscreen allow="autoplay; encrypted-media"></iframe>
             `;
             
             modal.classList.add('active');
@@ -527,11 +655,8 @@
         }
 
         function closePlayer() {
-            const modal = document.getElementById('playerModal');
-            const wrapper = document.getElementById('playerWrapper');
-            
-            modal.classList.remove('active');
-            wrapper.innerHTML = '';
+            document.getElementById('playerModal').classList.remove('active');
+            document.getElementById('playerWrapper').innerHTML = '';
             document.body.style.overflow = '';
         }
 
@@ -541,37 +666,26 @@
         }
 
         function filterCategory(category) {
-            const cards = document.querySelectorAll('.video-card');
-            const title = document.getElementById('currentCategory');
-            
-            cards.forEach(card => {
-                if (category === 'all') {
-                    card.classList.remove('hidden');
-                } else {
-                    const cardCategory = card.getAttribute('data-category');
-                    card.classList.toggle('hidden', cardCategory !== category);
-                }
+            document.querySelectorAll('.video-card').forEach(card => {
+                card.classList.toggle('hidden', category !== 'all' && card.getAttribute('data-category') !== category);
             });
-            
-            title.textContent = category === 'all' ? 'Semua Video' : 
-                               category.charAt(0).toUpperCase() + category.slice(1);
-            
+            document.getElementById('currentCategory').textContent = 
+                category === 'all' ? 'Semua Video' : category.charAt(0).toUpperCase() + category.slice(1);
             toggleCategoryPanel();
         }
 
-        function showToast(message) {
+        function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
-            toast.textContent = message;
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}`;
             toast.classList.add('active');
             setTimeout(() => toast.classList.remove('active'), 3000);
         }
 
-        // Close modal on backdrop click
         document.getElementById('playerModal').addEventListener('click', (e) => {
             if (e.target === e.currentTarget) closePlayer();
         });
 
-        // Escape key to close
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 closePlayer();
