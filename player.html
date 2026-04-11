@@ -251,10 +251,13 @@
 
             // Streamtape embed URL format
             // Format: https://streamtape.com/e/[VIDEO_ID]
+            // atau https://stape.me/e/[VIDEO_ID] (short domain)
+            const embedUrl = `https://streamtape.com/e/${streamtapeId}`;
+            
             container.innerHTML = `
                 <div class="video-wrapper">
                     <iframe 
-                        src="https://streamtape.com/e/${streamtapeId}" 
+                        src="${embedUrl}" 
                         allowfullscreen 
                         allow="autoplay; encrypted-media"
                         sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
