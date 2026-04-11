@@ -14,7 +14,6 @@
             --primary: #ffffff;
             --secondary: #a0a0a0;
             --accent: #00d4ff;
-            --shopee: #ee4d2d;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -326,7 +325,7 @@
         
         <div class="video-grid" id="videoGrid">
             
-            <!-- TEMPLATE TAMBAH VIDEO -->
+            <!-- TEMPLATE -->
             <!--
             <div class="video-card" 
                  data-category="hijab" 
@@ -354,9 +353,9 @@
             </div>
             -->
 
-            <!-- CONTOH VIDEO 1 -->
+            <!-- CONTOH VIDEO -->
             <div class="video-card" 
-                 data-category="hijab" 
+                 data-category="abg" 
                  data-drive-id="11jw4bxAKW-AhG5S93IIF6DeE0zIcem42"
                  data-shopee="https://s.shopee.co.id/1gEa1RAN5w"
                  data-title="Tutorial Hijab Modern">
@@ -389,7 +388,6 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        // Session only - hilang saat refresh
         const sessionReady = new Set();
 
         function handleThumbnailClick(thumbnail) {
@@ -397,22 +395,14 @@
             const driveId = card.getAttribute('data-drive-id');
             const shopeeLink = card.getAttribute('data-shopee');
 
-            // Cek apakah sudah ready di session ini
             if (sessionReady.has(driveId)) {
-                // Sudah redirect Shopee di session ini, langsung buka player tab baru
                 openPlayerTab(card);
             } else {
-                // Belum redirect, lakukan redirect Shopee
                 sessionReady.add(driveId);
                 card.classList.add('ready');
-                
-                // Tampilkan overlay Shopee
                 card.classList.add('show-shopee');
-                
-                // Buka Shopee di tab baru
                 window.open(shopeeLink, '_blank');
                 
-                // Sembunyikan overlay, update UI
                 setTimeout(() => {
                     card.classList.remove('show-shopee');
                     showToast('✓ Redirect berhasil! Klik lagi untuk nonton');
@@ -437,10 +427,7 @@
                 return;
             }
 
-            // Buat URL player dengan parameter
             const playerUrl = `player.html?id=${encodeURIComponent(driveId)}&title=${encodeURIComponent(title)}&cat=${encodeURIComponent(category)}`;
-            
-            // Buka di tab baru
             window.open(playerUrl, '_blank');
         }
 
