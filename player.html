@@ -202,7 +202,7 @@
         <div class="video-meta-bar">
             <div class="meta-item">
                 <i class="fas fa-play-circle"></i>
-                <span>Google Drive Stream</span>
+                <span>Jumpshare Stream</span>
             </div>
             <div class="meta-item">
                 <i class="fas fa-shield-alt"></i>
@@ -218,7 +218,7 @@
     <script>
         // Parse URL parameters
         const params = new URLSearchParams(window.location.search);
-        const driveId = params.get('id');
+        const jumpshareId = params.get('id');
         const title = params.get('title') || 'Untitled Video';
         const category = params.get('cat') || 'uncategorized';
 
@@ -238,7 +238,7 @@
         setInterval(updateTime, 60000);
 
         // Load video
-        if (driveId && driveId.length >= 25) {
+        if (jumpshareId && jumpshareId.length >= 10) {
             const container = document.getElementById('playerContainer');
             
             // Timeout untuk error handling
@@ -252,7 +252,7 @@
             container.innerHTML = `
                 <div class="video-wrapper">
                     <iframe 
-                        src="https://drive.google.com/file/d/${driveId}/preview?usp=sharing" 
+                        src="https://jumpshare.com/embed/${jumpshareId}?autoplay=0" 
                         allowfullscreen 
                         allow="autoplay; encrypted-media"
                         onload="document.getElementById('loading')?.remove()"
@@ -271,9 +271,9 @@
                     <h3>Video Tidak Dapat Dimuat</h3>
                     <p>
                         Pastikan:<br>
-                        1. ID Google Drive benar<br>
-                        2. File sudah di-share publik ("Anyone with the link")<br>
-                        3. File masih tersedia di Google Drive
+                        1. ID Jumpshare benar<br>
+                        2. File sudah di-share publik<br>
+                        3. File masih tersedia di Jumpshare
                     </p>
                 </div>
             `;
