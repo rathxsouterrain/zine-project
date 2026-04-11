@@ -3,1298 +3,319 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - StreamFlow</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- Google Identity Services -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="https://apis.google.com/js/api.js"></script>
-    
+    <title>Video Card Generator</title>
     <style>
-        :root {
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --glass-highlight: rgba(255, 255, 255, 0.15);
-            --primary: #ffffff;
-            --secondary: #a0a0a0;
-            --bg-dark: #0a0a0a;
-            --bg-darker: #050505;
-            --success: #4ade80;
-            --warning: #fbbf24;
-            --danger: #f87171;
-            --info: #60a5fa;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background: var(--bg-darker);
-            color: var(--primary);
+            font-family: 'Courier New', monospace;
+            background-color: #0a0a0a;
+            color: #e0e0e0;
             min-height: 100vh;
+            padding: 40px 20px;
         }
 
-        .liquid-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; overflow: hidden; background: var(--bg-darker);
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
         }
 
-        .blob {
-            position: absolute; border-radius: 50%;
-            filter: blur(80px); opacity: 0.3;
-            animation: float 20s infinite ease-in-out;
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 40px;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 20px;
         }
 
-        .blob-1 {
-            width: 500px; height: 500px;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            top: -100px; right: -100px;
+        .input-section {
+            background: #111;
+            border: 1px solid #333;
+            padding: 30px;
+            margin-bottom: 30px;
         }
 
-        .blob-2 {
-            width: 400px; height: 400px;
-            background: radial-gradient(circle, rgba(200,200,200,0.08) 0%, transparent 70%);
-            bottom: -100px; left: -100px;
-            animation-delay: -10s;
+        .form-group {
+            margin-bottom: 25px;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(-30px, 30px) scale(1.1); }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #888;
         }
 
-        .glass-nav {
-            position: fixed; top: 0; left: 0; right: 0;
-            height: 70px; background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--glass-border);
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 30px; z-index: 1000;
+        input[type="text"],
+        input[type="url"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 15px;
+            background: #0a0a0a;
+            border: 1px solid #333;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
         }
 
-        .logo { display: flex; align-items: center; gap: 12px; font-size: 1.5rem; font-weight: 700; }
-        
-        .glass-btn {
-            background: var(--glass-bg); border: 1px solid var(--glass-border);
-            color: var(--primary); padding: 10px 20px; border-radius: 12px;
-            cursor: pointer; transition: all 0.3s ease; backdrop-filter: blur(10px);
-            text-decoration: none; display: flex; align-items: center; gap: 8px;
-            font-size: 0.95rem;
+        input[type="text"]:focus,
+        input[type="url"]:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #555;
         }
 
-        .glass-btn:hover { background: var(--glass-highlight); transform: translateY(-2px); }
-        .glass-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-        .glass-btn-primary {
-            background: var(--primary); color: var(--bg-dark); border: none;
-            padding: 14px 28px; border-radius: 12px; font-weight: 600;
-            cursor: pointer; transition: all 0.3s ease;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            width: 100%; margin-top: 10px; font-size: 1rem;
+        textarea {
+            min-height: 80px;
+            resize: vertical;
         }
 
-        .glass-btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 40px rgba(255,255,255,0.2); }
-        .glass-btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-
-        .glass-btn-secondary {
-            background: transparent; color: var(--primary);
-            border: 1px solid var(--glass-border); padding: 10px 20px;
-            border-radius: 10px; cursor: pointer; font-size: 0.9rem;
-            display: flex; align-items: center; gap: 6px;
+        .generate-btn {
+            width: 100%;
+            padding: 18px;
+            background: #fff;
+            color: #000;
+            border: none;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
         }
 
-        .glass-btn-secondary:hover { background: var(--glass-bg); }
-
-        .glass-card {
-            background: var(--glass-bg); backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border); border-radius: 20px; padding: 24px;
+        .generate-btn:hover {
+            background: #ccc;
         }
 
-        .admin-main {
-            padding-top: 100px; padding-left: 30px; padding-right: 30px;
-            max-width: 1200px; margin: 0 auto;
-            display: grid; grid-template-columns: 1fr 1.5fr; gap: 30px;
+        .output-section {
+            background: #111;
+            border: 1px solid #333;
+            padding: 30px;
         }
 
-        .admin-section h2 {
-            margin-bottom: 24px; display: flex; align-items: center; gap: 12px;
-            font-size: 1.3rem;
-        }
-
-        .auth-section { text-align: center; padding: 40px; }
-        .auth-section i { font-size: 4rem; margin-bottom: 20px; color: var(--secondary); }
-        .auth-section h3 { margin-bottom: 10px; }
-        .auth-section p { color: var(--secondary); margin-bottom: 24px; font-size: 0.95rem; line-height: 1.6; }
-
-        .auth-methods {
-            display: flex; flex-direction: column; gap: 16px;
-            max-width: 400px; margin: 0 auto;
-        }
-
-        .auth-method {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px; padding: 24px;
-            text-align: left; cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .auth-method:hover { border-color: var(--glass-highlight); background: rgba(255,255,255,0.05); }
-        .auth-method.recommended { border-color: var(--success); position: relative; }
-        
-        .auth-method .badge {
-            position: absolute; top: -10px; right: 20px;
-            background: var(--success); color: #000;
-            padding: 4px 12px; border-radius: 20px;
-            font-size: 0.75rem; font-weight: 600;
-        }
-
-        .auth-method h4 { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-        .auth-method p { color: var(--secondary); font-size: 0.9rem; margin: 0; }
-
-        .google-btn {
-            background: #fff; color: #333;
-            border: none; padding: 12px 24px;
-            border-radius: 8px; font-weight: 600;
-            cursor: pointer; display: flex;
-            align-items: center; justify-content: center; gap: 10px;
-            width: 100%; font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .google-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-
-        .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
-        
-        .form-group label {
-            font-size: 0.9rem; color: var(--secondary); font-weight: 500;
-            display: flex; align-items: center; gap: 6px;
-        }
-
-        .form-group label .required { color: var(--danger); }
-
-        .form-group input, .form-group select, .form-group textarea {
-            background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border);
-            color: var(--primary); padding: 12px 16px; border-radius: 12px;
-            font-size: 1rem; outline: none; transition: all 0.3s ease;
-        }
-
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-            border-color: var(--glass-highlight); background: rgba(255, 255, 255, 0.08);
-        }
-
-        .help-text {
-            font-size: 0.8rem; color: var(--secondary);
-            margin-top: 4px; font-style: italic;
-        }
-
-        .url-input-group { display: flex; gap: 8px; }
-        .url-input-group input { flex: 1; }
-        .url-input-group button {
-            background: var(--glass-bg); border: 1px solid var(--glass-border);
-            color: var(--primary); padding: 12px 16px; border-radius: 12px;
-            cursor: pointer; white-space: nowrap;
-        }
-
-        .convert-btn {
-            background: var(--info) !important; color: #000 !important;
-            font-weight: 500;
-        }
-
-        .url-preview {
-            display: none; margin-top: 8px; padding: 12px;
-            background: rgba(96, 165, 250, 0.1); border: 1px solid var(--info);
-            border-radius: 8px; font-size: 0.85rem;
-        }
-
-        .url-preview.active { display: block; }
-
-        .url-preview code {
-            background: rgba(0,0,0,0.3); padding: 4px 8px;
-            border-radius: 4px; font-family: monospace;
-            word-break: break-all;
-        }
-
-        /* Info Box */
-        .info-box {
-            background: rgba(96, 165, 250, 0.1);
-            border: 1px solid var(--info);
-            border-radius: 12px; padding: 16px;
-            margin-bottom: 20px; font-size: 0.9rem;
-        }
-
-        .info-box i { color: var(--info); margin-right: 8px; }
-
-        .info-box ol {
-            margin-left: 20px; margin-top: 8px;
-        }
-
-        .info-box li {
-            margin-bottom: 6px; color: var(--secondary);
-        }
-
-        .info-box strong { color: var(--primary); }
-
-        /* Upload Progress */
-        .upload-progress { display: none; margin-top: 20px; }
-        .upload-progress.active { display: block; }
-
-        .progress-bar-container {
-            background: rgba(255, 255, 255, 0.1); border-radius: 10px;
-            height: 8px; overflow: hidden; margin-bottom: 10px;
-        }
-
-        .progress-bar {
-            height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary));
-            width: 0%; transition: width 0.3s ease; border-radius: 10px;
-        }
-
-        .progress-text { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--secondary); }
-
-        /* Video List */
-        .admin-filters { display: flex; gap: 12px; margin-bottom: 20px; }
-        
-        .admin-filters input, .admin-filters select {
-            background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border);
-            color: var(--primary); padding: 10px 16px; border-radius: 10px; outline: none;
-        }
-
-        .admin-filters input { flex: 1; }
-
-        .admin-video-list {
-            display: flex; flex-direction: column; gap: 12px;
-            max-height: 600px; overflow-y: auto;
-        }
-
-        .admin-video-item {
-            display: flex; align-items: center; gap: 16px;
-            padding: 16px; background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--glass-border); border-radius: 12px;
-            transition: all 0.3s ease;
-        }
-
-        .admin-video-item:hover { background: rgba(255, 255, 255, 0.06); border-color: var(--glass-highlight); }
-
-        .admin-thumb {
-            width: 100px; height: 60px; border-radius: 8px;
-            overflow: hidden; flex-shrink: 0; position: relative;
-        }
-
-        .admin-thumb img { width: 100%; height: 100%; object-fit: cover; }
-
-        .admin-thumb .source-badge {
-            position: absolute; bottom: 4px; right: 4px;
-            background: rgba(0, 0, 0, 0.8); padding: 2px 6px;
-            border-radius: 4px; font-size: 0.7rem;
-        }
-
-        .admin-thumb .source-badge.drive { color: var(--success); }
-        .admin-thumb .source-badge.direct { color: var(--info); }
-
-        .admin-video-info { flex: 1; min-width: 0; }
-        .admin-video-info h4 { font-size: 1rem; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .admin-video-info span { font-size: 0.8rem; color: var(--secondary); text-transform: uppercase; }
-
-        .admin-actions { display: flex; gap: 8px; }
-        
-        .admin-actions button {
-            background: var(--glass-bg); border: 1px solid var(--glass-border);
-            color: var(--primary); width: 36px; height: 36px;
-            border-radius: 8px; cursor: pointer; transition: all 0.3s ease;
-        }
-
-        .admin-actions button:hover { background: var(--glass-highlight); }
-        .admin-actions .btn-delete:hover { background: rgba(255, 0, 0, 0.2); border-color: rgba(255, 0, 0, 0.4); }
-
-        /* Modal */
-        .modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px);
-            z-index: 3000; display: flex; align-items: center; justify-content: center;
-            opacity: 0; visibility: hidden; transition: all 0.3s ease;
-        }
-
-        .modal.active { opacity: 1; visibility: visible; }
-
-        .glass-modal {
-            background: rgba(20, 20, 20, 0.98); backdrop-filter: blur(30px);
-            border: 1px solid var(--glass-border); border-radius: 24px;
-            padding: 30px; width: 90%; max-width: 500px; max-height: 90vh;
-            overflow-y: auto; transform: scale(0.9); transition: transform 0.3s ease;
-        }
-
-        .modal.active .glass-modal { transform: scale(1); }
-
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-
-        .close-btn {
-            background: var(--glass-bg); border: 1px solid var(--glass-border);
-            color: var(--primary); width: 36px; height: 36px;
-            border-radius: 50%; cursor: pointer; transition: all 0.3s ease;
-        }
-
-        .close-btn:hover { transform: rotate(90deg); background: rgba(255, 255, 255, 0.1); }
-
-        /* Toast */
-        .toast-container {
-            position: fixed; bottom: 30px; right: 30px;
-            display: flex; flex-direction: column; gap: 10px; z-index: 5000;
-        }
-
-        .toast {
-            background: var(--glass-bg); backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border); color: var(--primary);
-            padding: 16px 24px; border-radius: 12px; font-weight: 500;
-            display: flex; align-items: center; gap: 12px;
-            animation: slideIn 0.3s ease; max-width: 400px;
-        }
-
-        .toast.success { border-color: var(--success); background: rgba(74, 222, 128, 0.1); }
-        .toast.error { border-color: var(--danger); background: rgba(248, 113, 113, 0.1); }
-        .toast.warning { border-color: var(--warning); background: rgba(251, 191, 36, 0.1); }
-        .toast.info { border-color: var(--info); background: rgba(96, 165, 250, 0.1); }
-
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        /* Quick Convert Tool */
-        .quick-convert {
-            background: rgba(251, 191, 36, 0.1);
-            border: 1px solid var(--warning);
-            border-radius: 12px; padding: 16px;
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #333;
         }
 
-        .quick-convert h4 {
-            display: flex; align-items: center; gap: 8px;
-            margin-bottom: 12px; color: var(--warning);
+        .output-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #888;
         }
-
-        .convert-result {
-            display: none; margin-top: 12px; padding: 12px;
-            background: rgba(74, 222, 128, 0.1);
-            border: 1px solid var(--success);
-            border-radius: 8px;
-        }
-
-        .convert-result.active { display: block; }
 
         .copy-btn {
-            background: var(--glass-bg); border: 1px solid var(--glass-border);
-            color: var(--primary); padding: 6px 12px;
-            border-radius: 6px; cursor: pointer; font-size: 0.85rem;
-            margin-left: 8px;
+            padding: 10px 25px;
+            background: transparent;
+            border: 1px solid #555;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
-        .copy-btn:hover { background: var(--glass-highlight); }
-
-        /* Responsive */
-        @media (max-width: 1024px) { .admin-main { grid-template-columns: 1fr; } }
-        
-        @media (max-width: 768px) {
-            .admin-main { padding-left: 16px; padding-right: 16px; }
-            .glass-nav { padding: 0 16px; }
-            .url-input-group { flex-direction: column; }
-            .url-input-group button { width: 100%; }
+        .copy-btn:hover {
+            background: #fff;
+            color: #000;
+            border-color: #fff;
         }
 
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); }
-        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
+        .copy-btn.copied {
+            background: #2d5016;
+            border-color: #2d5016;
+            color: #fff;
+        }
+
+        pre {
+            background: #0a0a0a;
+            border: 1px solid #222;
+            padding: 25px;
+            overflow-x: auto;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #aaa;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .hint {
+            font-size: 11px;
+            color: #555;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .row {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="liquid-bg">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-    </div>
-
-    <nav class="glass-nav">
-        <div class="logo">
-            <i class="fas fa-shield-alt"></i>
-            <span>Admin Panel</span>
-        </div>
-        <a href="index.html" class="glass-btn">
-            <i class="fas fa-home"></i> Kembali
-        </a>
-    </nav>
-
-    <main class="admin-main">
-        <!-- Upload Section -->
-        <section class="admin-section glass-card">
-            
-            <!-- Pilih Metode -->
-            <div id="authSelect">
-                <h2><i class="fas fa-lock"></i> Pilih Metode Upload</h2>
-                
-                <div class="auth-methods">
-                    <!-- Metode 1: URL Manual (REKOMENDASI) -->
-                    <div class="auth-method recommended" onclick="selectAuthMethod('manual')">
-                        <span class="badge">REKOMENDASI</span>
-                        <h4><i class="fas fa-link" style="color: var(--info);"></i> URL Google Drive</h4>
-                        <p>Copy link dari Google Drive, sistem akan otomatis mengkonversi ke format yang benar.</p>
-                    </div>
-
-                    <!-- Metode 2: Google Login -->
-                    <div class="auth-method" onclick="selectAuthMethod('google')">
-                        <h4><i class="fab fa-google-drive" style="color: var(--success);"></i> Upload Langsung</h4>
-                        <p>Login dengan Google dan upload file langsung ke Drive (memerlukan setup API).</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Manual URL Form -->
-            <div id="manualForm" style="display: none;">
-                <h2><i class="fas fa-link"></i> Tambah Video dari URL</h2>
-                
-                <!-- Quick Converter Tool -->
-                <div class="quick-convert">
-                    <h4><i class="fas fa-magic"></i> Konverter URL Cepat</h4>
-                    <p style="font-size: 0.85rem; color: var(--secondary); margin-bottom: 12px;">
-                        Paste link share Google Drive Anda di sini:
-                    </p>
-                    <div class="url-input-group">
-                        <input type="text" id="quickConvertInput" placeholder="https://drive.google.com/file/d/11jw4bxAKW-AhG5S93IIF6DeE0zIcem42/view?usp=drivesdk">
-                        <button class="convert-btn" onclick="quickConvert()">
-                            <i class="fas fa-exchange-alt"></i> Konversi
-                        </button>
-                    </div>
-                    <div class="convert-result" id="convertResult">
-                        <strong>Hasil Konversi:</strong><br>
-                        <div style="margin-top: 8px;">
-                            <span style="color: var(--secondary); font-size: 0.8rem;">Thumbnail:</span><br>
-                            <code id="thumbResult"></code>
-                            <button class="copy-btn" onclick="copyToClipboard('thumbResult')">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                        </div>
-                        <div style="margin-top: 8px;">
-                            <span style="color: var(--secondary); font-size: 0.8rem;">Video:</span><br>
-                            <code id="videoResult"></code>
-                            <button class="copy-btn" onclick="copyToClipboard('videoResult')">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                        </div>
-                        <button class="glass-btn-primary" style="margin-top: 12px;" onclick="useConvertedUrls()">
-                            <i class="fas fa-check"></i> Gunakan URL Ini
-                        </button>
-                    </div>
-                </div>
-
-                <div class="info-box">
-                    <i class="fas fa-lightbulb"></i>
-                    <strong>Cara mendapatkan URL:</strong>
-                    <ol>
-                        <li>Buka <strong>Google Drive</strong> di browser/HP</li>
-                        <li>Upload file video dan thumbnail</li>
-                        <li>Klik kanan file → <strong>Share</strong> → <strong>Copy link</strong></li>
-                        <li>Paste link di form di bawah atau konverter di atas</li>
-                        <li>Sistem akan otomatis mengkonversi ke format direct link</li>
-                    </ol>
-                </div>
-
-                <form id="uploadForm">
-                    <div class="form-group">
-                        <label>Judul Video <span class="required">*</span></label>
-                        <input type="text" id="videoTitle" required placeholder="Masukkan judul video...">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Kategori <span class="required">*</span></label>
-                        <select id="videoCategory" required>
-                            <option value="">Pilih Kategori</option>
-                            <option value="hijab">Hijab</option>
-                            <option value="bocil">Bocil</option>
-                            <option value="abg">ABG</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>URL Thumbnail <span class="required">*</span></label>
-                        <div class="url-input-group">
-                            <input type="url" id="thumbnailUrl" required 
-                                   placeholder="https://drive.google.com/file/d/... atau https://drive.google.com/uc?export=view&id=..."
-                                   onblur="autoConvertUrl('thumbnailUrl')">
-                            <button type="button" class="convert-btn" onclick="convertSingleUrl('thumbnailUrl')">
-                                <i class="fas fa-sync"></i>
-                            </button>
-                        </div>
-                        <span class="help-text">
-                            Bisa paste link share (file/d/...) atau direct link (uc?export=...)
-                        </span>
-                        <div class="url-preview" id="thumbPreview">
-                            <i class="fas fa-check-circle" style="color: var(--success);"></i>
-                            URL akan dikonversi ke: <code id="thumbConverted"></code>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>URL Video <span class="required">*</span></label>
-                        <div class="url-input-group">
-                            <input type="url" id="videoUrl" required 
-                                   placeholder="https://drive.google.com/file/d/... atau https://drive.google.com/uc?export=download&id=..."
-                                   onblur="autoConvertUrl('videoUrl')">
-                            <button type="button" class="convert-btn" onclick="convertSingleUrl('videoUrl')">
-                                <i class="fas fa-sync"></i>
-                            </button>
-                        </div>
-                        <span class="help-text">
-                            Bisa paste link share (file/d/...) atau direct link (uc?export=...)
-                        </span>
-                        <div class="url-preview" id="videoPreview">
-                            <i class="fas fa-check-circle" style="color: var(--success);"></i>
-                            URL akan dikonversi ke: <code id="videoConverted"></code>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Deskripsi</label>
-                        <textarea id="videoDesc" rows="3" placeholder="Deskripsi video..."></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Link Shopee (Redirect Pertama)</label>
-                        <input type="url" id="shopeeLink" value="https://s.shopee.co.id/1gEa1RAN5w">
-                    </div>
-
-                    <button type="submit" class="glass-btn-primary">
-                        <i class="fas fa-save"></i> Simpan Video
-                    </button>
-                </form>
-            </div>
-
-            <!-- Google Drive Upload Form -->
-            <div id="googleDriveForm" style="display: none;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h2><i class="fab fa-google-drive"></i> Upload ke Drive</h2>
-                    <button class="glass-btn" onclick="logoutGoogle()" style="padding: 8px 16px; font-size: 0.85rem;">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </button>
-                </div>
-
-                <div id="googleAuthContainer" style="margin-bottom: 20px;">
-                    <div class="g_id_signin"
-                         data-type="standard"
-                         data-shape="rectangular"
-                         data-theme="outline"
-                         data-text="signin_with"
-                         data-size="large"
-                         data-logo_alignment="left">
-                    </div>
-                </div>
-
-                <div id="gdriveLoggedIn" style="display: none;">
-                    <div style="padding: 12px; background: rgba(74, 222, 128, 0.1); border-radius: 10px; border: 1px solid var(--success); margin-bottom: 20px;">
-                        <span style="display: flex; align-items: center; gap: 8px; color: var(--success); font-size: 0.9rem;">
-                            <i class="fas fa-check-circle"></i> 
-                            Terhubung: <span id="userEmail">user@gmail.com</span>
-                        </span>
-                    </div>
-
-                    <form id="googleUploadForm">
-                        <div class="form-group">
-                            <label>Judul Video <span class="required">*</span></label>
-                            <input type="text" id="gdTitle" required placeholder="Masukkan judul video...">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Kategori <span class="required">*</span></label>
-                            <select id="gdCategory" required>
-                                <option value="">Pilih Kategori</option>
-                                <option value="hijab">Hijab</option>
-                                <option value="bocil">Bocil</option>
-                                <option value="abg">ABG</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Thumbnail (File)</label>
-                            <input type="file" id="gdThumbnailFile" accept="image/*" style="padding: 10px;">
-                            <span class="help-text">Maksimal 5MB (JPG, PNG, WebP)</span>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Video (File) <span class="required">*</span></label>
-                            <input type="file" id="gdVideoFile" accept="video/*" required style="padding: 10px;">
-                            <span class="help-text">Maksimal 100MB (MP4, WebM, MOV)</span>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Deskripsi</label>
-                            <textarea id="gdDesc" rows="3" placeholder="Deskripsi video..."></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Link Shopee</label>
-                            <input type="url" id="gdShopeeLink" value="https://s.shopee.co.id/1gEa1RAN5w">
-                        </div>
-
-                        <div class="upload-progress" id="gdProgress">
-                            <div class="progress-bar-container">
-                                <div class="progress-bar" id="gdProgressBar"></div>
-                            </div>
-                            <div class="progress-text">
-                                <span id="gdProgressStatus">Mengupload...</span>
-                                <span id="gdProgressPercent">0%</span>
-                            </div>
-                        </div>
-
-                        <button type="submit" class="glass-btn-primary" id="gdSubmitBtn">
-                            <i class="fas fa-upload"></i> Upload ke Google Drive
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </section>
-
-        <!-- Video List -->
-        <section class="admin-section glass-card">
-            <h2><i class="fas fa-list"></i> Kelola Video</h2>
-            
-            <div class="admin-filters">
-                <input type="text" id="adminSearch" placeholder="Cari video..." onkeyup="filterAdminVideos()">
-                <select id="adminCategoryFilter" onchange="filterAdminVideos()">
-                    <option value="">Semua Kategori</option>
-                    <option value="hijab">Hijab</option>
-                    <option value="bocil">Bocil</option>
-                    <option value="abg">ABG</option>
-                </select>
-            </div>
-
-            <div class="admin-video-list" id="adminVideoList">
-                <div style="text-align: center; padding: 40px; color: var(--secondary);">
-                    <i class="fas fa-spinner fa-spin" style="font-size: 2rem;"></i>
-                    <p style="margin-top: 16px;">Memuat...</p>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Edit Modal -->
-    <div class="modal" id="editModal">
-        <div class="glass-modal">
-            <div class="modal-header">
-                <h3>Edit Video</h3>
-                <button onclick="closeEditModal()" class="close-btn">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <form id="editForm">
-                <input type="hidden" id="editId">
+    <div class="container">
+        <h1>/// Video Card Generator ///</h1>
+        
+        <div class="input-section">
+            <div class="row">
                 <div class="form-group">
-                    <label>Judul Video</label>
-                    <input type="text" id="editTitle" required>
-                </div>
-                <div class="form-group">
-                    <label>Kategori</label>
-                    <select id="editCategory" required>
-                        <option value="hijab">Hijab</option>
-                        <option value="bocil">Bocil</option>
-                        <option value="abg">ABG</option>
+                    <label for="category">Kategori</label>
+                    <select id="category">
+                        <option value="hijab">hijab</option>
+                        <option value="bocil">bocil</option>
+                        <option value="abg">abg</option>
                     </select>
                 </div>
+                
                 <div class="form-group">
-                    <label>Thumbnail URL</label>
-                    <input type="url" id="editThumbnailUrl">
+                    <label for="title">Judul Video</label>
+                    <input type="text" id="title" placeholder="Contoh: DI SEPONG PACAR GURIH BIKIN NAGIH">
                 </div>
+            </div>
+
+            <div class="form-group">
+                <label for="jumpshare">Link Jumpshare</label>
+                <input type="url" id="jumpshare" placeholder="https://jumpshare.com/v/...">
+                <div class="hint">Paste link video dari Jumpshare</div>
+            </div>
+
+            <div class="row">
                 <div class="form-group">
-                    <label>Video URL</label>
-                    <input type="url" id="editVideoUrl">
+                    <label for="driveId">ID Google Drive Thumbnail</label>
+                    <input type="text" id="driveId" placeholder="Contoh: 1ABC123xyz...">
+                    <div class="hint">Ambil dari URL: drive.google.com/file/d/ID_INI/view</div>
                 </div>
+                
                 <div class="form-group">
-                    <label>Deskripsi</label>
-                    <textarea id="editDesc" rows="3"></textarea>
+                    <label for="shopee">Link Shopee (Opsional)</label>
+                    <input type="url" id="shopee" value="https://s.shopee.co.id/1gEa1RAN5w">
                 </div>
-                <div class="form-group">
-                    <label>Link Shopee</label>
-                    <input type="url" id="editShopeeLink">
-                </div>
-                <button type="submit" class="glass-btn-primary">
-                    <i class="fas fa-save"></i> Simpan Perubahan
-                </button>
-            </form>
+            </div>
+
+            <div class="form-group">
+                <label for="displayTitle">Judul Tampilan (H3)</label>
+                <input type="text" id="displayTitle" placeholder="Contoh: CEWEK ABG COLMEK BODY TOBRUT">
+            </div>
+
+            <button class="generate-btn" onclick="generateCode()">Generate Kode</button>
+        </div>
+
+        <div class="output-section">
+            <div class="output-header">
+                <span class="output-title">/// Output HTML</span>
+                <button class="copy-btn" id="copyBtn" onclick="copyCode()">Copy</button>
+            </div>
+            <pre id="output"><!-- Kode akan muncul di sini --></pre>
         </div>
     </div>
 
-    <div class="toast-container" id="toastContainer"></div>
-
     <script>
-        // ==========================================
-        // URL CONVERTER FUNCTIONS
-        // ==========================================
-        
-        /**
-         * Konversi URL Google Drive apapun ke format direct link
-         * Support format:
-         * - https://drive.google.com/file/d/FILE_ID/view?usp=...
-         * - https://drive.google.com/open?id=FILE_ID
-         * - https://drive.google.com/uc?export=view&id=FILE_ID (sudah direct)
-         */
-        function convertGoogleDriveUrl(url, type = 'view') {
-            if (!url) return '';
+        function generateCode() {
+            const category = document.getElementById('category').value;
+            const title = document.getElementById('title').value || 'Judul Video';
+            const jumpshare = document.getElementById('jumpshare').value || '#';
+            const driveId = document.getElementById('driveId').value || 'ID_PLACEHOLDER';
+            const shopee = document.getElementById('shopee').value || 'https://s.shopee.co.id/1gEa1RAN5w';
+            const displayTitle = document.getElementById('displayTitle').value || title.toUpperCase();
             
-            // Extract FILE_ID dari berbagai format
-            let fileId = '';
-            
-            // Format 1: /file/d/FILE_ID/view...
-            const fileMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-            if (fileMatch) {
-                fileId = fileMatch[1];
-            }
-            
-            // Format 2: ?id=FILE_ID atau &id=FILE_ID
-            if (!fileId) {
-                const idMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-                if (idMatch) {
-                    fileId = idMatch[1];
-                }
-            }
-            
-            // Format 3: /open?id=FILE_ID
-            if (!fileId) {
-                const openMatch = url.match(/\/open\?id=([a-zA-Z0-9_-]+)/);
-                if (openMatch) {
-                    fileId = openMatch[1];
-                }
-            }
-            
-            if (!fileId) {
-                return url; // Return as-is jika tidak match
-            }
-            
-            // Return direct URL
-            const exportType = type === 'download' ? 'download' : 'view';
-            return `https://drive.google.com/uc?export=${exportType}&id=${fileId}`;
+            const today = new Date();
+            const dateStr = today.getDate() + ' ' + today.toLocaleString('id-ID', { month: 'short' });
+
+            const code = `<div class="video-card" 
+     data-category="${category}" 
+     data-video-url="${jumpshare}"
+     data-shopee="${shopee}"
+     data-title="${title}">
+    <div class="video-thumbnail">
+        <!-- GANTI SRC DI SINI -->
+        <img src="https://drive.google.com/thumbnail?id=${driveId}&sz=w300-h450" 
+             alt="${title}"
+             onerror="this.src='https://via.placeholder.com/300x450/1a1a1a/666?text=No+Image'">
+        <div class="play-overlay"><i class="fas fa-play"></i></div>
+        <div class="shopee-overlay"><i class="fas fa-shopping-bag"></i><span>Ke Shopee...</span></div>
+        <div class="ready-indicator"></div>
+    </div>
+    <span class="category-badge">${category}</span>
+    <div class="video-info">
+        <h3>${displayTitle}</h3>
+        <div class="video-meta">
+            <span><i class="fas fa-calendar"></i> ${dateStr}</span>
+            <span class="ready-text" style="display:none; color: var(--accent);"><i class="fas fa-check"></i> Ready</span>
+        </div>
+    </div>
+</div>`;
+
+            document.getElementById('output').textContent = code;
         }
 
-        function extractFileId(url) {
-            const fileMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-            if (fileMatch) return fileMatch[1];
+        function copyCode() {
+            const output = document.getElementById('output').textContent;
+            const copyBtn = document.getElementById('copyBtn');
             
-            const idMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-            if (idMatch) return idMatch[1];
-            
-            const openMatch = url.match(/\/open\?id=([a-zA-Z0-9_-]+)/);
-            if (openMatch) return openMatch[1];
-            
-            return null;
-        }
-
-        // Quick Convert Tool
-        function quickConvert() {
-            const input = document.getElementById('quickConvertInput').value.trim();
-            
-            if (!input) {
-                showToast('Masukkan URL terlebih dahulu!', 'warning');
+            if (!output.trim()) {
+                alert('Generate kode terlebih dahulu!');
                 return;
             }
             
-            const fileId = extractFileId(input);
-            
-            if (!fileId) {
-                showToast('URL tidak valid! Pastikan format link Google Drive benar.', 'error');
-                return;
-            }
-            
-            const thumbUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
-            const videoUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
-            
-            document.getElementById('thumbResult').textContent = thumbUrl;
-            document.getElementById('videoResult').textContent = videoUrl;
-            document.getElementById('convertResult').classList.add('active');
-            
-            showToast('URL berhasil dikonversi!', 'success');
-        }
-
-        function useConvertedUrls() {
-            const thumbUrl = document.getElementById('thumbResult').textContent;
-            const videoUrl = document.getElementById('videoResult').textContent;
-            
-            document.getElementById('thumbnailUrl').value = thumbUrl;
-            document.getElementById('videoUrl').value = videoUrl;
-            
-            // Update previews
-            showConvertedPreview('thumbnailUrl', thumbUrl);
-            showConvertedPreview('videoUrl', videoUrl);
-            
-            showToast('URL telah dimasukkan ke form!', 'success');
-            
-            // Scroll ke form
-            document.getElementById('uploadForm').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        // Auto convert on blur
-        function autoConvertUrl(inputId) {
-            const input = document.getElementById(inputId);
-            const url = input.value.trim();
-            
-            if (!url) return;
-            
-            // Check if already direct URL
-            if (url.includes('uc?export=')) {
-                showConvertedPreview(inputId, url);
-                return;
-            }
-            
-            // Convert
-            const type = inputId === 'videoUrl' ? 'download' : 'view';
-            const converted = convertGoogleDriveUrl(url, type);
-            
-            if (converted !== url) {
-                showConvertedPreview(inputId, converted);
-            }
-        }
-
-        // Manual convert button
-        function convertSingleUrl(inputId) {
-            const input = document.getElementById(inputId);
-            const url = input.value.trim();
-            
-            if (!url) {
-                showToast('Masukkan URL terlebih dahulu!', 'warning');
-                return;
-            }
-            
-            const type = inputId === 'videoUrl' ? 'download' : 'view';
-            const converted = convertGoogleDriveUrl(url, type);
-            
-            input.value = converted;
-            showConvertedPreview(inputId, converted);
-            
-            showToast('URL berhasil dikonversi!', 'success');
-        }
-
-        function showConvertedPreview(inputId, convertedUrl) {
-            const previewId = inputId === 'videoUrl' ? 'videoPreview' : 'thumbPreview';
-            const codeId = inputId === 'videoUrl' ? 'videoConverted' : 'thumbConverted';
-            
-            document.getElementById(codeId).textContent = convertedUrl;
-            document.getElementById(previewId).classList.add('active');
-        }
-
-        function copyToClipboard(elementId) {
-            const text = document.getElementById(elementId).textContent;
-            navigator.clipboard.writeText(text).then(() => {
-                showToast('URL disalin ke clipboard!', 'success');
-            }).catch(() => {
-                // Fallback
+            navigator.clipboard.writeText(output).then(() => {
+                copyBtn.textContent = 'Copied!';
+                copyBtn.classList.add('copied');
+                
+                setTimeout(() => {
+                    copyBtn.textContent = 'Copy';
+                    copyBtn.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
                 const textarea = document.createElement('textarea');
-                textarea.value = text;
+                textarea.value = output;
                 document.body.appendChild(textarea);
                 textarea.select();
                 document.execCommand('copy');
                 document.body.removeChild(textarea);
-                showToast('URL disalin ke clipboard!', 'success');
-            });
-        }
-
-        // ==========================================
-        // AUTH & UPLOAD FUNCTIONS
-        // ==========================================
-        
-        const GOOGLE_CLIENT_ID = 'YOUR_CLIENT_ID.apps.googleusercontent.com';
-        let googleAccessToken = null;
-        let googleUser = null;
-
-        document.addEventListener('DOMContentLoaded', () => {
-            loadAdminVideos();
-            setupEventListeners();
-            
-            // Initialize Google Sign In if configured
-            if (GOOGLE_CLIENT_ID && !GOOGLE_CLIENT_ID.includes('YOUR_')) {
-                initializeGoogleSignIn();
-            }
-        });
-
-        function initializeGoogleSignIn() {
-            google.accounts.id.initialize({
-                client_id: GOOGLE_CLIENT_ID,
-                callback: handleCredentialResponse,
-                auto_select: false
-            });
-        }
-
-        function handleCredentialResponse(response) {
-            // Handle Google Sign In
-            const credential = response.credential;
-            const payload = JSON.parse(atob(credential.split('.')[1]));
-            
-            googleUser = {
-                email: payload.email,
-                name: payload.name,
-                picture: payload.picture
-            };
-            
-            // For Drive API, need additional OAuth
-            requestDriveAccess();
-        }
-
-        function requestDriveAccess() {
-            const redirectUri = window.location.href;
-            const scope = 'https://www.googleapis.com/auth/drive.file';
-            
-            const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
-                `client_id=${GOOGLE_CLIENT_ID}&` +
-                `redirect_uri=${encodeURIComponent(redirectUri)}&` +
-                `response_type=token&` +
-                `scope=${encodeURIComponent(scope)}&` +
-                `prompt=consent`;
-            
-            const popup = window.open(authUrl, 'googleAuth', 'width=500,height=600');
-            
-            window.addEventListener('message', (event) => {
-                if (event.data && event.data.type === 'google_auth_success') {
-                    googleAccessToken = event.data.access_token;
-                    document.getElementById('googleAuthContainer').style.display = 'none';
-                    document.getElementById('gdriveLoggedIn').style.display = 'block';
-                    document.getElementById('userEmail').textContent = googleUser.email;
-                    showToast('Berhasil login dengan Google!', 'success');
-                }
-            });
-        }
-
-        // Check for access token in URL
-        if (window.location.hash.includes('access_token')) {
-            const params = new URLSearchParams(window.location.hash.substring(1));
-            const token = params.get('access_token');
-            if (token && window.opener) {
-                window.opener.postMessage({ type: 'google_auth_success', access_token: token }, '*');
-                window.close();
-            }
-        }
-
-        function selectAuthMethod(method) {
-            document.getElementById('authSelect').style.display = 'none';
-            
-            if (method === 'manual') {
-                document.getElementById('manualForm').style.display = 'block';
-                localStorage.setItem('auth_method', 'manual');
-            } else if (method === 'google') {
-                document.getElementById('googleDriveForm').style.display = 'block';
                 
-                if (!GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID.includes('YOUR_')) {
-                    showToast('Google Client ID belum dikonfigurasi!', 'error');
-                    showToast('Silakan edit file dan masukkan Client ID Anda', 'info');
-                }
-            }
-        }
-
-        function logoutGoogle() {
-            googleAccessToken = null;
-            googleUser = null;
-            document.getElementById('googleAuthContainer').style.display = 'block';
-            document.getElementById('gdriveLoggedIn').style.display = 'none';
-            showToast('Berhasil logout', 'success');
-        }
-
-        // ==========================================
-        // FORM SUBMISSION
-        // ==========================================
-        
-        document.getElementById('uploadForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            const title = document.getElementById('videoTitle').value;
-            const category = document.getElementById('videoCategory').value;
-            let thumbnailUrl = document.getElementById('thumbnailUrl').value;
-            let videoUrl = document.getElementById('videoUrl').value;
-            const description = document.getElementById('videoDesc').value;
-            const shopeeLink = document.getElementById('shopeeLink').value || 'https://s.shopee.co.id/1gEa1RAN5w';
-            
-            // Auto convert URLs if needed
-            thumbnailUrl = convertGoogleDriveUrl(thumbnailUrl, 'view');
-            videoUrl = convertGoogleDriveUrl(videoUrl, 'download');
-            
-            if (!title || !category || !thumbnailUrl || !videoUrl) {
-                showToast('Semua field wajib diisi!', 'error');
-                return;
-            }
-            
-            saveVideo({
-                title, category, thumbnailUrl, videoUrl, description, shopeeLink,
-                source: 'manual'
-            });
-            
-            // Reset form
-            document.getElementById('uploadForm').reset();
-            document.getElementById('shopeeLink').value = 'https://s.shopee.co.id/1gEa1RAN5w';
-            document.querySelectorAll('.url-preview').forEach(p => p.classList.remove('active'));
-            document.getElementById('convertResult').classList.remove('active');
-            document.getElementById('quickConvertInput').value = '';
-        });
-
-        document.getElementById('googleUploadForm')?.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            if (!googleAccessToken) {
-                showToast('Sesi Google habis, silakan login ulang', 'error');
-                return;
-            }
-            
-            const title = document.getElementById('gdTitle').value;
-            const category = document.getElementById('gdCategory').value;
-            const thumbnailFile = document.getElementById('gdThumbnailFile').files[0];
-            const videoFile = document.getElementById('gdVideoFile').files[0];
-            const description = document.getElementById('gdDesc').value;
-            const shopeeLink = document.getElementById('gdShopeeLink').value;
-            
-            if (!title || !category || !videoFile) {
-                showToast('Judul, kategori, dan file video wajib diisi!', 'error');
-                return;
-            }
-            
-            const btn = document.getElementById('gdSubmitBtn');
-            btn.disabled = true;
-            
-            try {
-                let thumbUrl = '';
-                let vidUrl = '';
+                copyBtn.textContent = 'Copied!';
+                copyBtn.classList.add('copied');
                 
-                if (thumbnailFile) {
-                    updateProgress('gd', 10, 'Upload thumbnail...');
-                    thumbUrl = await uploadToDrive(thumbnailFile, 'thumbnails');
-                }
-                
-                updateProgress('gd', 40, 'Upload video...');
-                vidUrl = await uploadToDrive(videoFile, 'videos');
-                
-                saveVideo({
-                    title, category,
-                    thumbnailUrl: thumbUrl || 'https://via.placeholder.com/640x360?text=No+Thumbnail',
-                    videoUrl: vidUrl,
-                    description, shopeeLink,
-                    source: 'gdrive'
-                });
-                
-                updateProgress('gd', 100, 'Selesai!');
                 setTimeout(() => {
-                    hideProgress('gd');
-                    btn.disabled = false;
-                    document.getElementById('googleUploadForm').reset();
-                    document.getElementById('gdShopeeLink').value = 'https://s.shopee.co.id/1gEa1RAN5w';
-                }, 1000);
-                
-            } catch (err) {
-                showToast('Gagal upload: ' + err.message, 'error');
-                btn.disabled = false;
-                hideProgress('gd');
-            }
-        });
-
-        async function uploadToDrive(file, folder) {
-            // Simple upload for small files
-            const metadata = {
-                name: file.name,
-                mimeType: file.type,
-                parents: [await getOrCreateFolder(folder)]
-            };
-            
-            const form = new FormData();
-            form.append('metadata', new Blob([JSON.stringify(metadata)], {type: 'application/json'}));
-            form.append('file', file);
-            
-            const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-                method: 'POST',
-                headers: { 'Authorization': 'Bearer ' + googleAccessToken },
-                body: form
-            });
-            
-            if (!res.ok) throw new Error('Upload failed');
-            
-            const result = await res.json();
-            await makeFilePublic(result.id);
-            
-            return `https://drive.google.com/uc?export=${folder === 'videos' ? 'download' : 'view'}&id=${result.id}`;
-        }
-
-        async function getOrCreateFolder(name) {
-            const search = await fetch(
-                `https://www.googleapis.com/drive/v3/files?q=mimeType='application/vnd.google-apps.folder' and name='${name}' and trashed=false`,
-                { headers: { 'Authorization': 'Bearer ' + googleAccessToken } }
-            );
-            const data = await search.json();
-            
-            if (data.files?.length > 0) return data.files[0].id;
-            
-            const create = await fetch('https://www.googleapis.com/drive/v3/files', {
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Bearer ' + googleAccessToken,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ name, mimeType: 'application/vnd.google-apps.folder' })
-            });
-            const result = await create.json();
-            return result.id;
-        }
-
-        async function makeFilePublic(fileId) {
-            await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/permissions`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Bearer ' + googleAccessToken,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ role: 'reader', type: 'anyone' })
+                    copyBtn.textContent = 'Copy';
+                    copyBtn.classList.remove('copied');
+                }, 2000);
             });
         }
 
-        function updateProgress(prefix, pct, status) {
-            document.getElementById(prefix + 'Progress').classList.add('active');
-            document.getElementById(prefix + 'ProgressBar').style.width = pct + '%';
-            document.getElementById(prefix + 'ProgressStatus').textContent = status;
-            document.getElementById(prefix + 'ProgressPercent').textContent = Math.round(pct) + '%';
-        }
-
-        function hideProgress(prefix) {
-            document.getElementById(prefix + 'Progress').classList.remove('active');
-        }
-
-        // ==========================================
-        // VIDEO MANAGEMENT
-        // ==========================================
-        
-        function saveVideo(data) {
-            const videos = JSON.parse(localStorage.getItem('videos') || '[]');
-            videos.unshift({
-                id: Date.now().toString(),
-                ...data,
-                uploadDate: new Date().toISOString(),
-                views: 0
-            });
-            localStorage.setItem('videos', JSON.stringify(videos));
-            showToast('Video berhasil disimpan!', 'success');
-            loadAdminVideos();
-        }
-
-        function loadAdminVideos() {
-            const videos = JSON.parse(localStorage.getItem('videos') || '[]');
-            renderList(videos);
-        }
-
-        function renderList(videos) {
-            const container = document.getElementById('adminVideoList');
-            
-            if (videos.length === 0) {
-                container.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--secondary);">
-                    <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 16px;"></i>
-                    <p>Belum ada video. Tambahkan video baru!</p>
-                </div>`;
-                return;
-            }
-            
-            container.innerHTML = videos.map(v => `
-                <div class="admin-video-item">
-                    <div class="admin-thumb">
-                        <img src="${v.thumbnailUrl}" alt="${v.title}" onerror="this.src='https://via.placeholder.com/100x60?text=Error'">
-                        <span class="source-badge ${v.source === 'gdrive' ? 'drive' : 'direct'}">
-                            ${v.source === 'gdrive' ? '<i class="fab fa-google-drive"></i>' : '<i class="fas fa-link"></i>'}
-                        </span>
-                    </div>
-                    <div class="admin-video-info">
-                        <h4>${v.title}</h4>
-                        <span>${v.category} • ${formatViews(v.views || 0)} views</span>
-                    </div>
-                    <div class="admin-actions">
-                        <button onclick="openEdit('${v.id}')" title="Edit"><i class="fas fa-edit"></i></button>
-                        <button onclick="deleteVideo('${v.id}')" class="btn-delete" title="Hapus"><i class="fas fa-trash"></i></button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function deleteVideo(id) {
-            if (!confirm('Yakin ingin menghapus video ini?')) return;
-            let videos = JSON.parse(localStorage.getItem('videos') || '[]');
-            videos = videos.filter(v => v.id !== id);
-            localStorage.setItem('videos', JSON.stringify(videos));
-            loadAdminVideos();
-            showToast('Video dihapus!', 'success');
-        }
-
-        function openEdit(id) {
-            const videos = JSON.parse(localStorage.getItem('videos') || '[]');
-            const v = videos.find(x => x.id === id);
-            if (!v) return;
-            
-            document.getElementById('editId').value = v.id;
-            document.getElementById('editTitle').value = v.title;
-            document.getElementById('editCategory').value = v.category;
-            document.getElementById('editThumbnailUrl').value = v.thumbnailUrl || '';
-            document.getElementById('editVideoUrl').value = v.videoUrl || '';
-            document.getElementById('editDesc').value = v.description || '';
-            document.getElementById('editShopeeLink').value = v.shopeeLink || '';
-            
-            document.getElementById('editModal').classList.add('active');
-        }
-
-        function closeEditModal() {
-            document.getElementById('editModal').classList.remove('active');
-        }
-
-        document.getElementById('editForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const id = document.getElementById('editId').value;
-            
-            let videos = JSON.parse(localStorage.getItem('videos') || '[]');
-            const idx = videos.findIndex(v => v.id === id);
-            
-            if (idx !== -1) {
-                videos[idx] = {
-                    ...videos[idx],
-                    title: document.getElementById('editTitle').value,
-                    category: document.getElementById('editCategory').value,
-                    thumbnailUrl: document.getElementById('editThumbnailUrl').value,
-                    videoUrl: document.getElementById('editVideoUrl').value,
-                    description: document.getElementById('editDesc').value,
-                    shopeeLink: document.getElementById('editShopeeLink').value
-                };
-                
-                localStorage.setItem('videos', JSON.stringify(videos));
-                loadAdminVideos();
-                closeEditModal();
-                showToast('Perubahan disimpan!', 'success');
-            }
-        });
-
-        function filterAdminVideos() {
-            const search = document.getElementById('adminSearch').value.toLowerCase();
-            const cat = document.getElementById('adminCategoryFilter').value;
-            
-            let videos = JSON.parse(localStorage.getItem('videos') || '[]');
-            if (search) videos = videos.filter(v => v.title.toLowerCase().includes(search));
-            if (cat) videos = videos.filter(v => v.category === cat);
-            
-            renderList(videos);
-        }
-
-        function formatViews(n) {
-            if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
-            if (n >= 1000) return (n/1000).toFixed(1) + 'K';
-            return n.toString();
-        }
-
-        function showToast(msg, type = 'info') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            
-            const icons = { success: 'check-circle', error: 'exclamation-circle', warning: 'exclamation-triangle', info: 'info-circle' };
-            toast.innerHTML = `<i class="fas fa-${icons[type]}"></i> ${msg}`;
-            
-            container.appendChild(toast);
-            setTimeout(() => {
-                toast.style.animation = 'slideIn 0.3s ease reverse';
-                setTimeout(() => toast.remove(), 300);
-            }, 4000);
-        }
-
-        function setupEventListeners() {
-            document.addEventListener('click', (e) => {
-                if (e.target === document.getElementById('editModal')) closeEditModal();
-            });
-        }
+        window.onload = function() {
+            document.getElementById('title').value = 'DI SEPONG PACAR GURIH BIKIN NAGIH';
+            document.getElementById('displayTitle').value = 'CEWEK ABG COLMEK BODY TOBRUT';
+            generateCode();
+        };
     </script>
 </body>
 </html>
