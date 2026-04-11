@@ -111,36 +111,18 @@
             overflow: hidden;
             position: relative;
             min-height: 400px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
-        
-        /* Custom Video Player Styling */
-        .video-player {
-            width: 100%;
-            height: 100%;
-            max-height: 70vh;
-            object-fit: contain;
-            background: #000;
+        .video-wrapper {
+            position: absolute; inset: 0;
         }
-        
-        /* Custom Controls Styling */
-        video::-webkit-media-controls {
-            background-color: rgba(0, 0, 0, 0.7);
+        .video-wrapper iframe {
+            width: 100%; height: 100%; border: none;
         }
-        
-        video::-webkit-media-controls-panel {
-            background: linear-gradient(transparent, rgba(0,0,0,0.8));
-        }
-
         .loading {
             position: absolute; inset: 0;
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
             color: var(--secondary);
-            background: var(--bg-dark);
-            z-index: 10;
         }
         .loading i {
             font-size: 3rem; margin-bottom: 16px;
@@ -220,11 +202,11 @@
         <div class="video-meta-bar">
             <div class="meta-item">
                 <i class="fas fa-play-circle"></i>
-                <span>Telegram Stream</span>
+                <span>Streamtape</span>
             </div>
             <div class="meta-item">
-                <i class="fas fa-shield-alt"></i>
-                <span>Direct Play</span>
+                <i class="fas fa-infinity"></i>
+                <span>Unlimited Storage</span>
             </div>
             <div class="meta-item">
                 <i class="fas fa-clock"></i>
@@ -236,7 +218,7 @@
     <script>
         // Parse URL parameters
         const params = new URLSearchParams(window.location.search);
-        const videoUrl = params.get('url');
+        const streamtapeId = params.get('id');
         const title = params.get('title') || 'Untitled Video';
         const category = params.get('cat') || 'uncategorized';
 
@@ -256,44 +238,31 @@
         setInterval(updateTime, 60000);
 
         // Load video
-        if (videoUrl && videoUrl.includes('telegram.org')) {
+        if (streamtapeId && streamtapeId.length >= 5) {
             const container = document.getElementById('playerContainer');
             
-            // Buat video element dengan HTML5 player (bisa streaming/seek)
-            container.innerHTML = `
-                <video 
-                    class="video-player" 
-                    controls 
-                    autoplay
-                    playsinline
-                    preload="metadata"
-                    poster="https://via.placeholder.com/1280x720/0a0a0a/666?text=Loading..."
-                >
-                    <source src="${decodeURIComponent(videoUrl)}" type="video/mp4">
-                    <source src="${decodeURIComponent(videoUrl)}" type="video/webm">
-                    <source src="${decodeURIComponent(videoUrl)}" type="video/ogg">
-                    Browser Anda tidak mendukung pemutaran video.
-                </video>
-            `;
-
-            const video = container.querySelector('video');
-            
-            // Event listeners
-            video.addEventListener('loadeddata', () => {
-                document.getElementById('loading')?.remove();
-            });
-            
-            video.addEventListener('error', () => {
-                showError();
-            });
-            
-            // Timeout fallback
+            // Timeout untuk error handling
             setTimeout(() => {
-                if (video.readyState === 0) {
+                const iframe = container.querySelector('iframe');
+                if (!iframe) {
                     showError();
                 }
-            }, 15000);
-            
+            }, 10000);
+
+            // Streamtape embed URL format
+            // Format: https://streamtape.com/e/[VIDEO_ID]
+            container.innerHTML = `
+                <div class="video-wrapper">
+                    <iframe 
+                        src="https://streamtape.com/e/${streamtapeId}" 
+                        allowfullscreen 
+                        allow="autoplay; encrypted-media"
+                        sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+                        onload="document.getElementById('loading')?.remove()"
+                        onerror="showError()">
+                    </iframe>
+                </div>
+            `;
         } else {
             showError();
         }
@@ -305,10 +274,10 @@
                     <h3>Video Tidak Dapat Dimuat</h3>
                     <p>
                         Pastikan:<br>
-                        1. URL video valid dari Telegram<br>
-                        2. Token bot masih aktif<br>
-                        3. File masih tersedia di server Telegram<br>
-                        4. Coba refresh halaman
+                        1. ID Streamtape benar<br>
+                        2. Video masih tersedia di Streamtape<br>
+                        3. Video tidak dihapus karena copyright/DMCA<br>
+                        4. Coba akses langsung di streamtape.com
                     </p>
                 </div>
             `;
