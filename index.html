@@ -329,11 +329,11 @@
             <!--
             <div class="video-card" 
                  data-category="hijab" 
-                 data-jumpshare-id="ID_JUMPSHARE"
+                 data-telegram-url="https://t.me/channel_name/123"
                  data-shopee="https://s.shopee.co.id/1gEa1RAN5w"
                  data-title="Judul Video">
                 <div class="video-thumbnail" onclick="handleThumbnailClick(this)">
-                    <img src="https://jumpshare.com/embed/ID_JUMPSHARE?autoplay=0" 
+                    <img src="https://via.placeholder.com/640x360/1a1a1a/666?text=Telegram+Video" 
                          alt="Judul Video"
                          onerror="this.src='https://via.placeholder.com/640x360/1a1a1a/666?text=Video+Not+Found'">
                     <div class="play-overlay"><i class="fas fa-play"></i></div>
@@ -356,11 +356,11 @@
             <!-- CONTOH VIDEO -->
             <div class="video-card" 
                  data-category="Abg" 
-                 data-jumpshare-id="https://jumpshare.com/share/vCNENoHPqm1gnpE88QwH"
+                 data-telegram-url="https://t.me/asupandoodday/102"
                  data-shopee="https://s.shopee.co.id/1gEa1RAN5w"
                  data-title="CEWEK ABG COLMEK BODY TOBRUT">
                 <div class="video-thumbnail" onclick="handleThumbnailClick(this)">
-                    <img src="https://via.placeholder.com/640x360/1a1a1a/666?text=Jumpshare+Video" 
+                    <img src="https://via.placeholder.com/640x360/1a1a1a/666?text=Telegram+Video" 
                          alt="CEWEK ABG COLMEK BODY TOBRUT"
                          onerror="this.src='https://via.placeholder.com/640x360/1a1a1a/666?text=Video+Not+Found'">
                     <div class="play-overlay"><i class="fas fa-play"></i></div>
@@ -392,13 +392,13 @@
 
         function handleThumbnailClick(thumbnail) {
             const card = thumbnail.closest('.video-card');
-            const jumpshareId = card.getAttribute('data-jumpshare-id');
+            const telegramUrl = card.getAttribute('data-telegram-url');
             const shopeeLink = card.getAttribute('data-shopee');
 
-            if (sessionReady.has(jumpshareId)) {
+            if (sessionReady.has(telegramUrl)) {
                 openPlayerTab(card);
             } else {
-                sessionReady.add(jumpshareId);
+                sessionReady.add(telegramUrl);
                 card.classList.add('ready');
                 card.classList.add('show-shopee');
                 window.open(shopeeLink, '_blank');
@@ -418,16 +418,16 @@
         }
 
         function openPlayerTab(card) {
-            const jumpshareId = card.getAttribute('data-jumpshare-id');
+            const telegramUrl = card.getAttribute('data-telegram-url');
             const title = card.getAttribute('data-title');
             const category = card.getAttribute('data-category');
             
-            if (!jumpshareId || jumpshareId.length < 10) {
-                showToast('❌ ID Video tidak valid!');
+            if (!telegramUrl || !telegramUrl.includes('t.me/')) {
+                showToast('❌ URL Telegram tidak valid!');
                 return;
             }
 
-            const playerUrl = `player.html?id=${encodeURIComponent(jumpshareId)}&title=${encodeURIComponent(title)}&cat=${encodeURIComponent(category)}`;
+            const playerUrl = `player.html?url=${encodeURIComponent(telegramUrl)}&title=${encodeURIComponent(title)}&cat=${encodeURIComponent(category)}`;
             window.open(playerUrl, '_blank');
         }
 
