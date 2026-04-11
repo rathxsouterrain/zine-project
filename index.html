@@ -1,10 +1,10 @@
+<!-- index.html - Halaman Beranda -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopee Flash Sale Bot - Login Akun</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <title>Stream Video</title>
     <style>
         * {
             margin: 0;
@@ -12,2466 +12,626 @@
             box-sizing: border-box;
         }
 
-        :root {
-            --primary: #ee4d2d;
-            --primary-dark: #d73211;
-            --secondary: #ff7337;
-            --success: #00b894;
-            --danger: #ff4757;
-            --warning: #ffa502;
-            --info: #3498db;
-            --dark: #2d3436;
-            --light: #f5f6fa;
-            --sidebar: #1e272e;
-            --card-bg: #ffffff;
-            --text: #2d3436;
-            --text-light: #636e72;
-            --border: #dfe6e9;
-            --shadow: 0 4px 6px rgba(0,0,0,0.07);
-            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: #fff;
             min-height: 100vh;
-            color: var(--text);
+            overflow-x: hidden;
         }
 
-        .container {
-            display: flex;
-            min-height: 100vh;
+        /* Liquid Glass Effect Base */
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
 
-        /* Sidebar */
-        .sidebar {
-            width: 280px;
-            background: var(--sidebar);
-            color: white;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-            z-index: 1000;
-            transition: all 0.3s ease;
+        .glass-strong {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
-        .sidebar-header {
-            padding: 30px 25px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            text-align: center;
-        }
-
-        .sidebar-header h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .sidebar-header p {
-            font-size: 0.85rem;
-            opacity: 0.9;
-        }
-
-        .nav-menu {
-            padding: 20px 0;
-        }
-
-        .nav-item {
-            padding: 15px 25px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            border-left: 4px solid transparent;
-        }
-
-        .nav-item:hover {
-            background: rgba(255,255,255,0.05);
-            border-left-color: var(--primary);
-        }
-
-        .nav-item.active {
-            background: rgba(238, 77, 45, 0.1);
-            border-left-color: var(--primary);
-            color: var(--primary);
-        }
-
-        .nav-item i {
-            width: 20px;
-            text-align: center;
-        }
-
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            margin-left: 280px;
-            padding: 30px;
-        }
-
+        /* Header */
         .header {
-            background: white;
-            padding: 25px 30px;
-            border-radius: 15px;
-            box-shadow: var(--shadow);
-            margin-bottom: 30px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 20px 30px;
+            z-index: 100;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .header h2 {
-            color: var(--dark);
-            font-size: 1.8rem;
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #fff 0%, #888 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .header-actions {
+        /* Category Tab Button */
+        .category-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
             display: flex;
-            gap: 15px;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.95rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: inline-flex;
             align-items: center;
-            gap: 8px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(238, 77, 45, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(238, 77, 45, 0.4);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, var(--success) 0%, #00cec9 100%);
-            color: white;
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, var(--danger) 0%, #ff6348 100%);
-            color: white;
-        }
-
-        .btn-secondary {
-            background: var(--light);
-            color: var(--text);
-            border: 2px solid var(--border);
-        }
-
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: var(--shadow);
-            transition: transform 0.3s ease;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
 
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
+        .category-btn:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.15);
         }
 
-        .stat-card::before {
+        .category-btn::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
             width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-        }
-
-        .stat-card.success::before {
-            background: linear-gradient(90deg, var(--success), #00cec9);
-        }
-
-        .stat-card.warning::before {
-            background: linear-gradient(90deg, var(--warning), #e1b12c);
-        }
-
-        .stat-card.info::before {
-            background: linear-gradient(90deg, var(--info), #74b9ff);
-        }
-
-        .stat-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-        }
-
-        .stat-card .stat-icon {
-            background: rgba(238, 77, 45, 0.1);
-            color: var(--primary);
-        }
-
-        .stat-card.success .stat-icon {
-            background: rgba(0, 184, 148, 0.1);
-            color: var(--success);
-        }
-
-        .stat-card.warning .stat-icon {
-            background: rgba(255, 165, 2, 0.1);
-            color: var(--warning);
-        }
-
-        .stat-card.info .stat-icon {
-            background: rgba(52, 152, 219, 0.1);
-            color: var(--info);
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--dark);
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            color: var(--text-light);
-            font-size: 0.9rem;
-        }
-
-        /* Content Sections */
-        .content-section {
-            display: none;
-            animation: fadeIn 0.4s ease;
-        }
-
-        .content-section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .section-title {
-            font-size: 1.4rem;
-            margin-bottom: 25px;
-            color: var(--dark);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* Cards */
-        .card {
-            background: white;
-            border-radius: 15px;
-            box-shadow: var(--shadow);
-            padding: 30px;
-            margin-bottom: 25px;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid var(--light);
-        }
-
-        .card-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--dark);
-        }
-
-        /* Form Elements */
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 600;
-            color: var(--dark);
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 14px 18px;
-            border: 2px solid var(--border);
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            font-family: inherit;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(238, 77, 45, 0.1);
-        }
-
-        textarea.form-control {
-            resize: vertical;
-            min-height: 120px;
-        }
-
-        .form-text {
-            font-size: 0.85rem;
-            color: var(--text-light);
-            margin-top: 8px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-        }
-
-        /* Input Group with Icon */
-        .input-group {
-            position: relative;
-        }
-
-        .input-group i {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-light);
-        }
-
-        .input-group .form-control {
-            padding-left: 45px;
-        }
-
-        .input-group .toggle-password {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            color: var(--text-light);
-        }
-
-        /* Toggle Switch */
-        .toggle-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .toggle-switch {
-            position: relative;
-            width: 60px;
-            height: 30px;
-        }
-
-        .toggle-switch input {
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
             opacity: 0;
-            width: 0;
-            height: 0;
+            transition: opacity 0.3s;
         }
 
-        .toggle-slider {
-            position: absolute;
-            cursor: pointer;
+        .category-btn:hover::before {
+            opacity: 1;
+        }
+
+        .category-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: #fff;
+        }
+
+        /* Category Drawer */
+        .drawer-overlay {
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 30px;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+            z-index: 200;
         }
 
-        .toggle-slider:before {
+        .drawer-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .drawer {
+            position: fixed;
+            top: 0;
+            right: -50%;
+            width: 50%;
+            height: 100%;
+            z-index: 201;
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 100px 40px 40px;
+            overflow-y: auto;
+        }
+
+        .drawer.active {
+            right: 0;
+        }
+
+        @media (max-width: 768px) {
+            .drawer {
+                width: 85%;
+                right: -85%;
+            }
+        }
+
+        .drawer-close {
             position: absolute;
-            content: "";
-            height: 22px;
-            width: 22px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked + .toggle-slider {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-        }
-
-        input:checked + .toggle-slider:before {
-            transform: translateX(30px);
-        }
-
-        /* Account List */
-        .account-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .account-item {
-            background: var(--light);
-            padding: 20px;
-            border-radius: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-
-        .account-item:hover {
-            border-color: var(--primary);
-            transform: translateX(5px);
-        }
-
-        .account-item.active {
-            background: rgba(238, 77, 45, 0.05);
-            border-color: var(--primary);
-        }
-
-        .account-info h4 {
-            color: var(--dark);
-            margin-bottom: 5px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .account-info p {
-            color: var(--text-light);
-            font-size: 0.9rem;
-        }
-
-        .account-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .account-status.logged-in {
-            background: rgba(0, 184, 148, 0.1);
-            color: var(--success);
-        }
-
-        .account-status.logged-out {
-            background: rgba(255, 71, 87, 0.1);
-            color: var(--danger);
-        }
-
-        .account-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn-icon {
+            top: 30px;
+            right: 30px;
             width: 40px;
             height: 40px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
-            background: white;
-            color: var(--text);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .btn-icon:hover {
-            background: var(--primary);
-            color: white;
-            transform: scale(1.1);
-        }
-
-        .btn-icon.delete:hover {
-            background: var(--danger);
-        }
-
-        /* Log Console */
-        .console {
-            background: #1e272e;
-            color: #00ff88;
-            padding: 25px;
-            border-radius: 15px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            height: 400px;
-            overflow-y: auto;
-            line-height: 1.6;
-        }
-
-        .console-line {
-            margin-bottom: 8px;
-            opacity: 0;
-            animation: typeIn 0.3s ease forwards;
-        }
-
-        @keyframes typeIn {
-            to { opacity: 1; }
-        }
-
-        .console-line.error { color: #ff4757; }
-        .console-line.warning { color: #ffa502; }
-        .console-line.info { color: #74b9ff; }
-        .console-line.success { color: #00ff88; }
-
-        .console-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #444;
-        }
-
-        .console-title {
-            color: white;
-            font-weight: 600;
-        }
-
-        .console-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .console-btn {
-            background: #444;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 6px;
             cursor: pointer;
-            font-size: 0.85rem;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
         }
 
-        .console-btn:hover {
-            background: var(--primary);
+        .drawer-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(90deg);
         }
 
-        /* Status Badge */
-        .badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
+        .drawer-title {
+            font-size: 32px;
+            font-weight: 300;
+            margin-bottom: 40px;
+            letter-spacing: -1px;
         }
 
-        .badge-success {
-            background: rgba(0, 184, 148, 0.1);
-            color: var(--success);
+        /* Folder Cards */
+        .folder-grid {
+            display: grid;
+            gap: 20px;
         }
 
-        .badge-warning {
-            background: rgba(255, 165, 2, 0.1);
-            color: var(--warning);
-        }
-
-        .badge-danger {
-            background: rgba(255, 71, 87, 0.1);
-            color: var(--danger);
-        }
-
-        .badge-info {
-            background: rgba(52, 152, 219, 0.1);
-            color: var(--info);
-        }
-
-        /* Bot Control Panel */
-        .control-panel {
-            background: linear-gradient(135deg, var(--sidebar) 0%, #2d3436 100%);
-            color: white;
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .control-panel h2 {
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-
-        .control-panel p {
-            opacity: 0.8;
-            margin-bottom: 30px;
-        }
-
-        .big-button {
-            padding: 20px 50px;
-            font-size: 1.2rem;
-            border-radius: 50px;
-            border: none;
+        .folder-card {
+            padding: 30px;
+            border-radius: 24px;
             cursor: pointer;
-            font-weight: 700;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        .big-button:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
-        }
-
-        .big-button.start {
-            background: linear-gradient(135deg, var(--success) 0%, #00cec9 100%);
-            color: white;
-        }
-
-        .big-button.stop {
-            background: linear-gradient(135deg, var(--danger) 0%, #ff6348 100%);
-            color: white;
-        }
-
-        .big-button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
-        /* Progress Bar */
-        .progress-container {
-            margin-top: 30px;
-            display: none;
-        }
-
-        .progress-container.active {
-            display: block;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 10px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 10px;
+            transition: all 0.4s ease;
+            position: relative;
             overflow: hidden;
         }
 
-        .progress-fill {
+        .folder-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            width: 0%;
-            transition: width 0.3s ease;
-            border-radius: 10px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s;
         }
 
-        .progress-text {
-            margin-top: 10px;
-            font-size: 0.9rem;
-            opacity: 0.9;
+        .folder-card:hover::before {
+            left: 100%;
         }
 
-        /* OTP Input */
-        .otp-container {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin: 20px 0;
+        .folder-card:hover {
+            transform: translateX(-10px);
+            background: rgba(255, 255, 255, 0.12);
         }
 
-        .otp-input {
-            width: 50px;
+        .folder-icon {
+            width: 60px;
             height: 60px;
-            text-align: center;
-            font-size: 1.5rem;
-            border: 2px solid var(--border);
-            border-radius: 10px;
-            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            opacity: 0.8;
         }
 
-        .otp-input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(238, 77, 45, 0.1);
-            outline: none;
-        }
-
-        /* Login Method Tabs */
-        .login-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
-            border-bottom: 2px solid var(--border);
-        }
-
-        .login-tab {
-            padding: 12px 24px;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s ease;
+        .folder-name {
+            font-size: 24px;
             font-weight: 600;
-            color: var(--text-light);
+            margin-bottom: 8px;
         }
 
-        .login-tab:hover {
-            color: var(--primary);
+        .folder-count {
+            font-size: 14px;
+            opacity: 0.6;
         }
 
-        .login-tab.active {
-            color: var(--primary);
-            border-bottom-color: var(--primary);
+        /* Main Content */
+        .main-content {
+            padding: 100px 30px 50px;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
-        /* Variation Tags */
-        .variation-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 10px;
+        .section-title {
+            font-size: 48px;
+            font-weight: 200;
+            margin-bottom: 10px;
+            letter-spacing: -2px;
         }
 
-        .variation-tag {
-            background: var(--light);
-            padding: 8px 15px;
+        .section-subtitle {
+            font-size: 16px;
+            opacity: 0.6;
+            margin-bottom: 50px;
+        }
+
+        /* Video Grid */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .video-card {
             border-radius: 20px;
-            font-size: 0.9rem;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .video-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .video-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s;
+        }
+
+        .video-card:hover .video-thumbnail img {
+            transform: scale(1.1);
+        }
+
+        .play-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
             display: flex;
             align-items: center;
-            gap: 8px;
-            border: 2px solid var(--border);
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.3s ease;
         }
 
-        .variation-tag .remove {
-            cursor: pointer;
-            color: var(--danger);
-            font-weight: bold;
+        .video-card:hover .play-overlay {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
         }
 
-        .add-variation {
+        .play-overlay svg {
+            width: 24px;
+            height: 24px;
+            fill: #000;
+            margin-left: 4px;
+        }
+
+        .video-info {
+            padding: 20px;
+        }
+
+        .video-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .video-meta {
+            font-size: 13px;
+            opacity: 0.5;
+            display: flex;
+            gap: 15px;
+        }
+
+        /* Category Filter Tags */
+        .filter-tags {
             display: flex;
             gap: 10px;
-            margin-top: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
         }
 
-        .add-variation input {
-            flex: 1;
+        .tag {
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tag:hover, .tag.active {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Loading Animation */
+        .skeleton {
+            background: linear-gradient(90deg, #1a1a1a 25%, #2a2a2a 50%, #1a1a1a 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-size: 14px;
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 300;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
         }
 
         /* Responsive */
         @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
+            .section-title {
+                font-size: 32px;
             }
-            
-            .sidebar.active {
-                transform: translateX(0);
-            }
-            
-            .main-content {
-                margin-left: 0;
-                padding: 15px;
-            }
-            
-            .stats-grid {
+            .video-grid {
                 grid-template-columns: 1fr;
             }
-            
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-
-            .header {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
-
-            .control-panel {
-                padding: 25px;
-            }
-
-            .big-button {
-                padding: 15px 30px;
-                font-size: 1rem;
-            }
-
-            .otp-input {
-                width: 40px;
-                height: 50px;
-                font-size: 1.2rem;
-            }
         }
-
-        /* Loading Animation */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Toast Notification */
-        .toast-container {
-            position: fixed;
-            top: 30px;
-            right: 30px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .toast {
-            background: white;
-            padding: 20px 25px;
-            border-radius: 12px;
-            box-shadow: var(--shadow-lg);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            min-width: 300px;
-            animation: slideIn 0.4s ease;
-            border-left: 4px solid var(--primary);
-        }
-
-        .toast.success { border-left-color: var(--success); }
-        .toast.error { border-left-color: var(--danger); }
-        .toast.warning { border-left-color: var(--warning); }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        .toast-icon {
-            font-size: 1.5rem;
-        }
-
-        .toast.success .toast-icon { color: var(--success); }
-        .toast.error .toast-icon { color: var(--danger); }
-        .toast.warning .toast-icon { color: var(--warning); }
-
-        .toast-content h4 {
-            margin-bottom: 5px;
-            color: var(--dark);
-        }
-
-        .toast-content p {
-            color: var(--text-light);
-            font-size: 0.9rem;
-        }
-
-        /* Modal */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal {
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: modalSlide 0.3s ease;
-        }
-
-        @keyframes modalSlide {
-            from {
-                transform: translateY(-50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .modal-header {
-            margin-bottom: 20px;
-        }
-
-        .modal-footer {
-            margin-top: 25px;
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-        }
-
-        /* Security Notice */
-        .security-notice {
-            background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
-            border: 2px solid #fc8181;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 25px;
-        }
-
-        .security-notice h4 {
-            color: #c53030;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .security-notice p {
-            color: #742a2a;
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-light);
-        }
-
-        .empty-state i {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            opacity: 0.5;
-        }
-
-        .empty-state h3 {
-            margin-bottom: 10px;
-            color: var(--dark);
-        }
-
-        /* Mobile Menu Toggle */
-        .mobile-toggle {
-            display: none;
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1001;
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        @media (max-width: 768px) {
-            .mobile-toggle {
-                display: block;
-            }
-        }
-
-        /* Password Strength */
-        .password-strength {
-            margin-top: 8px;
-            height: 4px;
-            background: var(--border);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .password-strength-bar {
-            height: 100%;
-            width: 0%;
-            transition: all 0.3s ease;
-            border-radius: 2px;
-        }
-
-        .strength-weak { background: var(--danger); width: 33%; }
-        .strength-medium { background: var(--warning); width: 66%; }
-        .strength-strong { background: var(--success); width: 100%; }
     </style>
 </head>
 <body>
-    <button class="mobile-toggle" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </button>
 
-    <div class="container">
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <h1><i class="fas fa-robot"></i> Shopee Bot</h1>
-                <p>Flash Sale Automation</p>
+    <!-- Header -->
+    <header class="header glass">
+        <div class="logo">STREAM</div>
+        <div class="category-btn glass" onclick="toggleDrawer()">
+            <svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+        </div>
+    </header>
+
+    <!-- Category Drawer -->
+    <div class="drawer-overlay" onclick="toggleDrawer()"></div>
+    <div class="drawer glass-strong" id="drawer">
+        <div class="drawer-close" onclick="toggleDrawer()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </div>
+        <h2 class="drawer-title">Kategori</h2>
+        <div class="folder-grid">
+            <div class="folder-card glass" onclick="filterCategory('hijab')">
+                <svg class="folder-icon" viewBox="0 0 24 24" fill="white"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>
+                <div class="folder-name">Hijab</div>
+                <div class="folder-count"><span id="count-hijab">0</span> video</div>
             </div>
-            <nav class="nav-menu">
-                <div class="nav-item active" onclick="showSection('dashboard', this)">
-                    <i class="fas fa-home"></i>
-                    <span>Dashboard</span>
-                </div>
-                <div class="nav-item" onclick="showSection('accounts', this)">
-                    <i class="fas fa-users"></i>
-                    <span>Account Manager</span>
-                </div>
-                <div class="nav-item" onclick="showSection('config', this)">
-                    <i class="fas fa-cog"></i>
-                    <span>Configuration</span>
-                </div>
-                <div class="nav-item" onclick="showSection('bot', this)">
-                    <i class="fas fa-play-circle"></i>
-                    <span>Bot Control</span>
-                </div>
-                <div class="nav-item" onclick="showSection('logs', this)">
-                    <i class="fas fa-terminal"></i>
-                    <span>Logs & History</span>
-                </div>
-                <div class="nav-item" onclick="showSection('settings', this)">
-                    <i class="fas fa-sliders-h"></i>
-                    <span>Settings</span>
-                </div>
-            </nav>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Dashboard Section -->
-            <section id="dashboard" class="content-section active">
-                <div class="header">
-                    <h2><i class="fas fa-home"></i> Dashboard</h2>
-                    <div class="header-actions">
-                        <button class="btn btn-secondary" onclick="refreshDashboard()">
-                            <i class="fas fa-sync-alt"></i> Refresh
-                        </button>
-                    </div>
-                </div>
-
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-user-check"></i>
-                        </div>
-                        <div class="stat-value" id="activeAccount">-</div>
-                        <div class="stat-label">Active Account</div>
-                    </div>
-                    <div class="stat-card success">
-                        <div class="stat-icon">
-                            <i class="fas fa-shopping-bag"></i>
-                        </div>
-                        <div class="stat-value" id="totalAttempts">0</div>
-                        <div class="stat-label">Total Attempts</div>
-                    </div>
-                    <div class="stat-card warning">
-                        <div class="stat-icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="stat-value" id="nextFlashSale">--:--</div>
-                        <div class="stat-label">Next Flash Sale</div>
-                    </div>
-                    <div class="stat-card info">
-                        <div class="stat-icon">
-                            <i class="fas fa-server"></i>
-                        </div>
-                        <div class="stat-value" id="botStatus">Idle</div>
-                        <div class="stat-label">Bot Status</div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title"><i class="fas fa-info-circle"></i> Quick Start Guide</h3>
-                    </div>
-                    <div style="line-height: 1.8; color: var(--text-light);">
-                        <p><strong style="color: var(--dark);">Selamat datang di Shopee Flash Sale Bot!</strong></p>
-                        <p>Ikuti langkah-langkah berikut untuk memulai:</p>
-                        <ol style="margin-left: 20px; margin-top: 15px; margin-bottom: 20px;">
-                            <li style="margin-bottom: 10px;"><strong>Tambah Akun</strong> - Buka "Account Manager" dan login dengan akun Shopee Anda</li>
-                            <li style="margin-bottom: 10px;"><strong>Setting Produk</strong> - Masukkan URL produk target di "Configuration"</li>
-                            <li style="margin-bottom: 10px;"><strong>Jalankan Bot</strong> - Klik "START BOT" di "Bot Control"</li>
-                            <li><strong>Monitor</strong> - Pantau progress di dashboard dan logs</li>
-                        </ol>
-                        
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
-                            <div style="padding: 20px; background: rgba(238, 77, 45, 0.05); border-radius: 12px; text-align: center; cursor: pointer;" onclick="showSection('accounts', document.querySelectorAll('.nav-item')[1])">
-                                <i class="fas fa-users" style="font-size: 2rem; color: var(--primary); margin-bottom: 10px;"></i>
-                                <div style="font-weight: 600; color: var(--dark);">1. Login Akun</div>
-                            </div>
-                            <div style="padding: 20px; background: rgba(52, 152, 219, 0.05); border-radius: 12px; text-align: center; cursor: pointer;" onclick="showSection('config', document.querySelectorAll('.nav-item')[2])">
-                                <i class="fas fa-cog" style="font-size: 2rem; color: var(--info); margin-bottom: 10px;"></i>
-                                <div style="font-weight: 600; color: var(--dark);">2. Config</div>
-                            </div>
-                            <div style="padding: 20px; background: rgba(0, 184, 148, 0.05); border-radius: 12px; text-align: center; cursor: pointer;" onclick="showSection('bot', document.querySelectorAll('.nav-item')[3])">
-                                <i class="fas fa-play-circle" style="font-size: 2rem; color: var(--success); margin-bottom: 10px;"></i>
-                                <div style="font-weight: 600; color: var(--dark);">3. Start Bot</div>
-                            </div>
-                        </div>
-
-                        <div style="margin-top: 25px; padding: 20px; background: rgba(255, 165, 2, 0.1); border-radius: 12px; border-left: 4px solid var(--warning);">
-                            <i class="fas fa-shield-alt" style="color: var(--warning); margin-right: 10px;"></i>
-                            <strong>Keamanan:</strong> Password Anda dienkripsi dan disimpan secara lokal. Tidak ada data yang dikirim ke server kami.
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Accounts Section -->
-            <section id="accounts" class="content-section">
-                <div class="header">
-                    <h2><i class="fas fa-users"></i> Account Manager</h2>
-                    <div class="header-actions">
-                        <button class="btn btn-primary" onclick="openModal('addAccountModal')">
-                            <i class="fas fa-plus"></i> Tambah Akun
-                        </button>
-                    </div>
-                </div>
-
-                <div class="security-notice">
-                    <h4><i class="fas fa-lock"></i> Keamanan Data</h4>
-                    <p>Akun Shopee Anda disimpan dengan enkripsi AES-256 di browser (localStorage). 
-                    Password tidak pernah dikirim ke server kami. 
-                    <strong>Pastikan device Anda aman dan tidak dipinjamkan.</strong></p>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Akun Tersimpan</h3>
-                        <span class="badge badge-info" id="accountCount">0 akun</span>
-                    </div>
-                    <div class="account-list" id="accountList">
-                        <div class="empty-state">
-                            <i class="fas fa-user-plus"></i>
-                            <h3>Belum Ada Akun</h3>
-                            <p>Klik "Tambah Akun" untuk menambahkan akun Shopee Anda</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Configuration Section -->
-            <section id="config" class="content-section">
-                <div class="header">
-                    <h2><i class="fas fa-cog"></i> Configuration</h2>
-                    <div class="header-actions">
-                        <button class="btn btn-success" onclick="saveConfig()">
-                            <i class="fas fa-save"></i> Save Config
-                        </button>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title"><i class="fas fa-link"></i> Product Settings</h3>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Flash Sale URL</label>
-                        <div class="input-group">
-                            <i class="fas fa-link"></i>
-                            <input type="text" class="form-control" id="productUrl" placeholder="https://shopee.co.id/product/...">
-                        </div>
-                        <div class="form-text">Paste URL produk Shopee yang ingin dibeli saat flash sale</div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Product Variations</label>
-                        <div class="variation-container" id="variationContainer">
-                            <span style="color: var(--text-light); font-style: italic;">Belum ada varian (opsional)</span>
-                        </div>
-                        <div class="add-variation">
-                            <input type="text" class="form-control" id="newVariation" placeholder="Tambah varian (contoh: Merah, Ukuran L)">
-                            <button class="btn btn-secondary" onclick="addVariation()">
-                                <i class="fas fa-plus"></i> Add
-                            </button>
-                        </div>
-                        <div class="form-text">Tambahkan varian produk jika ada (warna, ukuran, dll)</div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title"><i class="fas fa-magic"></i> Automation Settings</h3>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Auto Checkout</label>
-                            <div class="toggle-container">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="autoCheckout" checked>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <span>Enable automatic checkout</span>
-                            </div>
-                            <div class="form-text">Bot akan otomatis checkout ketika produk tersedia</div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Auto Order</label>
-                            <div class="toggle-container">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="autoOrder">
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <span>Enable automatic order</span>
-                            </div>
-                            <div class="form-text">Otomatis konfirmasi order (Coming Soon)</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title"><i class="fab fa-chrome"></i> Chrome Options</h3>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Additional Chrome Options</label>
-                        <textarea class="form-control" id="chromeOptions" placeholder="--headless
---no-sandbox
---disable-dev-shm-usage
---disable-gpu
---disable-blink-features=AutomationControlled"></textarea>
-                        <div class="form-text">Satu option per baris. Options ini akan diteruskan ke ChromeDriver.</div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title"><i class="fas fa-clock"></i> Timing Settings</h3>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Refresh Interval (detik)</label>
-                            <input type="number" class="form-control" id="refreshInterval" value="1" min="0.5" max="10" step="0.5">
-                            <div class="form-text">Seberapa sering bot refresh halaman (detik)</div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Timeout (detik)</label>
-                            <input type="number" class="form-control" id="timeout" value="30" min="10" max="300">
-                            <div class="form-text">Timeout untuk menunggu element muncul</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Bot Control Section -->
-            <section id="bot" class="content-section">
-                <div class="header">
-                    <h2><i class="fas fa-play-circle"></i> Bot Control</h2>
-                </div>
-
-                <div class="control-panel">
-                    <h2><i class="fas fa-robot"></i> Bot Controller</h2>
-                    <p>Start the bot to begin monitoring and purchasing flash sale items</p>
-                    
-                    <button class="big-button start" id="startBtn" onclick="toggleBot()">
-                        <i class="fas fa-play"></i>
-                        <span>START BOT</span>
-                    </button>
-
-                    <div class="progress-container" id="progressContainer">
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="progressFill"></div>
-                        </div>
-                        <div class="progress-text" id="progressText">Ready to start...</div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Current Configuration</h3>
-                        <button class="btn btn-secondary" onclick="showSection('config', document.querySelectorAll('.nav-item')[2])">
-                            <i class="fas fa-edit"></i> Edit
-                        </button>
-                    </div>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-                        <div style="padding: 15px; background: var(--light); border-radius: 10px;">
-                            <div style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 5px;">Account</div>
-                            <div id="configAccount" style="color: var(--dark); font-weight: 600;">Not selected</div>
-                        </div>
-                        <div style="padding: 15px; background: var(--light); border-radius: 10px;">
-                            <div style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 5px;">Product URL</div>
-                            <div id="configUrl" style="color: var(--dark); font-weight: 600; word-break: break-all;">Not set</div>
-                        </div>
-                        <div style="padding: 15px; background: var(--light); border-radius: 10px;">
-                            <div style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 5px;">Auto Checkout</div>
-                            <div id="configCheckout">
-                                <span class="badge badge-success">Enabled</span>
-                            </div>
-                        </div>
-                        <div style="padding: 15px; background: var(--light); border-radius: 10px;">
-                            <div style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 5px;">Variations</div>
-                            <div id="configVariations" style="color: var(--dark);">None</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title"><i class="fas fa-terminal"></i> Live Logs</h3>
-                        <div class="header-actions">
-                            <span class="badge badge-success" id="logStatus">Standby</span>
-                            <button class="btn btn-secondary" onclick="clearLiveLogs()">
-                                <i class="fas fa-trash"></i> Clear
-                            </button>
-                        </div>
-                    </div>
-                    <div class="console" id="liveConsole">
-                        <div class="console-line info">[SYSTEM] Bot ready. Waiting to start...</div>
-                        <div class="console-line info">[SYSTEM] Please configure account and product URL first</div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Logs Section -->
-            <section id="logs" class="content-section">
-                <div class="header">
-                    <h2><i class="fas fa-terminal"></i> Logs & History</h2>
-                    <div class="header-actions">
-                        <button class="btn btn-secondary" onclick="clearLogs()">
-                            <i class="fas fa-trash"></i> Clear
-                        </button>
-                        <button class="btn btn-primary" onclick="exportLogs()">
-                            <i class="fas fa-download"></i> Export
-                        </button>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="console-header">
-                        <span class="console-title"><i class="fas fa-history"></i> Execution History</span>
-                        <div class="console-actions">
-                            <button class="console-btn" onclick="filterLogs('all')">All</button>
-                            <button class="console-btn" onclick="filterLogs('error')">Errors</button>
-                            <button class="console-btn" onclick="filterLogs('success')">Success</button>
-                            <button class="console-btn" onclick="filterLogs('info')">Info</button>
-                        </div>
-                    </div>
-                    <div class="console" id="historyConsole" style="height: 500px;">
-                        <div class="console-line info">[2026-04-03 19:00:00] System initialized</div>
-                        <div class="console-line info">[2026-04-03 19:00:01] Dashboard loaded successfully</div>
-                        <div class="console-line warning">[2026-04-03 19:00:02] No active account configured</div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Settings Section -->
-            <section id="settings" class="content-section">
-                <div class="header">
-                    <h2><i class="fas fa-sliders-h"></i> Settings</h2>
-                    <div class="header-actions">
-                        <button class="btn btn-success" onclick="saveSettings()">
-                            <i class="fas fa-save"></i> Save Settings
-                        </button>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title"><i class="fas fa-cog"></i> ChromeDriver Settings</h3>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">ChromeDriver Path</label>
-                        <input type="text" class="form-control" id="driverPath" value="./webdriver/chromedriver">
-                        <div class="form-text">Path ke executable ChromeDriver (chromedriver.exe untuk Windows)</div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <button class="btn btn-secondary" onclick="checkDriver()">
-                                <i class="fas fa-check-circle"></i> Check Driver
-                            </button>
-                        </div>
-                        <div class="form-group">
-                            <button class="btn btn-secondary" onclick="downloadDriver()">
-                                <i class="fas fa-download"></i> Download Driver
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title"><i class="fas fa-laptop"></i> Platform Settings</h3>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Operating System</label>
-                        <select class="form-control" id="platform">
-                            <option value="Windows">Windows</option>
-                            <option value="Linux">Linux</option>
-                            <option value="Darwin">macOS</option>
-                        </select>
-                        <div class="form-text">Pilih OS untuk menyesuaikan path dan executable</div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title"><i class="fas fa-shield-alt"></i> Security Settings</h3>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Encryption Password (Optional)</label>
-                        <div class="input-group">
-                            <i class="fas fa-key"></i>
-                            <input type="password" class="form-control" id="encryptionKey" placeholder="Tambahan keamanan untuk enkripsi">
-                            <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility('encryptionKey')"></i>
-                        </div>
-                        <div class="form-text">Password tambahan untuk mengenkripsi data akun (opsional tapi direkomendasikan)</div>
-                    </div>
-                    <div class="form-group">
-                        <button class="btn btn-danger" onclick="clearAllData()">
-                            <i class="fas fa-trash-alt"></i> Clear All Data
-                        </button>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title"><i class="fas fa-info-circle"></i> About</h3>
-                    </div>
-                    <div style="text-align: center; padding: 40px;">
-                        <i class="fas fa-robot" style="font-size: 4rem; color: var(--primary); margin-bottom: 20px;"></i>
-                        <h3 style="margin-bottom: 10px;">Shopee Flash Sale Bot</h3>
-                        <p style="color: var(--text-light); margin-bottom: 10px;">Version 3.0.0 | Login Edition</p>
-                        <p style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 20px;">
-                            Tool otomasi flash sale dengan login akun langsung
-                        </p>
-                        <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-                            <a href="#" target="_blank" class="btn btn-secondary">
-                                <i class="fab fa-github"></i> GitHub
-                            </a>
-                            <a href="#" target="_blank" class="btn btn-primary">
-                                <i class="fas fa-book"></i> Documentation
-                            </a>
-                            <a href="#" target="_blank" class="btn btn-success">
-                                <i class="fas fa-headset"></i> Support
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <!-- Add Account Modal -->
-    <div class="modal-overlay" id="addAccountModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h3><i class="fas fa-user-plus"></i> Tambah Akun Shopee</h3>
-                <p style="color: var(--text-light); margin-top: 5px;">Login dengan akun Shopee Anda</p>
+            <div class="folder-card glass" onclick="filterCategory('bocil')">
+                <svg class="folder-icon" viewBox="0 0 24 24" fill="white"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>
+                <div class="folder-name">Bocil</div>
+                <div class="folder-count"><span id="count-bocil">0</span> video</div>
             </div>
-
-            <div class="login-tabs">
-                <div class="login-tab active" onclick="switchLoginTab('password', this)">
-                    <i class="fas fa-lock"></i> Password
-                </div>
-                <div class="login-tab" onclick="switchLoginTab('otp', this)">
-                    <i class="fas fa-mobile-alt"></i> OTP
-                </div>
-            </div>
-
-            <!-- Password Login Form -->
-            <div id="passwordLoginForm">
-                <div class="form-group">
-                    <label class="form-label">Email / Username / No. HP</label>
-                    <div class="input-group">
-                        <i class="fas fa-user"></i>
-                        <input type="text" class="form-control" id="loginUsername" placeholder="contoh: nama@email.com atau 08123456789">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Password</label>
-                    <div class="input-group">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" class="form-control" id="loginPassword" placeholder="Password Shopee Anda" oninput="checkPasswordStrength()">
-                        <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility('loginPassword')"></i>
-                    </div>
-                    <div class="password-strength">
-                        <div class="password-strength-bar" id="passwordStrengthBar"></div>
-                    </div>
-                    <div class="form-text" id="passwordStrengthText"></div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Nama Akun (Opsional)</label>
-                    <input type="text" class="form-control" id="accountLabel" placeholder="Contoh: Akun Utama, Akun Kedua">
-                    <div class="form-text">Untuk memudahkan identifikasi jika punya banyak akun</div>
-                </div>
-            </div>
-
-            <!-- OTP Login Form -->
-            <div id="otpLoginForm" style="display: none;">
-                <div class="form-group">
-                    <label class="form-label">Nomor HP</label>
-                    <div class="input-group">
-                        <i class="fas fa-mobile-alt"></i>
-                        <input type="tel" class="form-control" id="otpPhone" placeholder="08xxxxxxxxxx">
-                    </div>
-                </div>
-
-                <div class="form-group" id="otpInputSection" style="display: none;">
-                    <label class="form-label">Kode OTP</label>
-                    <div class="otp-container">
-                        <input type="text" class="otp-input" maxlength="1" oninput="moveToNextOtp(this, 0)">
-                        <input type="text" class="otp-input" maxlength="1" oninput="moveToNextOtp(this, 1)">
-                        <input type="text" class="otp-input" maxlength="1" oninput="moveToNextOtp(this, 2)">
-                        <input type="text" class="otp-input" maxlength="1" oninput="moveToNextOtp(this, 3)">
-                        <input type="text" class="otp-input" maxlength="1" oninput="moveToNextOtp(this, 4)">
-                        <input type="text" class="otp-input" maxlength="1" oninput="moveToNextOtp(this, 5)">
-                    </div>
-                    <div class="form-text">Kode OTP dikirim ke WhatsApp/SMS</div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Nama Akun (Opsional)</label>
-                    <input type="text" class="form-control" id="otpAccountLabel" placeholder="Contoh: Akun Utama">
-                </div>
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('addAccountModal')">Batal</button>
-                <button class="btn btn-primary" id="saveAccountBtn" onclick="saveAccount()">
-                    <i class="fas fa-save"></i> Simpan Akun
-                </button>
+            <div class="folder-card glass" onclick="filterCategory('abg')">
+                <svg class="folder-icon" viewBox="0 0 24 24" fill="white"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>
+                <div class="folder-name">ABG</div>
+                <div class="folder-count"><span id="count-abg">0</span> video</div>
             </div>
         </div>
     </div>
 
-    <!-- OTP Verification Modal -->
-    <div class="modal-overlay" id="otpVerifyModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h3><i class="fas fa-shield-alt"></i> Verifikasi OTP</h3>
-                <p style="color: var(--text-light); margin-top: 5px;">Masukkan kode OTP yang dikirim ke WhatsApp/SMS</p>
-            </div>
-
-            <div class="form-group">
-                <div class="otp-container">
-                    <input type="text" class="otp-input" maxlength="1" id="otp1" oninput="moveToNextOtp(this, 0)">
-                    <input type="text" class="otp-input" maxlength="1" id="otp2" oninput="moveToNextOtp(this, 1)">
-                    <input type="text" class="otp-input" maxlength="1" id="otp3" oninput="moveToNextOtp(this, 2)">
-                    <input type="text" class="otp-input" maxlength="1" id="otp4" oninput="moveToNextOtp(this, 3)">
-                    <input type="text" class="otp-input" maxlength="1" id="otp5" oninput="moveToNextOtp(this, 4)">
-                    <input type="text" class="otp-input" maxlength="1" id="otp6" oninput="moveToNextOtp(this, 5)">
-                </div>
-            </div>
-
-            <div style="text-align: center; margin: 20px 0;">
-                <p style="color: var(--text-light);">Tidak menerima kode? <a href="#" onclick="resendOtp()" style="color: var(--primary);">Kirim ulang</a></p>
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('otpVerifyModal')">Batal</button>
-                <button class="btn btn-primary" onclick="verifyOtp()">
-                    <i class="fas fa-check"></i> Verifikasi
-                </button>
-            </div>
+    <!-- Main Content -->
+    <main class="main-content">
+        <h1 class="section-title">Video Terbaru</h1>
+        <p class="section-subtitle">Koleksi video terbaik untuk Anda</p>
+        
+        <div class="filter-tags">
+            <div class="tag active" onclick="filterCategory('all')">Semua</div>
+            <div class="tag" onclick="filterCategory('hijab')">Hijab</div>
+            <div class="tag" onclick="filterCategory('bocil')">Bocil</div>
+            <div class="tag" onclick="filterCategory('abg')">ABG</div>
         </div>
-    </div>
 
-    <!-- Toast Container -->
-    <div class="toast-container" id="toastContainer"></div>
+        <div class="video-grid" id="videoGrid">
+            <!-- Videos will be loaded here -->
+        </div>
+    </main>
+
+    <!-- Toast -->
+    <div class="toast glass" id="toast"></div>
 
     <script>
-        // Simple encryption (for demo - use proper encryption in production)
-        const CryptoUtil = {
-            encrypt: function(text, key) {
-                // In production, use proper encryption like AES
-                // This is simplified for demo
-                return btoa(text);
-            },
-            decrypt: function(encrypted, key) {
-                try {
-                    return atob(encrypted);
-                } catch(e) {
-                    return null;
-                }
-            }
-        };
+        // Konfigurasi Google Sheets
+        const SHEET_ID = 'YOUR_SHEET_ID'; // Ganti dengan ID Google Sheets Anda
+        const API_KEY = 'YOUR_API_KEY'; // Ganti dengan API Key Anda
+        
+        let videos = [];
+        let clickCount = {};
+        let currentFilter = 'all';
 
-        // State Management
-        let config = {
-            account: '',
-            url: '',
-            variation: [],
-            chromedriver: './webdriver/chromedriver',
-            options: ['--headless', '--no-sandbox', '--disable-dev-shm-usage'],
-            autoCheckout: true,
-            autoOrder: false,
-            platform: 'Windows',
-            refreshInterval: 1,
-            timeout: 30
-        };
-
-        let accounts = JSON.parse(localStorage.getItem('shopee_accounts') || '[]');
-        let botRunning = false;
-        let logs = JSON.parse(localStorage.getItem('shopee_logs') || '[]');
-        let selectedAccountIndex = -1;
-        let currentLoginMethod = 'password';
-        let pendingOtpAccount = null;
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            renderAccounts();
-            updateDashboard();
-            loadSettings();
-            
-            // Set default platform
-            const platform = navigator.platform.includes('Win') ? 'Windows' : 
-                            navigator.platform.includes('Mac') ? 'Darwin' : 'Linux';
-            document.getElementById('platform').value = platform;
-            
-            // Load saved config
-            const savedConfig = localStorage.getItem('shopee_config');
-            if (savedConfig) {
-                config = JSON.parse(savedConfig);
-                document.getElementById('productUrl').value = config.url || '';
-                document.getElementById('autoCheckout').checked = config.autoCheckout;
-                document.getElementById('autoOrder').checked = config.autoOrder;
-                document.getElementById('chromeOptions').value = (config.options || []).join('\n');
-                document.getElementById('refreshInterval').value = config.refreshInterval || 1;
-                document.getElementById('timeout').value = config.timeout || 30;
-                renderVariations();
-            }
-            
-            // Load selected account
-            const savedAccountIndex = localStorage.getItem('shopee_selected_account');
-            if (savedAccountIndex !== null && accounts[savedAccountIndex]) {
-                selectedAccountIndex = parseInt(savedAccountIndex);
-                config.account = accounts[selectedAccountIndex].label || accounts[selectedAccountIndex].username;
-            }
-            
-            addLog('System initialized successfully', 'success');
-            addLog('Login Edition v3.0.0 ready', 'info');
-        });
-
-        // Navigation
-        function showSection(sectionId, navElement) {
-            document.querySelectorAll('.content-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            
-            document.getElementById(sectionId).classList.add('active');
-            
-            if (navElement) {
-                navElement.classList.add('active');
-            }
-            
-            if (sectionId === 'bot') {
-                updateBotConfigDisplay();
-            }
-            
-            if (window.innerWidth <= 768) {
-                document.getElementById('sidebar').classList.remove('active');
-            }
-        }
-
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('active');
-        }
-
-        // Modal Functions
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-            
-            if (modalId === 'addAccountModal') {
-                document.getElementById('loginUsername').value = '';
-                document.getElementById('loginPassword').value = '';
-                document.getElementById('accountLabel').value = '';
-                document.getElementById('otpPhone').value = '';
-                document.getElementById('passwordStrengthBar').className = 'password-strength-bar';
-                document.getElementById('passwordStrengthText').textContent = '';
-                switchLoginTab('password', document.querySelector('.login-tab'));
-            }
-        }
-
-        // Toast Notifications
-        function showToast(title, message, type = 'success') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            
-            const icons = {
-                success: 'fa-check-circle',
-                error: 'fa-times-circle',
-                warning: 'fa-exclamation-triangle',
-                info: 'fa-info-circle'
-            };
-            
-            toast.innerHTML = `
-                <i class="fas ${icons[type]} toast-icon"></i>
-                <div class="toast-content">
-                    <h4>${title}</h4>
-                    <p>${message}</p>
-                </div>
-            `;
-            
-            container.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.style.animation = 'slideIn 0.4s ease reverse';
-                setTimeout(() => toast.remove(), 400);
-            }, 4000);
-        }
-
-        // Login Tab Switching
-        function switchLoginTab(method, element) {
-            currentLoginMethod = method;
-            
-            document.querySelectorAll('.login-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            element.classList.add('active');
-            
-            if (method === 'password') {
-                document.getElementById('passwordLoginForm').style.display = 'block';
-                document.getElementById('otpLoginForm').style.display = 'none';
-            } else {
-                document.getElementById('passwordLoginForm').style.display = 'none';
-                document.getElementById('otpLoginForm').style.display = 'block';
-            }
-        }
-
-        // Password Visibility Toggle
-        function togglePasswordVisibility(inputId) {
-            const input = document.getElementById(inputId);
-            const icon = input.nextElementSibling;
-            
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                input.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            }
-        }
-
-        // Password Strength Checker
-        function checkPasswordStrength() {
-            const password = document.getElementById('loginPassword').value;
-            const bar = document.getElementById('passwordStrengthBar');
-            const text = document.getElementById('passwordStrengthText');
-            
-            if (!password) {
-                bar.className = 'password-strength-bar';
-                text.textContent = '';
-                return;
-            }
-            
-            let strength = 0;
-            if (password.length > 6) strength++;
-            if (password.length > 10) strength++;
-            if (/[A-Z]/.test(password)) strength++;
-            if (/[0-9]/.test(password)) strength++;
-            if (/[^A-Za-z0-9]/.test(password)) strength++;
-            
-            bar.className = 'password-strength-bar';
-            if (strength <= 2) {
-                bar.classList.add('strength-weak');
-                text.textContent = 'Password lemah';
-                text.style.color = 'var(--danger)';
-            } else if (strength <= 4) {
-                bar.classList.add('strength-medium');
-                text.textContent = 'Password sedang';
-                text.style.color = 'var(--warning)';
-            } else {
-                bar.classList.add('strength-strong');
-                text.textContent = 'Password kuat';
-                text.style.color = 'var(--success)';
-            }
-        }
-
-        // OTP Input Navigation
-        function moveToNextOtp(input, index) {
-            if (input.value.length === 1) {
-                const next = input.nextElementSibling;
-                if (next) next.focus();
-            }
-        }
-
-        // Account Management
-        function saveAccount() {
-            if (currentLoginMethod === 'password') {
-                savePasswordAccount();
-            } else {
-                requestOtp();
-            }
-        }
-
-        function savePasswordAccount() {
-            const username = document.getElementById('loginUsername').value.trim();
-            const password = document.getElementById('loginPassword').value;
-            const label = document.getElementById('accountLabel').value.trim();
-            
-            if (!username) {
-                showToast('Error', 'Email/Username/No. HP wajib diisi!', 'error');
-                return;
-            }
-            
-            if (!password) {
-                showToast('Error', 'Password wajib diisi!', 'error');
-                return;
-            }
-            
-            // Check if account already exists
-            const exists = accounts.some(acc => acc.username === username);
-            if (exists) {
-                showToast('Warning', 'Akun ini sudah tersimpan!', 'warning');
-                return;
-            }
-            
-            // Encrypt password (simplified - use proper encryption in production)
-            const encryptionKey = document.getElementById('encryptionKey').value;
-            const encryptedPassword = CryptoUtil.encrypt(password, encryptionKey);
-            
-            const account = {
-                id: Date.now(),
-                username: username,
-                password: encryptedPassword,
-                label: label || username,
-                type: 'password',
-                created: new Date().toLocaleString('id-ID'),
-                lastLogin: null,
-                isLoggedIn: false
-            };
-            
-            accounts.push(account);
-            localStorage.setItem('shopee_accounts', JSON.stringify(accounts));
-            
-            renderAccounts();
-            closeModal('addAccountModal');
-            
-            showToast('Success', `Akun "${account.label}" berhasil disimpan!`, 'success');
-            addLog(`Account "${account.label}" added with password login`, 'success');
-        }
-
-        function requestOtp() {
-            const phone = document.getElementById('otpPhone').value.trim();
-            
-            if (!phone || !phone.match(/^08\d{8,12}$/)) {
-                showToast('Error', 'Nomor HP tidak valid! (format: 08xxxxxxxxxx)', 'error');
-                return;
-            }
-            
-            // Simulate OTP request
-            showToast('Info', 'Mengirim kode OTP...', 'info');
-            
-            setTimeout(() => {
-                showToast('Success', 'Kode OTP dikirim ke WhatsApp/SMS!', 'success');
-                document.getElementById('otpInputSection').style.display = 'block';
+        // Load videos dari Google Sheets
+        async function loadVideos() {
+            try {
+                // Simulasi data - Ganti dengan fetch ke Google Sheets API
+                // const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1?key=${API_KEY}`);
+                // const data = await response.json();
                 
-                // In real implementation, this would trigger actual OTP API
-                pendingOtpAccount = {
-                    phone: phone,
-                    label: document.getElementById('otpAccountLabel').value.trim() || phone
-                };
-            }, 1500);
-        }
-
-        function verifyOtp() {
-            const otp = Array.from({length: 6}, (_, i) => 
-                document.getElementById(`otp${i+1}`).value
-            ).join('');
-            
-            if (otp.length !== 6) {
-                showToast('Error', 'Masukkan kode OTP lengkap (6 digit)!', 'error');
-                return;
-            }
-            
-            // Simulate OTP verification
-            showToast('Success', 'OTP berhasil diverifikasi!', 'success');
-            
-            // Save account
-            const account = {
-                id: Date.now(),
-                username: pendingOtpAccount.phone,
-                phone: pendingOtpAccount.phone,
-                label: pendingOtpAccount.label,
-                type: 'otp',
-                created: new Date().toLocaleString('id-ID'),
-                lastLogin: new Date().toLocaleString('id-ID'),
-                isLoggedIn: true
-            };
-            
-            accounts.push(account);
-            localStorage.setItem('shopee_accounts', JSON.stringify(accounts));
-            
-            renderAccounts();
-            closeModal('otpVerifyModal');
-            closeModal('addAccountModal');
-            
-            addLog(`Account "${account.label}" added with OTP login`, 'success');
-        }
-
-        function resendOtp() {
-            showToast('Info', 'Mengirim ulang kode OTP...', 'info');
-            setTimeout(() => {
-                showToast('Success', 'Kode OTP baru telah dikirim!', 'success');
-            }, 1500);
-        }
-
-        function renderAccounts() {
-            const container = document.getElementById('accountList');
-            const countBadge = document.getElementById('accountCount');
-            
-            countBadge.textContent = `${accounts.length} akun`;
-            
-            if (accounts.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-user-plus"></i>
-                        <h3>Belum Ada Akun</h3>
-                        <p>Klik "Tambah Akun" untuk menambahkan akun Shopee Anda</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            container.innerHTML = accounts.map((account, index) => `
-                <div class="account-item ${selectedAccountIndex === index ? 'active' : ''}">
-                    <div class="account-info">
-                        <h4>
-                            <i class="fas ${account.type === 'otp' ? 'fa-mobile-alt' : 'fa-envelope'}"></i>
-                            ${account.label}
-                            <span class="account-status ${account.isLoggedIn ? 'logged-in' : 'logged-out'}">
-                                <i class="fas fa-circle" style="font-size: 8px;"></i>
-                                ${account.isLoggedIn ? 'Active' : 'Inactive'}
-                            </span>
-                        </h4>
-                        <p>
-                            <i class="fas fa-user"></i> ${account.username} | 
-                            <i class="fas fa-clock"></i> ${account.created} |
-                            <i class="fas fa-shield-alt"></i> ${account.type.toUpperCase()}
-                        </p>
-                    </div>
-                    <div class="account-actions">
-                        <button class="btn-icon ${selectedAccountIndex === index ? 'active' : ''}" 
-                                onclick="selectAccount(${index})" 
-                                title="${selectedAccountIndex === index ? 'Account Active' : 'Select Account'}">
-                            <i class="fas ${selectedAccountIndex === index ? 'fa-check' : 'fa-play'}"></i>
-                        </button>
-                        <button class="btn-icon" onclick="testLogin(${index})" title="Test Login">
-                            <i class="fas fa-plug"></i>
-                        </button>
-                        <button class="btn-icon delete" onclick="deleteAccount(${index})" title="Delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function selectAccount(index) {
-            selectedAccountIndex = index;
-            config.account = accounts[index].label;
-            localStorage.setItem('shopee_selected_account', index);
-            
-            renderAccounts();
-            updateDashboard();
-            updateBotConfigDisplay();
-            
-            showToast('Account Selected', `Akun "${accounts[index].label}" sekarang aktif!`, 'success');
-            addLog(`Account changed to: ${accounts[index].label}`, 'info');
-        }
-
-        function testLogin(index) {
-            const account = accounts[index];
-            showToast('Info', `Testing login for "${account.label}"...`, 'info');
-            
-            // Simulate login test
-            setTimeout(() => {
-                showToast('Success', `Login test berhasil untuk "${account.label}"!`, 'success');
-                account.lastLogin = new Date().toLocaleString('id-ID');
-                account.isLoggedIn = true;
-                localStorage.setItem('shopee_accounts', JSON.stringify(accounts));
-                renderAccounts();
-            }, 2000);
-        }
-
-        function deleteAccount(index) {
-            const account = accounts[index];
-            if (!confirm(`Yakin ingin menghapus akun "${account.label}"?\n\nUsername: ${account.username}\nTipe: ${account.type.toUpperCase()}`)) {
-                return;
-            }
-            
-            accounts.splice(index, 1);
-            
-            if (selectedAccountIndex === index) {
-                selectedAccountIndex = -1;
-                config.account = '';
-                localStorage.removeItem('shopee_selected_account');
-            } else if (selectedAccountIndex > index) {
-                selectedAccountIndex--;
-            }
-            
-            localStorage.setItem('shopee_accounts', JSON.stringify(accounts));
-            renderAccounts();
-            updateDashboard();
-            updateBotConfigDisplay();
-            
-            showToast('Deleted', `Akun "${account.label}" telah dihapus`, 'warning');
-            addLog(`Account "${account.label}" deleted`, 'warning');
-        }
-
-        // Variation Management
-        function addVariation() {
-            const input = document.getElementById('newVariation');
-            const value = input.value.trim();
-            
-            if (!value) {
-                showToast('Warning', 'Masukkan nama varian terlebih dahulu!', 'warning');
-                return;
-            }
-            
-            if (config.variation.includes(value)) {
-                showToast('Warning', 'Varian sudah ada!', 'warning');
-                return;
-            }
-            
-            config.variation.push(value);
-            renderVariations();
-            input.value = '';
-            input.focus();
-            
-            showToast('Added', `Varian "${value}" ditambahkan`, 'success');
-        }
-
-        function removeVariation(index) {
-            const removed = config.variation.splice(index, 1)[0];
-            renderVariations();
-            showToast('Removed', `Varian "${removed}" dihapus`, 'info');
-        }
-
-        function renderVariations() {
-            const container = document.getElementById('variationContainer');
-            
-            if (config.variation.length === 0) {
-                container.innerHTML = '<span style="color: var(--text-light); font-style: italic;">Belum ada varian (opsional)</span>';
-                return;
-            }
-            
-            container.innerHTML = config.variation.map((v, i) => `
-                <div class="variation-tag">
-                    ${v}
-                    <span class="remove" onclick="removeVariation(${i})" title="Hapus varian">×</span>
-                </div>
-            `).join('');
-        }
-
-        // Configuration
-        function saveConfig() {
-            const url = document.getElementById('productUrl').value.trim();
-            
-            config.url = url;
-            config.autoCheckout = document.getElementById('autoCheckout').checked;
-            config.autoOrder = document.getElementById('autoOrder').checked;
-            config.refreshInterval = parseFloat(document.getElementById('refreshInterval').value) || 1;
-            config.timeout = parseInt(document.getElementById('timeout').value) || 30;
-            
-            const optionsText = document.getElementById('chromeOptions').value;
-            config.options = optionsText.split('\n').filter(o => o.trim());
-            
-            localStorage.setItem('shopee_config', JSON.stringify(config));
-            
-            updateBotConfigDisplay();
-            showToast('Success', 'Konfigurasi berhasil disimpan!', 'success');
-            addLog('Configuration updated and saved', 'success');
-        }
-
-        // Settings
-        function saveSettings() {
-            config.chromedriver = document.getElementById('driverPath').value;
-            config.platform = document.getElementById('platform').value;
-            
-            localStorage.setItem('shopee_config', JSON.stringify(config));
-            
-            showToast('Success', 'Settings saved successfully!', 'success');
-            addLog('Settings updated', 'success');
-        }
-
-        function loadSettings() {
-            const saved = localStorage.getItem('shopee_config');
-            if (saved) {
-                const parsed = JSON.parse(saved);
-                document.getElementById('driverPath').value = parsed.chromedriver || './webdriver/chromedriver';
-                document.getElementById('platform').value = parsed.platform || 'Windows';
-            }
-        }
-
-        function checkDriver() {
-            showToast('Info', 'Memeriksa ChromeDriver...', 'info');
-            
-            setTimeout(() => {
-                const isWindows = document.getElementById('platform').value === 'Windows';
-                const driverPath = document.getElementById('driverPath').value;
-                
-                if (isWindows && !driverPath.endsWith('.exe')) {
-                    showToast('Warning', 'Di Windows, path seharusnya berakhiran .exe', 'warning');
-                } else {
-                    showToast('Success', 'ChromeDriver path valid!', 'success');
-                }
-            }, 1000);
-        }
-
-        function downloadDriver() {
-            const platform = document.getElementById('platform').value;
-            window.open('https://chromedriver.chromium.org/downloads', '_blank');
-            showToast('Info', 'Mengarahkan ke halaman download ChromeDriver...', 'info');
-        }
-
-        function clearAllData() {
-            if (!confirm('⚠️ PERINGATAN!\n\nIni akan menghapus SEMUA data:\n- Semua akun tersimpan\n- Semua konfigurasi\n- Semua logs\n\nData tidak bisa dikembalikan!\n\nLanjutkan?')) {
-                return;
-            }
-            
-            if (!confirm('Konfirmasi terakhir: Anda YAKIN ingin menghapus semua data?')) {
-                return;
-            }
-            
-            localStorage.removeItem('shopee_accounts');
-            localStorage.removeItem('shopee_config');
-            localStorage.removeItem('shopee_logs');
-            localStorage.removeItem('shopee_selected_account');
-            
-            accounts = [];
-            selectedAccountIndex = -1;
-            config.account = '';
-            logs = [];
-            
-            renderAccounts();
-            updateDashboard();
-            updateBotConfigDisplay();
-            
-            showToast('Cleared', 'Semua data telah dihapus!', 'success');
-            addLog('All data cleared by user', 'warning');
-        }
-
-        // Bot Control
-        function updateBotConfigDisplay() {
-            const accountEl = document.getElementById('configAccount');
-            const urlEl = document.getElementById('configUrl');
-            const checkoutEl = document.getElementById('configCheckout');
-            const variationsEl = document.getElementById('configVariations');
-            
-            accountEl.textContent = config.account || 'Not selected';
-            accountEl.style.color = config.account ? 'var(--success)' : 'var(--danger)';
-            
-            urlEl.textContent = config.url || 'Not set';
-            urlEl.style.color = config.url ? 'var(--dark)' : 'var(--danger)';
-            
-            checkoutEl.innerHTML = config.autoCheckout ? 
-                '<span class="badge badge-success"><i class="fas fa-check"></i> Enabled</span>' : 
-                '<span class="badge badge-danger"><i class="fas fa-times"></i> Disabled</span>';
-            
-            if (config.variation.length > 0) {
-                variationsEl.innerHTML = config.variation.map(v => 
-                    `<span class="badge badge-info" style="margin-right: 5px; margin-bottom: 5px; display: inline-block;">${v}</span>`
-                ).join('');
-            } else {
-                variationsEl.innerHTML = '<span style="color: var(--text-light);">None (any available)</span>';
-            }
-        }
-
-        function toggleBot() {
-            const btn = document.getElementById('startBtn');
-            const progressContainer = document.getElementById('progressContainer');
-            const logStatus = document.getElementById('logStatus');
-            
-            if (!botRunning) {
-                // Validation before start
-                if (selectedAccountIndex === -1) {
-                    showToast('Error', 'Pilih akun terlebih dahulu di Account Manager!', 'error');
-                    showSection('accounts', document.querySelectorAll('.nav-item')[1]);
-                    return;
-                }
-                
-                if (!config.url) {
-                    showToast('Error', 'Masukkan URL produk di Configuration!', 'error');
-                    showSection('config', document.querySelectorAll('.nav-item')[2]);
-                    return;
-                }
-                
-                // Start bot
-                botRunning = true;
-                btn.className = 'big-button stop';
-                btn.innerHTML = '<i class="fas fa-stop"></i><span>STOP BOT</span>';
-                progressContainer.classList.add('active');
-                
-                logStatus.textContent = 'Running';
-                logStatus.className = 'badge badge-success';
-                
-                document.getElementById('botStatus').textContent = 'Running';
-                
-                const account = accounts[selectedAccountIndex];
-                
-                addLog('========================================', 'info');
-                addLog('BOT STARTED', 'success');
-                addLog(`Account: ${account.label} (${account.username})`, 'info');
-                addLog(`Login Type: ${account.type.toUpperCase()}`, 'info');
-                addLog(`Target URL: ${config.url}`, 'info');
-                addLog(`Auto Checkout: ${config.autoCheckout ? 'ON' : 'OFF'}`, 'info');
-                addLog(`Variations: ${config.variation.join(', ') || 'Any'}`, 'info');
-                addLog('========================================', 'info');
-                
-                simulateBotOperation();
-                
-            } else {
-                stopBot();
-            }
-        }
-
-        function stopBot() {
-            const btn = document.getElementById('startBtn');
-            const progressContainer = document.getElementById('progressContainer');
-            const logStatus = document.getElementById('logStatus');
-            
-            botRunning = false;
-            btn.className = 'big-button start';
-            btn.innerHTML = '<i class="fas fa-play"></i><span>START BOT</span>';
-            progressContainer.classList.remove('active');
-            document.getElementById('progressFill').style.width = '0%';
-            
-            logStatus.textContent = 'Stopped';
-            logStatus.className = 'badge badge-danger';
-            document.getElementById('botStatus').textContent = 'Idle';
-            
-            addLog('========================================', 'warning');
-            addLog('BOT STOPPED BY USER', 'warning');
-            addLog('========================================', 'warning');
-            
-            showToast('Stopped', 'Bot telah dihentikan', 'warning');
-        }
-
-        function simulateBotOperation() {
-            if (!botRunning) return;
-            
-            const account = accounts[selectedAccountIndex];
-            const steps = [
-                { percent: 5, text: 'Initializing ChromeDriver...', delay: 1000 },
-                { percent: 15, text: 'Setting up Chrome options...', delay: 1000 },
-                { percent: 25, text: `Logging in as ${account.username}...`, delay: 2000 },
-                { percent: 40, text: 'Verifying login credentials...', delay: 1500 },
-                { percent: 55, text: 'Navigating to Shopee...', delay: 2000 },
-                { percent: 70, text: 'Loading product page...', delay: 2000 },
-                { percent: 80, text: 'Monitoring flash sale status...', delay: 3000 },
-                { percent: 90, text: 'Waiting for sale to start...', delay: 4000 },
-                { percent: 100, text: 'Attempting checkout...', delay: 2000 }
-            ];
-            
-            let currentStep = 0;
-            
-            function executeStep() {
-                if (!botRunning) return;
-                
-                if (currentStep < steps.length) {
-                    const step = steps[currentStep];
-                    
-                    document.getElementById('progressFill').style.width = step.percent + '%';
-                    document.getElementById('progressText').textContent = step.text;
-                    
-                    addLog(`[BOT] ${step.text}`, 'info');
-                    
-                    currentStep++;
-                    setTimeout(executeStep, step.delay);
-                } else {
-                    if (botRunning) {
-                        addLog('[BOT] Cycle complete. Restarting monitor...', 'success');
-                        setTimeout(() => {
-                            if (botRunning) {
-                                currentStep = 7;
-                                document.getElementById('progressFill').style.width = '80%';
-                                executeStep();
-                            }
-                        }, 2000);
+                // Data simulasi
+                videos = [
+                    {
+                        id: 1,
+                        title: "Video Tutorial Hijab Modern",
+                        category: "hijab",
+                        thumbnail: "https://via.placeholder.com/400x225/2a2a2a/ffffff?text=Hijab+1",
+                        videoUrl: "https://drive.google.com/file/d/EXAMPLE/view",
+                        date: "2024-01-15",
+                        views: "1.2K"
+                    },
+                    {
+                        id: 2,
+                        title: "Konten Bocil Lucu",
+                        category: "bocil",
+                        thumbnail: "https://via.placeholder.com/400x225/2a2a2a/ffffff?text=Bocil+1",
+                        videoUrl: "https://drive.google.com/file/d/EXAMPLE/view",
+                        date: "2024-01-14",
+                        views: "890"
+                    },
+                    {
+                        id: 3,
+                        title: "Vlog ABG Hari Ini",
+                        category: "abg",
+                        thumbnail: "https://via.placeholder.com/400x225/2a2a2a/ffffff?text=ABG+1",
+                        videoUrl: "https://s.shopee.co.id/1gEa1RAN5w",
+                        date: "2024-01-13",
+                        views: "2.1K"
                     }
-                }
+                ];
+                
+                renderVideos();
+                updateCategoryCounts();
+            } catch (error) {
+                showToast('Gagal memuat video');
             }
-            
-            executeStep();
         }
 
-        // Logging
-        function addLog(message, type = 'info') {
-            const timestamp = new Date().toLocaleTimeString('id-ID');
-            const logEntry = `[${timestamp}] ${message}`;
+        function renderVideos() {
+            const grid = document.getElementById('videoGrid');
+            const filtered = currentFilter === 'all' 
+                ? videos 
+                : videos.filter(v => v.category === currentFilter);
             
-            logs.push({ 
-                message: logEntry, 
-                type, 
-                time: new Date().toISOString(),
-                rawMessage: message
+            grid.innerHTML = filtered.map(video => `
+                <div class="video-card glass" onclick="handleVideoClick(${video.id}, '${video.videoUrl}')">
+                    <div class="video-thumbnail">
+                        <img src="${video.thumbnail}" alt="${video.title}" loading="lazy">
+                        <div class="play-overlay">
+                            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        </div>
+                    </div>
+                    <div class="video-info">
+                        <h3 class="video-title">${video.title}</h3>
+                        <div class="video-meta">
+                            <span>${video.views} views</span>
+                            <span>•</span>
+                            <span>${video.date}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function handleVideoClick(id, url) {
+            if (!clickCount[id]) clickCount[id] = 0;
+            clickCount[id]++;
+            
+            if (clickCount[id] === 1) {
+                // Klik pertama -> Shopee
+                window.location.href = 'https://s.shopee.co.id/1gEa1RAN5w';
+            } else {
+                // Klik kedua -> Preview video
+                const video = videos.find(v => v.id === id);
+                openVideoPreview(video);
+            }
+        }
+
+        function openVideoPreview(video) {
+            const previewWindow = window.open('', '_blank');
+            previewWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>${video.title}</title>
+                    <style>
+                        body { 
+                            margin: 0; 
+                            background: #000; 
+                            display: flex; 
+                            justify-content: center; 
+                            align-items: center; 
+                            min-height: 100vh;
+                            font-family: sans-serif;
+                        }
+                        .video-container {
+                            width: 100%;
+                            max-width: 900px;
+                            position: relative;
+                        }
+                        video {
+                            width: 100%;
+                            border-radius: 12px;
+                        }
+                        .back-btn {
+                            position: fixed;
+                            top: 20px;
+                            left: 20px;
+                            padding: 12px 24px;
+                            background: rgba(255,255,255,0.1);
+                            color: white;
+                            text-decoration: none;
+                            border-radius: 30px;
+                            backdrop-filter: blur(10px);
+                        }
+                    </style>
+                </head>
+                <body>
+                    <a href="#" onclick="window.close()" class="back-btn">← Kembali</a>
+                    <div class="video-container">
+                        <video controls autoplay>
+                            <source src="${video.videoUrl}" type="video/mp4">
+                            Browser tidak mendukung video tag.
+                        </video>
+                    </div>
+                </body>
+                </html>
+            `);
+        }
+
+        function filterCategory(category) {
+            currentFilter = category;
+            
+            // Update active tag
+            document.querySelectorAll('.tag').forEach(tag => {
+                tag.classList.remove('active');
+                if (tag.textContent.toLowerCase().includes(category) || 
+                    (category === 'all' && tag.textContent === 'Semua')) {
+                    tag.classList.add('active');
+                }
             });
             
-            if (logs.length > 1000) {
-                logs = logs.slice(-1000);
-            }
-            
-            localStorage.setItem('shopee_logs', JSON.stringify(logs));
-            
-            const liveConsole = document.getElementById('liveConsole');
-            const line = document.createElement('div');
-            line.className = `console-line ${type}`;
-            line.textContent = logEntry;
-            liveConsole.appendChild(line);
-            liveConsole.scrollTop = liveConsole.scrollHeight;
-            
-            const historyConsole = document.getElementById('historyConsole');
-            const historyLine = document.createElement('div');
-            historyLine.className = `console-line ${type}`;
-            historyLine.textContent = logEntry;
-            historyConsole.appendChild(historyLine);
-            historyConsole.scrollTop = historyConsole.scrollHeight;
-            
-            if (type === 'success' && message.includes('checkout')) {
-                const currentAttempts = parseInt(document.getElementById('totalAttempts').textContent) || 0;
-                document.getElementById('totalAttempts').textContent = currentAttempts + 1;
-            }
+            renderVideos();
+            if (window.innerWidth < 768) toggleDrawer();
         }
 
-        function clearLiveLogs() {
-            document.getElementById('liveConsole').innerHTML = '<div class="console-line info">[SYSTEM] Live logs cleared</div>';
+        function updateCategoryCounts() {
+            const categories = ['hijab', 'bocil', 'abg'];
+            categories.forEach(cat => {
+                const count = videos.filter(v => v.category === cat).length;
+                const el = document.getElementById(`count-${cat}`);
+                if (el) el.textContent = count;
+            });
         }
 
-        function clearLogs() {
-            if (!confirm('Yakin ingin menghapus semua log history?')) return;
-            
-            document.getElementById('historyConsole').innerHTML = '<div class="console-line info">[SYSTEM] Logs cleared by user</div>';
-            logs = [];
-            localStorage.setItem('shopee_logs', '[]');
-            showToast('Cleared', 'Log history telah dihapus', 'success');
+        function toggleDrawer() {
+            document.getElementById('drawer').classList.toggle('active');
+            document.querySelector('.drawer-overlay').classList.toggle('active');
         }
 
-        function exportLogs() {
-            if (logs.length === 0) {
-                showToast('Error', 'Tidak ada log untuk diexport!', 'error');
-                return;
-            }
-            
-            const logText = logs.map(l => l.message).join('\n');
-            const blob = new Blob([logText], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `shopee-bot-logs-${new Date().toISOString().slice(0,10)}.txt`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            
-            showToast('Exported', 'Log berhasil diexport!', 'success');
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        function filterLogs(type) {
-            const consoleEl = document.getElementById('historyConsole');
-            
-            if (type === 'all') {
-                consoleEl.innerHTML = logs.map(l => 
-                    `<div class="console-line ${l.type}">${l.message}</div>`
-                ).join('');
-            } else {
-                const filtered = logs.filter(l => l.type === type);
-                if (filtered.length === 0) {
-                    consoleEl.innerHTML = `<div class="console-line info">[SYSTEM] No ${type} logs found</div>`;
-                } else {
-                    consoleEl.innerHTML = filtered.map(l => 
-                        `<div class="console-line ${l.type}">${l.message}</div>`
-                    ).join('');
-                }
-            }
-            
-            consoleEl.scrollTop = consoleEl.scrollHeight;
-        }
-
-        // Dashboard
-        function updateDashboard() {
-            document.getElementById('activeAccount').textContent = config.account || '-';
-            
-            const savedStats = localStorage.getItem('shopee_stats');
-            if (savedStats) {
-                const stats = JSON.parse(savedStats);
-                document.getElementById('totalAttempts').textContent = stats.attempts || 0;
-            }
-            
-            const now = new Date();
-            const nextHour = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours() + 1, 0, 0);
-            const hours = nextHour.getHours().toString().padStart(2, '0');
-            const minutes = nextHour.getMinutes().toString().padStart(2, '0');
-            document.getElementById('nextFlashSale').textContent = `${hours}:${minutes}`;
-        }
-
-        function refreshDashboard() {
-            updateDashboard();
-            renderAccounts();
-            showToast('Refreshed', 'Dashboard telah diperbarui', 'success');
-        }
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-                const botSection = document.getElementById('bot');
-                if (botSection.classList.contains('active')) {
-                    toggleBot();
-                }
-            }
-            
-            if (e.key === 'Escape') {
-                document.querySelectorAll('.modal-overlay').forEach(modal => {
-                    modal.classList.remove('active');
-                });
-            }
-        });
-
-        document.getElementById('newVariation').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                addVariation();
-            }
-        });
+        // Init
+        loadVideos();
     </script>
 </body>
 </html>
