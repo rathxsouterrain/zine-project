@@ -6,49 +6,32 @@
     <title>StreamFlow - Video Streaming</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* ==========================================
-           LIQUID GLASS MODERN MONOCHROME THEME
-           ========================================== */
         :root {
             --glass-bg: rgba(255, 255, 255, 0.05);
             --glass-border: rgba(255, 255, 255, 0.1);
             --glass-highlight: rgba(255, 255, 255, 0.15);
-            --glass-shadow: rgba(0, 0, 0, 0.3);
+            --bg-dark: #0a0a0a;
             --primary: #ffffff;
             --secondary: #a0a0a0;
-            --accent: #e0e0e0;
-            --bg-dark: #0a0a0a;
-            --bg-darker: #050505;
-            --gradient-1: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.02) 100%);
-            --gradient-2: linear-gradient(225deg, rgba(255,255,255,0.08) 0%, transparent 100%);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', system-ui, sans-serif;
             background: var(--bg-dark);
             color: var(--primary);
             min-height: 100vh;
-            overflow-x: hidden;
         }
 
-        /* LIQUID BACKGROUND */
+        /* Background */
         .liquid-bg {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
             overflow: hidden;
-            background: var(--bg-darker);
+            background: #050505;
         }
-
         .blob {
             position: absolute;
             border-radius: 50%;
@@ -56,50 +39,29 @@
             opacity: 0.4;
             animation: float 20s infinite ease-in-out;
         }
-
         .blob-1 {
-            width: 600px;
-            height: 600px;
+            width: 600px; height: 600px;
             background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
-            top: -200px;
-            left: -200px;
+            top: -200px; left: -200px;
         }
-
         .blob-2 {
-            width: 500px;
-            height: 500px;
+            width: 500px; height: 500px;
             background: radial-gradient(circle, rgba(200,200,200,0.1) 0%, transparent 70%);
-            bottom: -150px;
-            right: -150px;
+            bottom: -150px; right: -150px;
             animation-delay: -5s;
         }
-
-        .blob-3 {
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(150,150,150,0.08) 0%, transparent 70%);
-            top: 50%;
-            left: 50%;
-            animation-delay: -10s;
-        }
-
         @keyframes float {
             0%, 100% { transform: translate(0, 0) scale(1); }
-            25% { transform: translate(50px, -50px) scale(1.1); }
             50% { transform: translate(-30px, 30px) scale(0.9); }
-            75% { transform: translate(30px, 50px) scale(1.05); }
         }
 
-        /* GLASS COMPONENTS */
+        /* Glass Nav */
         .glass-nav {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
+            top: 0; left: 0; right: 0;
             height: 70px;
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--glass-border);
             display: flex;
             align-items: center;
@@ -107,29 +69,13 @@
             padding: 0 30px;
             z-index: 1000;
         }
-
         .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
+            display: flex; align-items: center; gap: 12px;
+            font-size: 1.5rem; font-weight: 700;
             cursor: pointer;
         }
-
-        .logo i {
-            font-size: 2rem;
-            background: var(--gradient-1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .nav-actions {
-            display: flex;
-            gap: 12px;
-        }
-
+        .nav-actions { display: flex; gap: 12px; }
+        
         .glass-btn {
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
@@ -137,102 +83,60 @@
             padding: 10px 20px;
             border-radius: 12px;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s ease;
             backdrop-filter: blur(10px);
             font-size: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
+            display: flex; align-items: center; gap: 8px;
         }
-
         .glass-btn:hover {
             background: var(--glass-highlight);
             transform: translateY(-2px);
-            box-shadow: 0 8px 32px var(--glass-shadow);
         }
 
-        /* CATEGORY PANEL */
+        /* Category Panel */
         .category-panel {
             position: fixed;
-            top: 0;
-            right: -400px;
-            width: 380px;
-            height: 100vh;
+            top: 0; right: -400px;
+            width: 380px; height: 100vh;
             background: rgba(10, 10, 10, 0.98);
             backdrop-filter: blur(30px);
             border-left: 1px solid var(--glass-border);
             z-index: 2000;
-            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: right 0.4s ease;
             padding: 30px;
-            overflow-y: auto;
         }
-
-        .category-panel.active {
-            right: 0;
-        }
-
+        .category-panel.active { right: 0; }
+        
         .panel-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            position: fixed; inset: 0;
             background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(5px);
             z-index: 1999;
-            opacity: 0;
-            visibility: hidden;
+            opacity: 0; visibility: hidden;
             transition: all 0.3s ease;
         }
-
-        .panel-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
+        .panel-overlay.active { opacity: 1; visibility: visible; }
 
         .panel-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 30px;
             padding-bottom: 20px;
             border-bottom: 1px solid var(--glass-border);
         }
-
-        .panel-header h3 {
-            font-size: 1.3rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
         .close-panel {
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
             color: var(--primary);
-            width: 40px;
-            height: 40px;
+            width: 40px; height: 40px;
             border-radius: 50%;
             cursor: pointer;
             transition: all 0.3s ease;
         }
+        .close-panel:hover { transform: rotate(90deg); }
 
-        .close-panel:hover {
-            transform: rotate(90deg);
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .category-list {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
+        .category-list { display: flex; flex-direction: column; gap: 16px; }
         .category-item {
-            display: flex;
-            align-items: center;
-            gap: 16px;
+            display: flex; align-items: center; gap: 16px;
             padding: 20px;
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
@@ -240,123 +144,34 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
-
         .category-item:hover {
             background: var(--glass-highlight);
             transform: translateX(-5px);
         }
-
         .cat-icon {
-            width: 50px;
-            height: 50px;
+            width: 50px; height: 50px;
             border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             font-size: 1.3rem;
         }
-
         .hijab-icon { background: rgba(255, 255, 255, 0.1); }
         .bocil-icon { background: rgba(200, 200, 200, 0.15); }
         .abg-icon { background: rgba(150, 150, 150, 0.2); }
 
-        .category-item span {
-            flex: 1;
-            font-weight: 500;
-            font-size: 1.1rem;
-            text-transform: capitalize;
-        }
-
-        /* MAIN CONTENT */
+        /* Main Content */
         .main-content {
-            padding-top: 90px;
-            padding-left: 30px;
-            padding-right: 30px;
+            padding: 90px 30px 50px;
             max-width: 1600px;
             margin: 0 auto;
         }
 
-        .hero-section {
-            margin-bottom: 40px;
-        }
-
-        .glass-hero {
-            background: var(--gradient-1);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 60px 40px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .glass-hero::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%);
-            animation: pulse 4s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.1); opacity: 0.8; }
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 1;
-        }
-
-        .hero-content h1 {
-            font-size: 3rem;
-            font-weight: 800;
-            margin-bottom: 16px;
-            letter-spacing: -1px;
-            background: linear-gradient(135deg, #fff 0%, #888 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero-content p {
-            font-size: 1.2rem;
-            color: var(--secondary);
-        }
-
-        /* VIDEO GRID */
-        .video-section {
-            margin-bottom: 60px;
-        }
-
         .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 24px;
         }
+        .section-header h2 { font-size: 1.5rem; font-weight: 600; }
 
-        .section-header h2 {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-
-        .view-toggle {
-            display: flex;
-            gap: 8px;
-        }
-
-        .view-toggle .glass-btn {
-            padding: 8px 14px;
-        }
-
-        .view-toggle .glass-btn.active {
-            background: var(--glass-highlight);
-        }
-
+        /* Video Grid */
         .video-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -370,88 +185,64 @@
             border-radius: 20px;
             overflow: hidden;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.4s ease;
             position: relative;
         }
-
         .video-card:hover {
             transform: translateY(-8px) scale(1.02);
             border-color: var(--glass-highlight);
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
         }
+        .video-card.hidden { display: none; }
 
         .video-thumbnail {
             position: relative;
-            width: 100%;
-            aspect-ratio: 16/9;
+            width: 100%; aspect-ratio: 16/9;
             overflow: hidden;
         }
-
         .video-thumbnail img {
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
             object-fit: cover;
-            transition: transform 0.5s ease;
+            filter: grayscale(100%) contrast(1.1);
+            transition: all 0.5s ease;
         }
-
         .video-card:hover .video-thumbnail img {
             transform: scale(1.1);
+            filter: grayscale(0%) contrast(1.2);
         }
 
         .play-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            position: absolute; inset: 0;
             background: rgba(0, 0, 0, 0.4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-
-        .video-card:hover .play-overlay {
-            opacity: 1;
-        }
-
+        .video-card:hover .play-overlay { opacity: 1; }
         .play-overlay i {
-            font-size: 3rem;
-            color: white;
+            font-size: 3rem; color: white;
             background: rgba(255, 255, 255, 0.2);
-            width: 70px;
-            height: 70px;
+            width: 70px; height: 70px;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             backdrop-filter: blur(10px);
             border: 2px solid rgba(255, 255, 255, 0.3);
         }
 
         .category-badge {
-            position: absolute;
-            top: 12px;
-            left: 12px;
+            position: absolute; top: 12px; left: 12px;
             background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(10px);
             padding: 6px 12px;
             border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
+            font-size: 0.75rem; font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .video-info {
-            padding: 20px;
-        }
-
+        .video-info { padding: 20px; }
         .video-info h3 {
-            font-size: 1.1rem;
-            font-weight: 600;
+            font-size: 1.1rem; font-weight: 600;
             margin-bottom: 8px;
             line-height: 1.4;
             display: -webkit-box;
@@ -459,74 +250,48 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
-
         .video-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            display: flex; justify-content: space-between;
             color: var(--secondary);
             font-size: 0.85rem;
         }
 
-        .video-meta span {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        /* SEARCH */
-        .search-overlay {
-            position: fixed;
-            top: 70px;
-            left: 0;
-            width: 100%;
-            padding: 20px 30px;
-            background: rgba(10, 10, 10, 0.98);
+        /* Player Modal */
+        .player-modal {
+            position: fixed; inset: 0;
+            background: rgba(0, 0, 0, 0.95);
             backdrop-filter: blur(20px);
-            z-index: 999;
-            transform: translateY(-100%);
-            opacity: 0;
-            transition: all 0.3s ease;
+            z-index: 3000;
+            display: none; align-items: center; justify-content: center;
+            padding: 40px;
         }
-
-        .search-overlay.active {
-            transform: translateY(0);
-            opacity: 1;
+        .player-modal.active { display: flex; }
+        
+        .player-container {
+            width: 100%; max-width: 1000px;
+            position: relative;
         }
-
-        .glass-search {
-            max-width: 600px;
-            margin: 0 auto;
-            display: flex;
-            gap: 12px;
-        }
-
-        .glass-search input {
-            flex: 1;
+        .player-close {
+            position: absolute; top: -50px; right: 0;
+            width: 40px; height: 40px;
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
-            color: var(--primary);
-            padding: 14px 20px;
-            border-radius: 12px;
-            font-size: 1rem;
-            outline: none;
+            border-radius: 50%; color: var(--primary);
+            cursor: pointer; font-size: 1.2rem;
         }
-
-        .glass-search button {
-            background: var(--primary);
-            color: var(--bg-dark);
+        .video-wrapper {
+            position: relative; padding-bottom: 56.25%;
+            border-radius: 20px; overflow: hidden;
+        }
+        .video-wrapper iframe {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%;
             border: none;
-            padding: 14px 24px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 600;
         }
 
-        /* TOAST */
+        /* Toast */
         .toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
+            position: fixed; bottom: 30px; left: 50%;
             transform: translateX(-50%) translateY(100px);
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
@@ -539,56 +304,15 @@
             opacity: 0;
             transition: all 0.3s ease;
         }
-
         .toast.active {
             transform: translateX(-50%) translateY(0);
             opacity: 1;
         }
 
-        /* RESPONSIVE */
         @media (max-width: 768px) {
-            .hero-content h1 { font-size: 2rem; }
-            .video-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
             .category-panel { width: 100%; right: -100%; }
-            .main-content { padding-left: 16px; padding-right: 16px; }
-            .glass-hero { padding: 40px 20px; }
-            .logo span { display: none; }
+            .video-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
         }
-
-        @media (max-width: 480px) {
-            .video-grid { grid-template-columns: 1fr; }
-        }
-
-        /* LIST VIEW */
-        .video-grid.list-view {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .video-grid.list-view .video-card {
-            display: flex;
-            flex-direction: row;
-            height: 150px;
-        }
-
-        .video-grid.list-view .video-thumbnail {
-            width: 250px;
-            height: 100%;
-        }
-
-        .video-grid.list-view .video-info {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        /* SCROLLBAR */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); }
-        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
     </style>
 </head>
 <body>
@@ -596,35 +320,21 @@
     <div class="liquid-bg">
         <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
     </div>
 
     <!-- Navigation -->
     <nav class="glass-nav">
-        <div class="logo" onclick="location.href='index.html'">
+        <div class="logo" onclick="location.reload()">
             <i class="fas fa-play-circle"></i>
             <span>StreamFlow</span>
         </div>
         <div class="nav-actions">
-            <button class="glass-btn" onclick="toggleSearch()">
-                <i class="fas fa-search"></i>
-            </button>
             <button class="glass-btn" onclick="toggleCategoryPanel()">
                 <i class="fas fa-folder-open"></i>
+                <span>Kategori</span>
             </button>
-            <a href="admin.html" class="glass-btn">
-                <i class="fas fa-shield-alt"></i>
-            </a>
         </div>
     </nav>
-
-    <!-- Search -->
-    <div class="search-overlay" id="searchOverlay">
-        <div class="glass-search">
-            <input type="text" placeholder="Cari video..." id="searchInput">
-            <button onclick="searchVideos()"><i class="fas fa-search"></i></button>
-        </div>
-    </div>
 
     <!-- Category Panel -->
     <div class="category-panel" id="categoryPanel">
@@ -635,190 +345,194 @@
             </button>
         </div>
         <div class="category-list">
+            <div class="category-item" onclick="filterCategory('all')">
+                <div class="cat-icon" style="background: rgba(255,255,255,0.1);"><i class="fas fa-th-large"></i></div>
+                <span>Semua Video</span>
+            </div>
             <div class="category-item" onclick="filterCategory('hijab')">
                 <div class="cat-icon hijab-icon"><i class="fas fa-user-shield"></i></div>
                 <span>Hijab</span>
-                <i class="fas fa-chevron-right"></i>
             </div>
             <div class="category-item" onclick="filterCategory('bocil')">
                 <div class="cat-icon bocil-icon"><i class="fas fa-child"></i></div>
                 <span>Bocil</span>
-                <i class="fas fa-chevron-right"></i>
             </div>
             <div class="category-item" onclick="filterCategory('abg')">
                 <div class="cat-icon abg-icon"><i class="fas fa-user-graduate"></i></div>
                 <span>ABG</span>
-                <i class="fas fa-chevron-right"></i>
             </div>
         </div>
     </div>
-
     <div class="panel-overlay" id="panelOverlay" onclick="toggleCategoryPanel()"></div>
 
     <!-- Main Content -->
     <main class="main-content">
-        <section class="hero-section">
-            <div class="glass-hero">
-                <div class="hero-content">
-                    <h1>Tonton Video Favoritmu</h1>
-                    <p>Koleksi video terbaik dengan kualitas HD</p>
-                </div>
-            </div>
-        </section>
+        <div class="section-header">
+            <h2 id="currentCategory">Semua Video</h2>
+        </div>
+        
+        <div class="video-grid" id="videoGrid">
+            
+            <!-- ==========================================
+                 TAMBAHKAN VIDEO BARU DI BAWAH INI
+                 Copy template di bawah dan paste di sini
+                 ========================================== -->
 
-        <section class="video-section">
-            <div class="section-header">
-                <h2 id="currentCategory">Semua Video</h2>
-                <div class="view-toggle">
-                    <button class="glass-btn active" onclick="setView('grid')"><i class="fas fa-th"></i></button>
-                    <button class="glass-btn" onclick="setView('list')"><i class="fas fa-list"></i></button>
+            <!-- TEMPLATE VIDEO (Copy dari sini) -->
+            <!-- 
+            <div class="video-card" 
+                 data-category="hijab" 
+                 data-drive-id="GANTI_DENGAN_ID_DRIVE" 
+                 data-shopee="https://s.shopee.co.id/1gEa1RAN5w"
+                 onclick="handleVideoClick(this)">
+                <div class="video-thumbnail">
+                    <img src="https://drive.google.com/thumbnail?id=GANTI_DENGAN_ID_DRIVE&sz=s4000" alt="Judul Video">
+                    <div class="play-overlay"><i class="fas fa-play"></i></div>
+                    <span class="category-badge">hijab</span>
+                </div>
+                <div class="video-info">
+                    <h3>Judul Video Di Sini</h3>
+                    <div class="video-meta">
+                        <span><i class="fas fa-calendar"></i> 11 Apr 2026</span>
+                    </div>
                 </div>
             </div>
-            <div class="video-grid" id="videoGrid"></div>
-        </section>
+            -->
+            <!-- (Sampai sini) -->
+
+            <!-- CONTOH VIDEO 1 - HIJAB -->
+            <div class="video-card" 
+                 data-category="hijab" 
+                 data-drive-id="11jw4bxAKW-AhG5S93IIF6DeE0zIcem42" 
+                 data-shopee="https://s.shopee.co.id/1gEa1RAN5w"
+                 onclick="handleVideoClick(this)">
+                <div class="video-thumbnail">
+                    <img src="https://drive.google.com/thumbnail?id=1APSRoW8XLWShNkeuC7--84XSoyMdcPrP&sz=s4000" alt="Tutorial Hijab">
+                    <div class="play-overlay"><i class="fas fa-play"></i></div>
+                    <span class="category-badge">hijab</span>
+                </div>
+                <div class="video-info">
+                    <h3>Tutorial Hijab Modern Elegan</h3>
+                    <div class="video-meta">
+                        <span><i class="fas fa-calendar"></i> 11 Apr 2026</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTOH VIDEO 2 - BOCIL -->
+            <div class="video-card" 
+                 data-category="bocil" 
+                 data-drive-id="1BQSRTm9YMXTIhNkevD8--95YTozNedQs" 
+                 data-shopee="https://s.shopee.co.id/1gEa1RAN5w"
+                 onclick="handleVideoClick(this)">
+                <div class="video-thumbnail">
+                    <img src="https://drive.google.com/thumbnail?id=1BQSRTm9YMXTIhNkevD8--95YTozNedQs&sz=s4000" alt="Video Bocil">
+                    <div class="play-overlay"><i class="fas fa-play"></i></div>
+                    <span class="category-badge">bocil</span>
+                </div>
+                <div class="video-info">
+                    <h3>Video Lucu Anak Kecil</h3>
+                    <div class="video-meta">
+                        <span><i class="fas fa-calendar"></i> 11 Apr 2026</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTOH VIDEO 3 - ABG -->
+            <div class="video-card" 
+                 data-category="abg" 
+                 data-drive-id="1CRTSn0ZNYLUJkevE9--06ZUpzOefRt" 
+                 data-shopee="https://s.shopee.co.id/1gEa1RAN5w"
+                 onclick="handleVideoClick(this)">
+                <div class="video-thumbnail">
+                    <img src="https://drive.google.com/thumbnail?id=1CRTSn0ZNYLUJkevE9--06ZUpzOefRt&sz=s4000" alt="Video ABG">
+                    <div class="play-overlay"><i class="fas fa-play"></i></div>
+                    <span class="category-badge">abg</span>
+                </div>
+                <div class="video-info">
+                    <h3>Vlog ABG Sekolah</h3>
+                    <div class="video-meta">
+                        <span><i class="fas fa-calendar"></i> 11 Apr 2026</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAMBAHKAN VIDEO BARU ANDA DI BAWAH INI -->
+
+
+        </div>
     </main>
+
+    <!-- Player Modal -->
+    <div class="player-modal" id="playerModal">
+        <div class="player-container">
+            <button class="player-close" onclick="closePlayer()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="video-wrapper" id="playerWrapper"></div>
+        </div>
+    </div>
 
     <div class="toast" id="toast"></div>
 
     <script>
         // ==========================================
-        // MAIN APP LOGIC
+        // CARA MENAMBAH VIDEO BARU:
+        // 1. Copy template di atas (yang dalam komentar)
+        // 2. Paste di bagian "TAMBAHKAN VIDEO BARU DI BAWAH INI"
+        // 3. Ganti nilai-nilai berikut:
+        //    - data-category: "hijab" / "bocil" / "abg"
+        //    - data-drive-id: ID file Google Drive (dari link share)
+        //    - data-shopee: Link Shopee (bisa pakai default)
+        //    - src thumbnail: Ganti ID di URL thumbnail
+        //    - Judul video: Ganti teks di <h3>
         // ==========================================
-        
-        const sampleVideos = [
-            {
-                id: '1',
-                title: 'Tutorial Hijab Modern Elegan',
-                category: 'hijab',
-                thumbnailUrl: 'https://images.unsplash.com/photo-1534531688091-a458257992cb?w=640',
-                videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-                description: 'Tutorial hijab modern untuk acara formal',
-                uploadDate: new Date().toISOString(),
-                views: 1240,
-                shopeeLink: 'https://s.shopee.co.id/1gEa1RAN5w'
-            },
-            {
-                id: '2',
-                title: 'Kreasi Hijab Simple Sehari-hari',
-                category: 'hijab',
-                thumbnailUrl: 'https://images.unsplash.com/photo-1589987998932-a4be01f4c8c3?w=640',
-                videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-                description: 'Tutorial hijab simple untuk aktivitas harian',
-                uploadDate: new Date().toISOString(),
-                views: 890,
-                shopeeLink: 'https://s.shopee.co.id/1gEa1RAN5w'
-            },
-            {
-                id: '3',
-                title: 'Fashion ABG Trendy 2024',
-                category: 'abg',
-                thumbnailUrl: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=640',
-                videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-                description: 'Style fashion terbaru untuk remaja',
-                uploadDate: new Date().toISOString(),
-                views: 2100,
-                shopeeLink: 'https://s.shopee.co.id/1gEa1RAN5w'
-            },
-            {
-                id: '4',
-                title: 'Outfit Casual ABG',
-                category: 'abg',
-                thumbnailUrl: 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=640',
-                videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-                description: 'Inspirasi outfit casual untuk hangout',
-                uploadDate: new Date().toISOString(),
-                views: 1560,
-                shopeeLink: 'https://s.shopee.co.id/1gEa1RAN5w'
-            },
-            {
-                id: '5',
-                title: 'Gaya Anak Kekinian',
-                category: 'bocil',
-                thumbnailUrl: 'https://images.unsplash.com/photo-1503919545889-aef636e10ad4?w=640',
-                videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-                description: 'Fashion anak-anak yang lucu dan trendy',
-                uploadDate: new Date().toISOString(),
-                views: 3200,
-                shopeeLink: 'https://s.shopee.co.id/1gEa1RAN5w'
-            },
-            {
-                id: '6',
-                title: 'Mix and Match Bocil',
-                category: 'bocil',
-                thumbnailUrl: 'https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?w=640',
-                videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
-                description: 'Ide padu padan pakaian anak',
-                uploadDate: new Date().toISOString(),
-                views: 1890,
-                shopeeLink: 'https://s.shopee.co.id/1gEa1RAN5w'
-            }
-        ];
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            initApp();
-        });
-
-        function initApp() {
-            let videos = localStorage.getItem('videos');
-            if (!videos) {
-                localStorage.setItem('videos', JSON.stringify(sampleVideos));
-            }
-            loadVideos();
-            
-            const urlParams = new URLSearchParams(window.location.search);
-            const category = urlParams.get('category');
-            if (category) filterCategory(category);
-        }
-
-        function loadVideos() {
-            const videos = JSON.parse(localStorage.getItem('videos') || '[]');
-            renderVideos(videos);
-        }
-
-        function renderVideos(videos) {
-            const grid = document.getElementById('videoGrid');
-            if (videos.length === 0) {
-                grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--secondary);">
-                    <i class="fas fa-video-slash" style="font-size: 4rem; margin-bottom: 20px;"></i>
-                    <h3>Tidak ada video</h3>
-                </div>`;
-                return;
-            }
-            
-            grid.innerHTML = videos.map(video => `
-                <div class="video-card" onclick="handleVideoClick('${video.id}', '${video.shopeeLink || 'https://s.shopee.co.id/1gEa1RAN5w'}')">
-                    <div class="video-thumbnail">
-                        <img src="${video.thumbnailUrl}" alt="${video.title}" loading="lazy">
-                        <div class="play-overlay"><i class="fas fa-play"></i></div>
-                        <span class="category-badge">${video.category}</span>
-                    </div>
-                    <div class="video-info">
-                        <h3>${video.title}</h3>
-                        <div class="video-meta">
-                            <span><i class="fas fa-eye"></i> ${formatViews(video.views || 0)}</span>
-                            <span><i class="fas fa-calendar"></i> ${formatDate(video.uploadDate)}</span>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
 
         let clickHistory = {};
 
-        function handleVideoClick(videoId, shopeeLink) {
+        function handleVideoClick(element) {
+            const driveId = element.getAttribute('data-drive-id');
+            const shopeeLink = element.getAttribute('data-shopee');
+            const videoId = driveId; // Use driveId as unique identifier
+            
             const now = Date.now();
             const lastClick = clickHistory[videoId];
             
+            // Klik kedua dalam 3 detik -> buka player
             if (lastClick && (now - lastClick) < 3000) {
-                window.open(`player.html?id=${videoId}`, '_blank');
+                openPlayer(driveId);
                 delete clickHistory[videoId];
-                showToast('Membuka pemutar video...');
+                showToast('Memutar video...');
             } else {
+                // Klik pertama -> buka Shopee
                 clickHistory[videoId] = now;
-                window.location.href = shopeeLink || 'https://s.shopee.co.id/1gEa1RAN5w';
+                window.open(shopeeLink || 'https://s.shopee.co.id/1gEa1RAN5w', '_blank');
                 showToast('Klik lagi untuk menonton video');
             }
+        }
+
+        function openPlayer(driveId) {
+            const modal = document.getElementById('playerModal');
+            const wrapper = document.getElementById('playerWrapper');
+            
+            wrapper.innerHTML = `
+                <iframe src="https://drive.google.com/file/d/${driveId}/preview" 
+                        allowfullscreen 
+                        allow="autoplay; encrypted-media">
+                </iframe>
+            `;
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePlayer() {
+            const modal = document.getElementById('playerModal');
+            const wrapper = document.getElementById('playerWrapper');
+            
+            modal.classList.remove('active');
+            wrapper.innerHTML = '';
+            document.body.style.overflow = '';
         }
 
         function toggleCategoryPanel() {
@@ -827,49 +541,22 @@
         }
 
         function filterCategory(category) {
-            const videos = JSON.parse(localStorage.getItem('videos') || '[]');
-            const filtered = videos.filter(v => v.category === category);
-            renderVideos(filtered);
-            document.getElementById('currentCategory').textContent = category.charAt(0).toUpperCase() + category.slice(1);
+            const cards = document.querySelectorAll('.video-card');
+            const title = document.getElementById('currentCategory');
+            
+            cards.forEach(card => {
+                if (category === 'all') {
+                    card.classList.remove('hidden');
+                } else {
+                    const cardCategory = card.getAttribute('data-category');
+                    card.classList.toggle('hidden', cardCategory !== category);
+                }
+            });
+            
+            title.textContent = category === 'all' ? 'Semua Video' : 
+                               category.charAt(0).toUpperCase() + category.slice(1);
+            
             toggleCategoryPanel();
-            window.history.pushState({}, '', `?category=${category}`);
-        }
-
-        function toggleSearch() {
-            document.getElementById('searchOverlay').classList.toggle('active');
-        }
-
-        function searchVideos() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const videos = JSON.parse(localStorage.getItem('videos') || '[]');
-            const filtered = videos.filter(v => v.title.toLowerCase().includes(query));
-            renderVideos(filtered);
-            document.getElementById('currentCategory').textContent = `Hasil: "${query}"`;
-            toggleSearch();
-        }
-
-        function setView(mode) {
-            const grid = document.getElementById('videoGrid');
-            const buttons = document.querySelectorAll('.view-toggle .glass-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            event.target.closest('.glass-btn').classList.add('active');
-            grid.classList.toggle('list-view', mode === 'list');
-        }
-
-        function formatViews(num) {
-            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
-            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
-            return num.toString();
-        }
-
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            const now = new Date();
-            const days = Math.floor((now - date) / (1000 * 60 * 60 * 24));
-            if (days === 0) return 'Hari ini';
-            if (days === 1) return 'Kemarin';
-            if (days < 7) return `${days} hari lalu`;
-            return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
         }
 
         function showToast(message) {
@@ -879,16 +566,17 @@
             setTimeout(() => toast.classList.remove('active'), 3000);
         }
 
-        // Event listeners
-        document.getElementById('searchInput')?.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') searchVideos();
+        // Close modal on backdrop click
+        document.getElementById('playerModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closePlayer();
         });
 
+        // Escape key to close
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                document.getElementById('searchOverlay')?.classList.remove('active');
-                document.getElementById('categoryPanel')?.classList.remove('active');
-                document.getElementById('panelOverlay')?.classList.remove('active');
+                closePlayer();
+                document.getElementById('categoryPanel').classList.remove('active');
+                document.getElementById('panelOverlay').classList.remove('active');
             }
         });
     </script>
