@@ -124,40 +124,46 @@
         .bocil-icon { background: rgba(200, 200, 200, 0.15); }
         .abg-icon { background: rgba(150, 150, 150, 0.2); }
 
-        .main-content { padding: 90px 30px 50px; max-width: 1600px; margin: 0 auto; }
-        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-        .section-header h2 { font-size: 1.5rem; font-weight: 600; }
+        .main-content { padding: 90px 20px 50px; max-width: 1400px; margin: 0 auto; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .section-header h2 { font-size: 1.3rem; font-weight: 600; }
 
+        /* SMALL LAYOUT - Film Stream Style */
         .video-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 24px;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 16px;
         }
 
         .video-card {
             background: var(--glass-bg);
             backdrop-filter: blur(15px);
             border: 1px solid var(--glass-border);
-            border-radius: 20px; overflow: hidden;
-            transition: all 0.4s ease;
+            border-radius: 12px; 
+            overflow: hidden;
+            transition: all 0.3s ease;
             position: relative;
+            cursor: pointer;
         }
         .video-card:hover {
-            transform: translateY(-8px) scale(1.02);
+            transform: translateY(-5px) scale(1.05);
             border-color: var(--glass-highlight);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            z-index: 10;
         }
         .video-card.hidden { display: none; }
-        .video-card.ready { border-color: var(--accent); }
+        .video-card.ready { border-color: var(--accent); box-shadow: 0 0 20px rgba(0,212,255,0.3); }
 
         .video-thumbnail {
-            position: relative; width: 100%; aspect-ratio: 16/9;
-            overflow: hidden; cursor: pointer;
+            position: relative; 
+            width: 100%; 
+            aspect-ratio: 2/3;
+            overflow: hidden;
         }
         .video-thumbnail img {
             width: 100%; height: 100%; object-fit: cover;
             filter: grayscale(100%) contrast(1.1);
-            transition: all 0.5s ease;
+            transition: all 0.4s ease;
         }
         .video-card:hover .video-thumbnail img {
             transform: scale(1.1);
@@ -166,15 +172,15 @@
 
         .play-overlay {
             position: absolute; inset: 0;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.5);
             display: flex; align-items: center; justify-content: center;
             opacity: 0; transition: opacity 0.3s ease;
         }
         .video-card:hover .play-overlay { opacity: 1; }
         .play-overlay i {
-            font-size: 3rem; color: white;
+            font-size: 2rem; color: white;
             background: rgba(255, 255, 255, 0.2);
-            width: 70px; height: 70px; border-radius: 50%;
+            width: 50px; height: 50px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             backdrop-filter: blur(10px);
             border: 2px solid rgba(255, 255, 255, 0.3);
@@ -191,62 +197,52 @@
         .video-card.show-shopee .shopee-overlay {
             opacity: 1; visibility: visible;
         }
-        .shopee-overlay i { font-size: 3rem; margin-bottom: 10px; }
-        .shopee-overlay span { font-weight: 600; font-size: 1.1rem; }
+        .shopee-overlay i { font-size: 2rem; margin-bottom: 8px; }
+        .shopee-overlay span { font-weight: 600; font-size: 0.9rem; }
 
-        .watch-btn {
-            position: absolute; bottom: 12px; left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: var(--accent);
-            color: #000; border: none;
-            padding: 12px 24px; border-radius: 25px;
-            font-weight: 600; cursor: pointer;
-            opacity: 0; visibility: hidden;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 10;
-            display: flex; align-items: center; gap: 8px;
-            box-shadow: 0 4px 20px rgba(0,212,255,0.3);
-            text-decoration: none;
+        .ready-indicator {
+            position: absolute; top: 8px; right: 8px;
+            width: 12px; height: 12px;
+            background: #00ff88;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #00ff88;
+            display: none;
+            animation: pulse 1.5s infinite;
         }
-        .video-card.ready .watch-btn {
-            opacity: 1; visibility: visible;
-            transform: translateX(-50%) translateY(0);
-        }
-        .watch-btn:hover {
-            background: #fff;
-            box-shadow: 0 6px 30px rgba(0,212,255,0.5);
-            transform: translateX(-50%) translateY(-2px);
+        .video-card.ready .ready-indicator { display: block; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
 
         .category-badge {
-            position: absolute; top: 12px; left: 12px;
-            background: rgba(0, 0, 0, 0.6);
+            position: absolute; top: 8px; left: 8px;
+            background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(10px);
-            padding: 6px 12px; border-radius: 20px;
-            font-size: 0.75rem; font-weight: 600;
+            padding: 4px 8px; border-radius: 12px;
+            font-size: 0.65rem; font-weight: 600;
             text-transform: uppercase;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .video-info { padding: 20px; }
+        .video-info { 
+            padding: 12px; 
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            position: absolute; bottom: 0; left: 0; right: 0;
+        }
         .video-info h3 {
-            font-size: 1.1rem; font-weight: 600;
-            margin-bottom: 8px; line-height: 1.4;
+            font-size: 0.85rem; font-weight: 600;
+            line-height: 1.3;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
+            margin-bottom: 4px;
         }
         .video-meta {
             display: flex; justify-content: space-between;
-            color: var(--secondary); font-size: 0.85rem;
+            color: var(--secondary); font-size: 0.7rem;
         }
-        .ready-badge {
-            color: var(--accent);
-            font-size: 0.75rem;
-            display: none; align-items: center; gap: 4px;
-        }
-        .video-card.ready .ready-badge { display: flex; }
 
         /* Toast */
         .toast {
@@ -267,7 +263,8 @@
 
         @media (max-width: 768px) {
             .category-panel { width: 100%; right: -100%; }
-            .video-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+            .video-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+            .main-content { padding: 90px 12px 50px; }
         }
     </style>
 </head>
@@ -325,58 +322,28 @@
         
         <div class="video-grid" id="videoGrid">
             
-            <!-- TEMPLATE -->
-            <!--
-            <div class="video-card" 
-                 data-category="hijab" 
-                 data-streamtape-id="STREAMTAPE_VIDEO_ID"
-                 data-shopee="https://s.shopee.co.id/1gEa1RAN5w"
-                 data-title="Judul Video">
-                <div class="video-thumbnail" onclick="handleThumbnailClick(this)">
-                    <img src="https://via.placeholder.com/640x360/1a1a1a/666?text=Streamtape" 
-                         alt="Judul Video"
-                         onerror="this.src='https://via.placeholder.com/640x360/1a1a1a/666?text=Video+Not+Found'">
-                    <div class="play-overlay"><i class="fas fa-play"></i></div>
-                    <div class="shopee-overlay"><i class="fas fa-shopping-bag"></i><span>Ke Shopee...</span></div>
-                </div>
-                <span class="category-badge">hijab</span>
-                <div class="video-info">
-                    <h3>Judul Video</h3>
-                    <div class="video-meta">
-                        <span><i class="fas fa-calendar"></i> 11 Apr 2026</span>
-                        <span class="ready-badge"><i class="fas fa-check-circle"></i> Siap tonton</span>
-                    </div>
-                </div>
-                <a href="#" class="watch-btn" onclick="watchVideo(event, this)" style="display:none;">
-                    <i class="fas fa-play"></i> Tonton Video
-                </a>
-            </div>
-            -->
-
             <!-- CONTOH VIDEO -->
             <div class="video-card" 
                  data-category="Abg" 
-                 data-streamtape-id="D4O7aybkL1FkKgo"
+                 data-streamtape-url="https://stape.me/e/D4O7aybkL1FkKgo"
                  data-shopee="https://s.shopee.co.id/1gEa1RAN5w"
                  data-title="CEWEK ABG COLMEK BODY TOBRUT">
-                <div class="video-thumbnail" onclick="handleThumbnailClick(this)">
-                    <img src="https://via.placeholder.com/640x360/1a1a1a/666?text=Streamtape" 
+                <div class="video-thumbnail">
+                    <img src="https://via.placeholder.com/300x450/1a1a1a/666?text=ABG" 
                          alt="CEWEK ABG COLMEK BODY TOBRUT"
-                         onerror="this.src='https://via.placeholder.com/640x360/1a1a1a/666?text=Video+Not+Found'">
+                         onerror="this.src='https://via.placeholder.com/300x450/1a1a1a/666?text=No+Image'">
                     <div class="play-overlay"><i class="fas fa-play"></i></div>
                     <div class="shopee-overlay"><i class="fas fa-shopping-bag"></i><span>Ke Shopee...</span></div>
+                    <div class="ready-indicator"></div>
                 </div>
                 <span class="category-badge">abg</span>
                 <div class="video-info">
                     <h3>CEWEK ABG COLMEK BODY TOBRUT</h3>
                     <div class="video-meta">
-                        <span><i class="fas fa-calendar"></i> 11 Apr 2026</span>
-                        <span class="ready-badge"><i class="fas fa-check-circle"></i> Siap tonton</span>
+                        <span><i class="fas fa-calendar"></i> 11 Apr</span>
+                        <span class="ready-text" style="display:none; color: var(--accent);"><i class="fas fa-check"></i> Ready</span>
                     </div>
                 </div>
-                <a href="#" class="watch-btn" onclick="watchVideo(event, this)" style="display:none;">
-                    <i class="fas fa-play"></i> Tonton Video
-                </a>
             </div>
 
             <!-- TAMBAH VIDEO BARU DI BAWAH INI -->
@@ -390,46 +357,37 @@
     <script>
         const sessionReady = new Set();
 
-        function handleThumbnailClick(thumbnail) {
-            const card = thumbnail.closest('.video-card');
-            const streamtapeId = card.getAttribute('data-streamtape-id');
+        // Event delegation untuk semua video card
+        document.getElementById('videoGrid').addEventListener('click', function(e) {
+            const card = e.target.closest('.video-card');
+            if (!card) return;
+            
+            const streamtapeUrl = card.getAttribute('data-streamtape-url');
             const shopeeLink = card.getAttribute('data-shopee');
+            
+            if (!streamtapeUrl || !shopeeLink) return;
 
-            if (sessionReady.has(streamtapeId)) {
-                openPlayerTab(card);
+            // Cek apakah sudah ready (klik kedua)
+            if (sessionReady.has(streamtapeUrl)) {
+                // KLIK KEDUA: Langsung ke Streamtape
+                window.open(streamtapeUrl, '_blank');
             } else {
-                sessionReady.add(streamtapeId);
+                // KLIK PERTAMA: Ke Shopee + Mark as Ready
+                sessionReady.add(streamtapeUrl);
                 card.classList.add('ready');
                 card.classList.add('show-shopee');
+                card.querySelector('.ready-text').style.display = 'inline';
+                
+                // Buka Shopee
                 window.open(shopeeLink, '_blank');
                 
+                // Hilangkan overlay Shopee setelah 1.5 detik
                 setTimeout(() => {
                     card.classList.remove('show-shopee');
-                    showToast('✓ Redirect berhasil! Klik lagi untuk nonton');
-                }, 1200);
+                    showToast('✓ Klik lagi untuk nonton video');
+                }, 1500);
             }
-        }
-
-        function watchVideo(event, btn) {
-            event.preventDefault();
-            event.stopPropagation();
-            const card = btn.closest('.video-card');
-            openPlayerTab(card);
-        }
-
-        function openPlayerTab(card) {
-            const streamtapeId = card.getAttribute('data-streamtape-id');
-            const title = card.getAttribute('data-title');
-            const category = card.getAttribute('data-category');
-            
-            if (!streamtapeId || streamtapeId.length < 5) {
-                showToast('❌ ID Streamtape tidak valid!');
-                return;
-            }
-
-            const playerUrl = `player.html?id=${encodeURIComponent(streamtapeId)}&title=${encodeURIComponent(title)}&cat=${encodeURIComponent(category)}`;
-            window.open(playerUrl, '_blank');
-        }
+        });
 
         function toggleCategoryPanel() {
             document.getElementById('categoryPanel').classList.toggle('active');
