@@ -1,4 +1,3 @@
-<!-- index.html - Halaman Beranda -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -6,42 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stream Video</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
             color: #fff;
             min-height: 100vh;
-            overflow-x: hidden;
         }
 
-        /* Liquid Glass Effect Base */
         .glass {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
         }
 
-        .glass-strong {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        /* Header */
         .header {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
+            top: 0; left: 0; right: 0;
             padding: 20px 30px;
             z-index: 100;
             display: flex;
@@ -52,99 +34,13 @@
         .logo {
             font-size: 24px;
             font-weight: 700;
-            letter-spacing: -1px;
             background: linear-gradient(135deg, #fff 0%, #888 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        /* Category Tab Button */
-        .category-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .category-btn:hover {
-            transform: scale(1.1);
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        .category-btn::before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .category-btn:hover::before {
-            opacity: 1;
-        }
-
-        .category-btn svg {
-            width: 24px;
-            height: 24px;
-            fill: #fff;
-        }
-
-        /* Category Drawer */
-        .drawer-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.4s ease;
-            z-index: 200;
-        }
-
-        .drawer-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .drawer {
-            position: fixed;
-            top: 0;
-            right: -50%;
-            width: 50%;
-            height: 100%;
-            z-index: 201;
-            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            padding: 100px 40px 40px;
-            overflow-y: auto;
-        }
-
-        .drawer.active {
-            right: 0;
-        }
-
-        @media (max-width: 768px) {
-            .drawer {
-                width: 85%;
-                right: -85%;
-            }
-        }
-
-        .drawer-close {
-            position: absolute;
-            top: 30px;
-            right: 30px;
-            width: 40px;
-            height: 40px;
+        .menu-btn {
+            width: 50px; height: 50px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -153,72 +49,47 @@
             transition: all 0.3s;
         }
 
-        .drawer-close:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: rotate(90deg);
+        .menu-btn:hover { transform: scale(1.1); background: rgba(255,255,255,0.1); }
+
+        .drawer-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            opacity: 0; visibility: hidden;
+            transition: all 0.4s;
+            z-index: 200;
         }
 
-        .drawer-title {
-            font-size: 32px;
-            font-weight: 300;
-            margin-bottom: 40px;
-            letter-spacing: -1px;
+        .drawer-overlay.active { opacity: 1; visibility: visible; }
+
+        .drawer {
+            position: fixed;
+            top: 0; right: -50%;
+            width: 50%; height: 100%;
+            z-index: 201;
+            transition: right 0.4s;
+            padding: 100px 40px 40px;
         }
 
-        /* Folder Cards */
-        .folder-grid {
-            display: grid;
-            gap: 20px;
+        .drawer.active { right: 0; }
+
+        @media (max-width: 768px) {
+            .drawer { width: 85%; right: -85%; }
         }
 
         .folder-card {
             padding: 30px;
             border-radius: 24px;
+            margin-bottom: 20px;
             cursor: pointer;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .folder-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            transition: left 0.5s;
-        }
-
-        .folder-card:hover::before {
-            left: 100%;
+            transition: all 0.3s;
         }
 
         .folder-card:hover {
             transform: translateX(-10px);
-            background: rgba(255, 255, 255, 0.12);
+            background: rgba(255,255,255,0.1);
         }
 
-        .folder-icon {
-            width: 60px;
-            height: 60px;
-            margin-bottom: 20px;
-            opacity: 0.8;
-        }
-
-        .folder-name {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .folder-count {
-            font-size: 14px;
-            opacity: 0.6;
-        }
-
-        /* Main Content */
         .main-content {
             padding: 100px 30px 50px;
             max-width: 1400px;
@@ -229,149 +100,82 @@
             font-size: 48px;
             font-weight: 200;
             margin-bottom: 10px;
-            letter-spacing: -2px;
         }
 
-        .section-subtitle {
-            font-size: 16px;
-            opacity: 0.6;
-            margin-bottom: 50px;
-        }
-
-        /* Video Grid */
         .video-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 30px;
+            margin-top: 30px;
         }
 
         .video-card {
             border-radius: 20px;
             overflow: hidden;
-            transition: all 0.4s ease;
             cursor: pointer;
-            position: relative;
+            transition: all 0.4s;
         }
 
         .video-card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
         }
 
-        .video-thumbnail {
+        .video-thumb {
             width: 100%;
             aspect-ratio: 16/9;
-            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+            background: #2a2a2a;
             position: relative;
             overflow: hidden;
         }
 
-        .video-thumbnail img {
-            width: 100%;
-            height: 100%;
+        .video-thumb img {
+            width: 100%; height: 100%;
             object-fit: cover;
             transition: transform 0.4s;
         }
 
-        .video-card:hover .video-thumbnail img {
-            transform: scale(1.1);
-        }
+        .video-card:hover .video-thumb img { transform: scale(1.1); }
 
-        .play-overlay {
+        .play-btn {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.8);
-            width: 60px;
-            height: 60px;
-            background: rgba(255, 255, 255, 0.9);
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px; height: 60px;
+            background: rgba(255,255,255,0.9);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             opacity: 0;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
         }
 
-        .video-card:hover .play-overlay {
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
-        }
+        .video-card:hover .play-btn { opacity: 1; }
 
-        .play-overlay svg {
-            width: 24px;
-            height: 24px;
-            fill: #000;
-            margin-left: 4px;
-        }
+        .play-btn svg { width: 24px; height: 24px; fill: #000; margin-left: 4px; }
 
-        .video-info {
-            padding: 20px;
-        }
+        .video-info { padding: 20px; }
 
         .video-title {
             font-size: 16px;
             font-weight: 500;
             margin-bottom: 8px;
-            line-height: 1.4;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
         }
 
         .video-meta {
             font-size: 13px;
             opacity: 0.5;
-            display: flex;
-            gap: 15px;
         }
 
-        /* Category Filter Tags */
-        .filter-tags {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-
-        .tag {
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .tag:hover, .tag.active {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: rgba(255, 255, 255, 0.3);
-        }
-
-        /* Loading Animation */
-        .skeleton {
-            background: linear-gradient(90deg, #1a1a1a 25%, #2a2a2a 50%, #1a1a1a 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
-        /* Toast Notification */
         .toast {
             position: fixed;
-            bottom: 30px;
-            left: 50%;
+            bottom: 30px; left: 50%;
             transform: translateX(-50%) translateY(100px);
             padding: 16px 32px;
             border-radius: 50px;
-            font-size: 14px;
             opacity: 0;
-            transition: all 0.4s ease;
+            transition: all 0.4s;
             z-index: 300;
         }
 
@@ -379,125 +183,77 @@
             opacity: 1;
             transform: translateX(-50%) translateY(0);
         }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .section-title {
-                font-size: 32px;
-            }
-            .video-grid {
-                grid-template-columns: 1fr;
-            }
-        }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
     <header class="header glass">
         <div class="logo">STREAM</div>
-        <div class="category-btn glass" onclick="toggleDrawer()">
-            <svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+        <div class="menu-btn glass" onclick="toggleDrawer()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+            </svg>
         </div>
     </header>
 
-    <!-- Category Drawer -->
     <div class="drawer-overlay" onclick="toggleDrawer()"></div>
-    <div class="drawer glass-strong" id="drawer">
-        <div class="drawer-close" onclick="toggleDrawer()">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+    
+    <div class="drawer glass" id="drawer">
+        <h2 style="margin-bottom: 30px; font-weight: 300;">Kategori</h2>
+        
+        <div class="folder-card glass" onclick="filterCategory('hijab')">
+            <h3>Hijab</h3>
+            <p style="opacity: 0.6; margin-top: 5px;"><span id="count-hijab">0</span> video</p>
         </div>
-        <h2 class="drawer-title">Kategori</h2>
-        <div class="folder-grid">
-            <div class="folder-card glass" onclick="filterCategory('hijab')">
-                <svg class="folder-icon" viewBox="0 0 24 24" fill="white"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>
-                <div class="folder-name">Hijab</div>
-                <div class="folder-count"><span id="count-hijab">0</span> video</div>
-            </div>
-            <div class="folder-card glass" onclick="filterCategory('bocil')">
-                <svg class="folder-icon" viewBox="0 0 24 24" fill="white"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>
-                <div class="folder-name">Bocil</div>
-                <div class="folder-count"><span id="count-bocil">0</span> video</div>
-            </div>
-            <div class="folder-card glass" onclick="filterCategory('abg')">
-                <svg class="folder-icon" viewBox="0 0 24 24" fill="white"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>
-                <div class="folder-name">ABG</div>
-                <div class="folder-count"><span id="count-abg">0</span> video</div>
-            </div>
+        
+        <div class="folder-card glass" onclick="filterCategory('bocil')">
+            <h3>Bocil</h3>
+            <p style="opacity: 0.6; margin-top: 5px;"><span id="count-bocil">0</span> video</p>
+        </div>
+        
+        <div class="folder-card glass" onclick="filterCategory('abg')">
+            <h3>ABG</h3>
+            <p style="opacity: 0.6; margin-top: 5px;"><span id="count-abg">0</span> video</p>
         </div>
     </div>
 
-    <!-- Main Content -->
     <main class="main-content">
         <h1 class="section-title">Video Terbaru</h1>
-        <p class="section-subtitle">Koleksi video terbaik untuk Anda</p>
+        <p style="opacity: 0.6;">Klik menu kanan untuk filter kategori</p>
         
-        <div class="filter-tags">
-            <div class="tag active" onclick="filterCategory('all')">Semua</div>
-            <div class="tag" onclick="filterCategory('hijab')">Hijab</div>
-            <div class="tag" onclick="filterCategory('bocil')">Bocil</div>
-            <div class="tag" onclick="filterCategory('abg')">ABG</div>
-        </div>
-
         <div class="video-grid" id="videoGrid">
-            <!-- Videos will be loaded here -->
+            <!-- Video muncul di sini -->
         </div>
     </main>
 
-    <!-- Toast -->
     <div class="toast glass" id="toast"></div>
 
     <script>
-        // Konfigurasi Google Sheets
-        const SHEET_ID = '104Wpnwt5sxUVxVi1mxVpwgTuH0VrcCq9qPyN_Lkd0WM'; // Ganti dengan ID Google Sheets Anda
-        const API_KEY = 'AIzaSyAuXjKrA1o5frA_Js4H_8Ht6EGOftnRqsA'; // Ganti dengan API Key Anda
+        // ============================================
+        // GANTI URL INI DENGAN URL DEPLOY ANDA
+        // ============================================
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw_jtcQH55fzoBkUzMh58gUqoh3QuwvRQf8a95cqQqS93yBndlbIII7PFGY2ZwzS_KefA/exec';
         
         let videos = [];
         let clickCount = {};
         let currentFilter = 'all';
 
-        // Load videos dari Google Sheets
         async function loadVideos() {
             try {
-                // Simulasi data - Ganti dengan fetch ke Google Sheets API
-                // const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1?key=${API_KEY}`);
-                // const data = await response.json();
+                showToast('Memuat...');
                 
-                // Data simulasi
-                videos = [
-                    {
-                        id: 1,
-                        title: "Video Tutorial Hijab Modern",
-                        category: "hijab",
-                        thumbnail: "https://via.placeholder.com/400x225/2a2a2a/ffffff?text=Hijab+1",
-                        videoUrl: "https://drive.google.com/file/d/EXAMPLE/view",
-                        date: "2024-01-15",
-                        views: "1.2K"
-                    },
-                    {
-                        id: 2,
-                        title: "Konten Bocil Lucu",
-                        category: "bocil",
-                        thumbnail: "https://via.placeholder.com/400x225/2a2a2a/ffffff?text=Bocil+1",
-                        videoUrl: "https://drive.google.com/file/d/EXAMPLE/view",
-                        date: "2024-01-14",
-                        views: "890"
-                    },
-                    {
-                        id: 3,
-                        title: "Vlog ABG Hari Ini",
-                        category: "abg",
-                        thumbnail: "https://via.placeholder.com/400x225/2a2a2a/ffffff?text=ABG+1",
-                        videoUrl: "https://s.shopee.co.id/1gEa1RAN5w",
-                        date: "2024-01-13",
-                        views: "2.1K"
-                    }
-                ];
+                const response = await fetch(`${SCRIPT_URL}?action=getVideos`);
+                const result = await response.json();
                 
-                renderVideos();
-                updateCategoryCounts();
+                if (result.success) {
+                    videos = result.data;
+                    renderVideos();
+                    updateCounts();
+                    showToast(`${videos.length} video dimuat`);
+                }
             } catch (error) {
-                showToast('Gagal memuat video');
+                showToast('Error: ' + error.message);
+                console.error(error);
             }
         }
 
@@ -507,115 +263,75 @@
                 ? videos 
                 : videos.filter(v => v.category === currentFilter);
             
+            if (filtered.length === 0) {
+                grid.innerHTML = '<p style="text-align:center; opacity:0.5; grid-column:1/-1;">Tidak ada video</p>';
+                return;
+            }
+            
             grid.innerHTML = filtered.map(video => `
-                <div class="video-card glass" onclick="handleVideoClick(${video.id}, '${video.videoUrl}')">
-                    <div class="video-thumbnail">
-                        <img src="${video.thumbnail}" alt="${video.title}" loading="lazy">
-                        <div class="play-overlay">
+                <div class="video-card glass" onclick="handleClick('${video.id}', '${video.videoUrl}')">
+                    <div class="video-thumb">
+                        <img src="${video.thumbnail}" alt="${video.title}" onerror="this.src='https://via.placeholder.com/400x225'">
+                        <div class="play-btn">
                             <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                         </div>
                     </div>
                     <div class="video-info">
-                        <h3 class="video-title">${video.title}</h3>
-                        <div class="video-meta">
-                            <span>${video.views} views</span>
-                            <span>•</span>
-                            <span>${video.date}</span>
-                        </div>
+                        <div class="video-title">${video.title}</div>
+                        <div class="video-meta">${video.category} • ${video.date}</div>
                     </div>
                 </div>
             `).join('');
         }
 
-        function handleVideoClick(id, url) {
+        function handleClick(id, url) {
             if (!clickCount[id]) clickCount[id] = 0;
             clickCount[id]++;
             
             if (clickCount[id] === 1) {
-                // Klik pertama -> Shopee
+                // Klik 1: Ke Shopee
                 window.location.href = 'https://s.shopee.co.id/1gEa1RAN5w';
             } else {
-                // Klik kedua -> Preview video
+                // Klik 2: Preview video
                 const video = videos.find(v => v.id === id);
-                openVideoPreview(video);
+                openPreview(video);
             }
         }
 
-        function openVideoPreview(video) {
-            const previewWindow = window.open('', '_blank');
-            previewWindow.document.write(`
+        function openPreview(video) {
+            const w = window.open('', '_blank');
+            w.document.write(`
                 <!DOCTYPE html>
                 <html>
                 <head>
                     <title>${video.title}</title>
                     <style>
-                        body { 
-                            margin: 0; 
-                            background: #000; 
-                            display: flex; 
-                            justify-content: center; 
-                            align-items: center; 
-                            min-height: 100vh;
-                            font-family: sans-serif;
-                        }
-                        .video-container {
-                            width: 100%;
-                            max-width: 900px;
-                            position: relative;
-                        }
-                        video {
-                            width: 100%;
-                            border-radius: 12px;
-                        }
-                        .back-btn {
-                            position: fixed;
-                            top: 20px;
-                            left: 20px;
-                            padding: 12px 24px;
-                            background: rgba(255,255,255,0.1);
-                            color: white;
-                            text-decoration: none;
-                            border-radius: 30px;
-                            backdrop-filter: blur(10px);
-                        }
+                        body { margin: 0; background: #000; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+                        .container { width: 100%; max-width: 900px; }
+                        iframe { width: 100%; height: 500px; border: none; }
+                        .close { position: fixed; top: 20px; left: 20px; color: #fff; cursor: pointer; padding: 10px 20px; background: rgba(255,255,255,0.1); border-radius: 20px; }
                     </style>
                 </head>
                 <body>
-                    <a href="#" onclick="window.close()" class="back-btn">← Kembali</a>
-                    <div class="video-container">
-                        <video controls autoplay>
-                            <source src="${video.videoUrl}" type="video/mp4">
-                            Browser tidak mendukung video tag.
-                        </video>
+                    <div class="close" onclick="window.close()">✕ Tutup</div>
+                    <div class="container">
+                        <iframe src="${video.videoUrl}" allowfullscreen></iframe>
                     </div>
                 </body>
                 </html>
             `);
         }
 
-        function filterCategory(category) {
-            currentFilter = category;
-            
-            // Update active tag
-            document.querySelectorAll('.tag').forEach(tag => {
-                tag.classList.remove('active');
-                if (tag.textContent.toLowerCase().includes(category) || 
-                    (category === 'all' && tag.textContent === 'Semua')) {
-                    tag.classList.add('active');
-                }
-            });
-            
+        function filterCategory(cat) {
+            currentFilter = cat;
             renderVideos();
-            if (window.innerWidth < 768) toggleDrawer();
+            toggleDrawer();
         }
 
-        function updateCategoryCounts() {
-            const categories = ['hijab', 'bocil', 'abg'];
-            categories.forEach(cat => {
-                const count = videos.filter(v => v.category === cat).length;
-                const el = document.getElementById(`count-${cat}`);
-                if (el) el.textContent = count;
-            });
+        function updateCounts() {
+            document.getElementById('count-hijab').textContent = videos.filter(v => v.category === 'hijab').length;
+            document.getElementById('count-bocil').textContent = videos.filter(v => v.category === 'bocil').length;
+            document.getElementById('count-abg').textContent = videos.filter(v => v.category === 'abg').length;
         }
 
         function toggleDrawer() {
@@ -623,15 +339,16 @@
             document.querySelector('.drawer-overlay').classList.toggle('active');
         }
 
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
         }
 
-        // Init
+        // Mulai
         loadVideos();
     </script>
+
 </body>
 </html>
