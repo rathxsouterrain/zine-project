@@ -322,10 +322,10 @@
         
         <div class="video-grid" id="videoGrid">
             
-            <!-- CONTOH VIDEO -->
+            <!-- CONTOH VIDEO - Google Drive -->
             <div class="video-card" 
                  data-category="Abg" 
-                 data-streamtape-url="https://drive.google.com/file/d/11jw4bxAKW-AhG5S93IIF6DeE0zIcem42/priview?usp=drivesdk"
+                 data-video-url="https://drive.google.com/file/d/11jw4bxAKW-AhG5S93IIF6DeE0zIcem42/view"
                  data-shopee="https://s.shopee.co.id/1gEa1RAN5w"
                  data-title="CEWEK ABG COLMEK BODY TOBRUT">
                 <div class="video-thumbnail">
@@ -362,18 +362,18 @@
             const card = e.target.closest('.video-card');
             if (!card) return;
             
-            const streamtapeUrl = card.getAttribute('data-streamtape-url');
+            const videoUrl = card.getAttribute('data-video-url');
             const shopeeLink = card.getAttribute('data-shopee');
             
-            if (!streamtapeUrl || !shopeeLink) return;
+            if (!videoUrl || !shopeeLink) return;
 
             // Cek apakah sudah ready (klik kedua)
-            if (sessionReady.has(streamtapeUrl)) {
-                // KLIK KEDUA: Langsung ke Streamtape
-                window.open(streamtapeUrl, '_blank');
+            if (sessionReady.has(videoUrl)) {
+                // KLIK KEDUA: Langsung ke video URL (Google Drive)
+                window.open(videoUrl, '_blank');
             } else {
                 // KLIK PERTAMA: Ke Shopee + Mark as Ready
-                sessionReady.add(streamtapeUrl);
+                sessionReady.add(videoUrl);
                 card.classList.add('ready');
                 card.classList.add('show-shopee');
                 card.querySelector('.ready-text').style.display = 'inline';
