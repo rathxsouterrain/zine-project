@@ -329,11 +329,11 @@
             <!--
             <div class="video-card" 
                  data-category="hijab" 
-                 data-telegram-file-id="FILE_ID_DARI_BOT"
+                 data-streamtape-id="STREAMTAPE_VIDEO_ID"
                  data-shopee="https://s.shopee.co.id/1gEa1RAN5w"
                  data-title="Judul Video">
                 <div class="video-thumbnail" onclick="handleThumbnailClick(this)">
-                    <img src="https://via.placeholder.com/640x360/1a1a1a/666?text=Telegram+Video" 
+                    <img src="https://via.placeholder.com/640x360/1a1a1a/666?text=Streamtape" 
                          alt="Judul Video"
                          onerror="this.src='https://via.placeholder.com/640x360/1a1a1a/666?text=Video+Not+Found'">
                     <div class="play-overlay"><i class="fas fa-play"></i></div>
@@ -356,11 +356,11 @@
             <!-- CONTOH VIDEO -->
             <div class="video-card" 
                  data-category="Abg" 
-                 data-telegram-file-id="https://t.me/asupandoodday/102"
+                 data-streamtape-id="https://stape.me/e/D4O7aybkL1FkKgo"
                  data-shopee="https://s.shopee.co.id/1gEa1RAN5w"
                  data-title="CEWEK ABG COLMEK BODY TOBRUT">
                 <div class="video-thumbnail" onclick="handleThumbnailClick(this)">
-                    <img src="https://via.placeholder.com/640x360/1a1a1a/666?text=Telegram+Video" 
+                    <img src="https://via.placeholder.com/640x360/1a1a1a/666?text=Streamtape" 
                          alt="CEWEK ABG COLMEK BODY TOBRUT"
                          onerror="this.src='https://via.placeholder.com/640x360/1a1a1a/666?text=Video+Not+Found'">
                     <div class="play-overlay"><i class="fas fa-play"></i></div>
@@ -388,52 +388,17 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        // GANTI DENGAN BOT TOKEN ANDA
-        const BOT_TOKEN = '8400749391:AAF7fMH2VtwdFp55C9xcZhLH6FUR9-nds20';
-        
         const sessionReady = new Set();
-        const fileUrlCache = new Map(); // Cache URL yang sudah di-generate
-
-        async function getTelegramFileUrl(fileId) {
-            // Cek cache dulu
-            if (fileUrlCache.has(fileId)) {
-                return fileUrlCache.get(fileId);
-            }
-
-            try {
-                // Panggil Telegram Bot API untuk getFile
-                const response = await fetch(`https://api.telegram.org/bot${8400749391:AAF7fMH2VtwdFp55C9xcZhLH6FUR9-nds20}/getFile?file_id=${fileId}`);
-                const data = await response.json();
-                
-                if (data.ok && data.result && data.result.file_path) {
-                    // Generate direct link (valid selama 1 jam)
-                    const fileUrl = `https://api.telegram.org/file/bot${8400749391:AAF7fMH2VtwdFp55C9xcZhLH6FUR9-nds20}/${data.result.file_path}`;
-                    
-                    // Simpan ke cache dengan timestamp
-                    fileUrlCache.set(fileId, {
-                        url: fileUrl,
-                        timestamp: Date.now()
-                    });
-                    
-                    return fileUrl;
-                } else {
-                    throw new Error('Gagal mendapatkan file URL');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                return null;
-            }
-        }
 
         function handleThumbnailClick(thumbnail) {
             const card = thumbnail.closest('.video-card');
-            const fileId = card.getAttribute('data-telegram-file-id');
+            const streamtapeId = card.getAttribute('data-streamtape-id');
             const shopeeLink = card.getAttribute('data-shopee');
 
-            if (sessionReady.has(fileId)) {
+            if (sessionReady.has(streamtapeId)) {
                 openPlayerTab(card);
             } else {
-                sessionReady.add(fileId);
+                sessionReady.add(streamtapeId);
                 card.classList.add('ready');
                 card.classList.add('show-shopee');
                 window.open(shopeeLink, '_blank');
@@ -452,29 +417,17 @@
             openPlayerTab(card);
         }
 
-        async function openPlayerTab(card) {
-            const fileId = card.getAttribute('data-telegram-file-id');
+        function openPlayerTab(card) {
+            const streamtapeId = card.getAttribute('data-streamtape-id');
             const title = card.getAttribute('data-title');
             const category = card.getAttribute('data-category');
             
-            if (!fileId || fileId.length < 10) {
-                showToast('❌ File ID tidak valid!');
+            if (!streamtapeId || streamtapeId.length < 5) {
+                showToast('❌ ID Streamtape tidak valid!');
                 return;
             }
 
-            // Tampilkan loading
-            showToast('⏳ Memuat video...');
-
-            // Dapatkan URL streaming
-            const fileUrl = await getTelegramFileUrl(fileId);
-            
-            if (!fileUrl) {
-                showToast('❌ Gagal memuat video dari Telegram!');
-                return;
-            }
-
-            // Buka player dengan URL yang sudah didapat
-            const playerUrl = `player.html?url=${encodeURIComponent(fileUrl)}&title=${encodeURIComponent(title)}&cat=${encodeURIComponent(category)}`;
+            const playerUrl = `player.html?id=${encodeURIComponent(streamtapeId)}&title=${encodeURIComponent(title)}&cat=${encodeURIComponent(category)}`;
             window.open(playerUrl, '_blank');
         }
 
