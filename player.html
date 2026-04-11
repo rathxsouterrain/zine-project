@@ -76,7 +76,7 @@
         .main-content {
             flex: 1;
             padding: 30px;
-            max-width: 1400px;
+            max-width: 1200px;
             width: 100%;
             margin: 0 auto;
             display: flex;
@@ -102,90 +102,50 @@
             -webkit-text-fill-color: transparent;
         }
 
-        /* PLAYER CONTAINER */
-        .player-wrapper {
+        .player-container {
             flex: 1;
-            background: #000;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
             border-radius: 24px;
             overflow: hidden;
             position: relative;
             min-height: 400px;
-            box-shadow: 0 25px 80px rgba(0,0,0,0.8);
         }
-
-        .player-iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
+        .video-wrapper {
+            position: absolute; inset: 0;
         }
-
-        /* CUSTOM CONTROLS OVERLAY */
-        .player-controls {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 20px;
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
+        .video-wrapper iframe {
+            width: 100%; height: 100%; border: none;
         }
-        .player-wrapper:hover .player-controls {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .control-btn {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            color: white;
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-        .control-btn:hover {
-            background: rgba(255,255,255,0.2);
-            transform: scale(1.1);
-        }
-
-        /* FULLSCREEN MODE */
-        .player-wrapper.fullscreen {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            border-radius: 0;
-            z-index: 9999;
-        }
-        .player-wrapper.fullscreen .player-controls {
-            opacity: 1;
-            pointer-events: all;
-            padding: 30px;
-        }
-
-        /* Loading */
         .loading {
             position: absolute; inset: 0;
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
             color: var(--secondary);
-            background: #000;
-            z-index: 10;
         }
         .loading i {
             font-size: 3rem; margin-bottom: 16px;
             animation: spin 1s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
+
+        .video-error {
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            text-align: center; padding: 40px;
+            color: var(--secondary);
+        }
+        .video-error i { 
+            font-size: 4rem; margin-bottom: 20px; 
+            color: #ff4444; 
+        }
+        .video-error h3 {
+            color: var(--primary); margin-bottom: 12px;
+            font-size: 1.5rem;
+        }
+        .video-error p { max-width: 400px; line-height: 1.6; }
 
         .video-meta-bar {
             margin-top: 24px;
@@ -202,8 +162,8 @@
 
         @media (max-width: 768px) {
             .main-content { padding: 20px; }
-            .video-title { font-size: 1.3rem; }
-            .player-wrapper { min-height: 250px; border-radius: 16px; }
+            .video-title { font-size: 1.5rem; }
+            .player-container { min-height: 250px; border-radius: 16px; }
             .glass-nav { padding: 15px 20px; }
         }
     </style>
@@ -232,17 +192,10 @@
             <h1 class="video-title" id="videoTitle">Loading...</h1>
         </div>
 
-        <div class="player-wrapper" id="playerWrapper">
+        <div class="player-container" id="playerContainer">
             <div class="loading" id="loading">
                 <i class="fas fa-spinner"></i>
                 <span>Memuat video...</span>
-            </div>
-            <!-- Iframe akan di-insert di sini -->
-            
-            <div class="player-controls">
-                <button class="control-btn" onclick="toggleFullscreen()" title="Fullscreen (F)">
-                    <i class="fas fa-expand" id="fullscreenIcon"></i>
-                </button>
             </div>
         </div>
 
@@ -252,12 +205,12 @@
                 <span>Google Drive Stream</span>
             </div>
             <div class="meta-item">
-                <i class="fas fa-expand"></i>
-                <span>Fullscreen Available</span>
+                <i class="fas fa-shield-alt"></i>
+                <span>Secure Connection</span>
             </div>
             <div class="meta-item">
-                <i class="fas fa-keyboard"></i>
-                <span>Press F for Fullscreen</span>
+                <i class="fas fa-clock"></i>
+                <span id="currentTime">-</span>
             </div>
         </div>
     </main>
@@ -269,91 +222,62 @@
         const title = params.get('title') || 'Untitled Video';
         const category = params.get('cat') || 'uncategorized';
 
-        // Update page info
+        // Update page
         document.getElementById('videoTitle').textContent = decodeURIComponent(title);
         document.getElementById('categoryTag').innerHTML = 
             `<i class="fas fa-folder"></i> <span>${decodeURIComponent(category)}</span>`;
         document.title = `${decodeURIComponent(title)} - StreamFlow`;
 
+        // Update time
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('currentTime').textContent = 
+                now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        }
+        updateTime();
+        setInterval(updateTime, 60000);
+
+        // Load video
         if (driveId && driveId.length >= 25) {
-            const wrapper = document.getElementById('playerWrapper');
-            const loading = document.getElementById('loading');
+            const container = document.getElementById('playerContainer');
             
-            // Buat iframe dengan Google Drive preview
-            const iframe = document.createElement('iframe');
-            iframe.className = 'player-iframe';
-            iframe.src = `https://drive.google.com/file/d/${driveId}/preview?usp=sharing`;
-            iframe.allowFullscreen = true;
-            iframe.allow = "autoplay; encrypted-media; fullscreen";
-            
-            // Sembunyikan loading saat iframe load
-            iframe.onload = () => {
-                loading.style.display = 'none';
-            };
-            
-            // Insert sebelum loading
-            wrapper.insertBefore(iframe, loading);
-            
+            // Timeout untuk error handling
+            setTimeout(() => {
+                const iframe = container.querySelector('iframe');
+                if (!iframe) {
+                    showError();
+                }
+            }, 10000);
+
+            container.innerHTML = `
+                <div class="video-wrapper">
+                    <iframe 
+                        src="https://drive.google.com/file/d/${driveId}/preview?usp=sharing" 
+                        allowfullscreen 
+                        allow="autoplay; encrypted-media"
+                        onload="document.getElementById('loading')?.remove()"
+                        onerror="showError()">
+                    </iframe>
+                </div>
+            `;
         } else {
-            document.getElementById('playerWrapper').innerHTML = `
-                <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--secondary); text-align:center; padding:40px;">
-                    <i class="fas fa-exclamation-triangle" style="font-size:4rem; margin-bottom:20px; color:#ff4444;"></i>
-                    <h3 style="color:var(--primary); margin-bottom:12px;">ID Video Tidak Valid</h3>
-                    <p>ID Google Drive tidak ditemukan atau format salah.</p>
+            showError();
+        }
+
+        function showError() {
+            document.getElementById('playerContainer').innerHTML = `
+                <div class="video-error">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Video Tidak Dapat Dimuat</h3>
+                    <p>
+                        Pastikan:<br>
+                        1. ID Google Drive benar<br>
+                        2. File sudah di-share publik ("Anyone with the link")<br>
+                        3. File masih tersedia di Google Drive
+                    </p>
                 </div>
             `;
         }
-
-        // Fullscreen function
-        function toggleFullscreen() {
-            const wrapper = document.getElementById('playerWrapper');
-            const icon = document.getElementById('fullscreenIcon');
-            
-            if (!document.fullscreenElement) {
-                // Masuk fullscreen
-                if (wrapper.requestFullscreen) {
-                    wrapper.requestFullscreen();
-                } else if (wrapper.webkitRequestFullscreen) {
-                    wrapper.webkitRequestFullscreen();
-                } else if (wrapper.msRequestFullscreen) {
-                    wrapper.msRequestFullscreen();
-                }
-                wrapper.classList.add('fullscreen');
-                icon.className = 'fas fa-compress';
-            } else {
-                // Keluar fullscreen
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                } else if (document.webkitExitFullscreen) {
-                    document.webkitExitFullscreen();
-                } else if (document.msExitFullscreen) {
-                    document.msExitFullscreen();
-                }
-                wrapper.classList.remove('fullscreen');
-                icon.className = 'fas fa-expand';
-            }
-        }
-
-        // Listen fullscreen change
-        document.addEventListener('fullscreenchange', () => {
-            const wrapper = document.getElementById('playerWrapper');
-            const icon = document.getElementById('fullscreenIcon');
-            
-            if (!document.fullscreenElement) {
-                wrapper.classList.remove('fullscreen');
-                icon.className = 'fas fa-expand';
-            }
-        });
-
-        // Keyboard shortcut
-        document.addEventListener('keydown', (e) => {
-            if (e.code === 'KeyF') {
-                e.preventDefault();
-                toggleFullscreen();
-            } else if (e.code === 'Escape' && document.fullscreenElement) {
-                document.exitFullscreen();
-            }
-        });
     </script>
 </body>
 </html>
