@@ -202,11 +202,11 @@
         <div class="video-meta-bar">
             <div class="meta-item">
                 <i class="fas fa-play-circle"></i>
-                <span>Jumpshare Stream</span>
+                <span>Telegram Stream</span>
             </div>
             <div class="meta-item">
                 <i class="fas fa-shield-alt"></i>
-                <span>Secure Connection</span>
+                <span>Embed Player</span>
             </div>
             <div class="meta-item">
                 <i class="fas fa-clock"></i>
@@ -218,7 +218,7 @@
     <script>
         // Parse URL parameters
         const params = new URLSearchParams(window.location.search);
-        const jumpshareId = params.get('id');
+        const telegramUrl = params.get('url');
         const title = params.get('title') || 'Untitled Video';
         const category = params.get('cat') || 'uncategorized';
 
@@ -238,9 +238,15 @@
         setInterval(updateTime, 60000);
 
         // Load video
-        if (jumpshareId && jumpshareId.length >= 10) {
+        if (telegramUrl && telegramUrl.includes('t.me/')) {
             const container = document.getElementById('playerContainer');
             
+            // Convert URL to embed format
+            // Format: https://t.me/channel_name/123?embed=1
+            const embedUrl = telegramUrl.includes('?') 
+                ? `${telegramUrl}&embed=1` 
+                : `${telegramUrl}?embed=1`;
+
             // Timeout untuk error handling
             setTimeout(() => {
                 const iframe = container.querySelector('iframe');
@@ -252,7 +258,7 @@
             container.innerHTML = `
                 <div class="video-wrapper">
                     <iframe 
-                        src="https://jumpshare.com/embed/${jumpshareId}?autoplay=0" 
+                        src="${embedUrl}" 
                         allowfullscreen 
                         allow="autoplay; encrypted-media"
                         onload="document.getElementById('loading')?.remove()"
@@ -271,9 +277,10 @@
                     <h3>Video Tidak Dapat Dimuat</h3>
                     <p>
                         Pastikan:<br>
-                        1. ID Jumpshare benar<br>
-                        2. File sudah di-share publik<br>
-                        3. File masih tersedia di Jumpshare
+                        1. URL Telegram benar (format: https://t.me/channel/message_id)<br>
+                        2. Channel/video bersifat publik<br>
+                        3. Video masih tersedia di Telegram<br>
+                        4. Coba akses langsung URL di browser
                     </p>
                 </div>
             `;
