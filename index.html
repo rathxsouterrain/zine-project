@@ -252,6 +252,85 @@
             color: var(--secondary); font-size: 0.7rem;
         }
 
+        /* VIDEO MODAL FULLSCREEN */
+        .video-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 5000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .video-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        .video-modal-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .video-modal-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+        }
+        .video-modal-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            max-width: 70%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .video-modal-close {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--primary);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        .video-modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+        .video-iframe-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px 20px;
+        }
+        .video-iframe-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            max-width: 1200px;
+            border: none;
+            border-radius: 12px;
+            background: #000;
+        }
+
         /* Toast */
         .toast {
             position: fixed; bottom: 30px; left: 50%;
@@ -273,6 +352,9 @@
             .category-panel { width: 100%; right: -100%; }
             .video-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
             .main-content { padding: 90px 12px 50px; }
+            .video-modal-title { font-size: 0.9rem; max-width: 60%; }
+            .video-iframe-wrapper { padding: 70px 10px 10px; }
+            .video-iframe-wrapper iframe { border-radius: 8px; }
         }
     </style>
 </head>
@@ -437,6 +519,21 @@
         </div>
     </main>
 
+    <!-- VIDEO MODAL FULLSCREEN -->
+    <div class="video-modal" id="videoModal">
+        <div class="video-modal-container">
+            <div class="video-modal-header">
+                <span class="video-modal-title" id="modalTitle">Video Title</span>
+                <button class="video-modal-close" onclick="closeVideoModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="video-iframe-wrapper" id="iframeWrapper">
+                <!-- iframe akan diinject di sini -->
+            </div>
+        </div>
+    </div>
+
     <div class="toast" id="toast"></div>
 
     <script>
@@ -449,13 +546,14 @@
             
             const videoUrl = card.getAttribute('data-video-url');
             const shopeeLink = card.getAttribute('data-shopee');
+            const title = card.getAttribute('data-title') || 'Video';
             
             if (!videoUrl || !shopeeLink) return;
 
             // Cek apakah sudah ready (klik kedua)
             if (sessionReady.has(videoUrl)) {
-                // KLIK KEDUA: Langsung ke video URL (Google Drive)
-                window.open(videoUrl, '_blank');
+                // KLIK KEDUA: Tampilkan modal fullscreen dengan video
+                openVideoModal(videoUrl, title);
             } else {
                 // KLIK PERTAMA: Ke Shopee + Mark as Ready
                 sessionReady.add(videoUrl);
@@ -471,6 +569,63 @@
                     card.classList.remove('show-shopee');
                     showToast('✓ Klik lagi untuk nonton video');
                 }, 1500);
+            }
+        });
+
+        function openVideoModal(videoUrl, title) {
+            const modal = document.getElementById('videoModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const iframeWrapper = document.getElementById('iframeWrapper');
+            
+            // Set judul
+            modalTitle.textContent = title;
+            
+            // Buat iframe untuk Jumpshare embed
+            // Konversi URL Jumpshare ke format embed jika belum
+            let embedUrl = videoUrl;
+            if (videoUrl.includes('jumpshare.com/v/')) {
+                embedUrl = videoUrl.replace('jumpshare.com/v/', 'jumpshare.com/embed/');
+            }
+            
+            // Inject iframe
+            iframeWrapper.innerHTML = `
+                <iframe src="${embedUrl}" 
+                        allowfullscreen 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+                </iframe>
+            `;
+            
+            // Tampilkan modal
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent scroll
+        }
+
+        function closeVideoModal() {
+            const modal = document.getElementById('videoModal');
+            const iframeWrapper = document.getElementById('iframeWrapper');
+            
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+            
+            // Hapus iframe untuk stop video
+            setTimeout(() => {
+                iframeWrapper.innerHTML = '';
+            }, 300);
+        }
+
+        // Tutup modal dengan tombol ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeVideoModal();
+                document.getElementById('categoryPanel').classList.remove('active');
+                document.getElementById('panelOverlay').classList.remove('active');
+            }
+        });
+
+        // Tutup modal dengan klik di luar
+        document.getElementById('videoModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeVideoModal();
             }
         });
 
@@ -494,13 +649,6 @@
             toast.classList.add('active');
             setTimeout(() => toast.classList.remove('active'), 3000);
         }
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                document.getElementById('categoryPanel').classList.remove('active');
-                document.getElementById('panelOverlay').classList.remove('active');
-            }
-        });
     </script>
 </body>
 </html>
