@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Now Playing - StreamFlow</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-highlight: rgba(255, 255, 255, 0.15);
+            --primary: #ffffff;
+            --secondary: #a0a0a0;
+            --bg-dark: #0a0a0a;
+            --bg-darker: #050505;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-darker);
+            color: var(--primary);
+            min-height: 100vh;
+        }
+
+        .liquid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            background: var(--bg-darker);
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .blob-1 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .blob-2 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(200,200,200,0.08) 0%, transparent 70%);
+            top: 20%;
+            right: 10%;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-20px, 20px) scale(1.1); }
+        }
+
+        .glass-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 1000;
+        }
+
+        .back-btn {
+            color: var(--primary);
+            font-size: 1.2rem;
+            text-decoration: none;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: var(--glass-bg);
+        }
+
+        .nav-title {
+            flex: 1;
+            text-align: center;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 0 20px;
+        }
+
+        .nav-spacer {
+            width: 40px;
+        }
+
+        .player-main {
+            padding-top: 90px;
+            padding-left: 20px;
+            padding-right: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .player-container {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 24px;
+            background: #000;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        video {
+            width: 100%;
+            aspect-ratio: 16/9;
+            display: block;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .video-info h1 {
+            font-size: 1.8rem;
+            margin-bottom: 16px;
+        }
+
+        .meta-info {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .meta-info span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--secondary);
+            font-size: 0.9rem;
+        }
+
+        .cat-badge {
+            background: var(--glass-bg);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            color: var(--primary);
+        }
+
+        .description {
+            color: var(--secondary);
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        .related-section {
+            margin-top: 40px;
+        }
+
+        .related-section h3 {
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+
+        .related-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .related-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .related-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--glass-highlight);
+        }
+
+        .related-thumb {
+            position: relative;
+            aspect-ratio: 16/9;
+            overflow: hidden;
+        }
+
+        .related-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .related-card:hover .related-thumb img {
+            transform: scale(1.05);
+        }
+
+        .play-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .related-card:hover .play-overlay {
+            opacity: 1;
+        }
+
+        .play-overlay i {
+            font-size: 2rem;
+            color: white;
+            background: rgba(255, 255, 255, 0.2);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .related-info {
+            padding: 16px;
+        }
+
+        .related-info h4 {
+            font-size: 1rem;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .related-info .cat-badge {
+            display: inline-block;
+        }
+
+        @media (max-width: 768px) {
+            .player-main {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+            
+            .video-info h1 {
+                font-size: 1.4rem;
+            }
+            
+            .related-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .related-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="liquid-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <nav class="glass-nav">
+        <a href="index.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <span class="nav-title" id="playerTitle">Now Playing</span>
+        <div class="nav-spacer"></div>
+    </nav>
+
+    <main class="player-main">
+        <div class="player-container">
+            <video id="mainVideo" controls poster="">
+                <source src="" type="video/mp4">
+                Browser Anda tidak mendukung pemutaran video.
+            </video>
+        </div>
+
+        <div class="video-info glass-card">
+            <h1 id="videoTitle">Judul Video</h1>
+            <div class="meta-info">
+                <span class="cat-badge" id="videoCategory">Kategori</span>
+                <span><i class="fas fa-eye"></i> <span id="viewCount">0</span> views</span>
+                <span><i class="fas fa-calendar"></i> <span id="uploadDate">-</span></span>
+            </div>
+            <p class="description" id="videoDesc">Deskripsi video...</p>
+        </div>
+
+        <div class="related-section">
+            <h3>Video Serupa</h3>
+            <div class="related-grid" id="relatedGrid"></div>
+        </div>
+    </main>
+
+    <script>
+        // ==========================================
+        // PLAYER LOGIC
+        // ==========================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadVideo();
+        });
+
+        function loadVideo() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const videoId = urlParams.get('id');
+            
+            const videos = JSON.parse(localStorage.getItem('videos') || '[]');
+            const video = videos.find(v => v.id === videoId);
+            
+            if (!video) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Update player
+            document.getElementById('mainVideo').src = video.videoUrl;
+            document.getElementById('mainVideo').poster = video.thumbnailUrl;
+            document.getElementById('videoTitle').textContent = video.title;
+            document.getElementById('playerTitle').textContent = video.title;
+            document.getElementById('videoCategory').textContent = video.category.toUpperCase();
+            document.getElementById('videoDesc').textContent = video.description || 'Tidak ada deskripsi';
+            document.getElementById('uploadDate').textContent = new Date(video.uploadDate).toLocaleDateString('id-ID');
+            
+            // Update views
+            video.views = (video.views || 0) + 1;
+            document.getElementById('viewCount').textContent = video.views;
+            localStorage.setItem('videos', JSON.stringify(videos));
+
+            // Load related videos
+            loadRelatedVideos(video.category, video.id);
+        }
+
+        function loadRelatedVideos(category, currentId) {
+            const videos = JSON.parse(localStorage.getItem('videos') || '[]');
+            const related = videos.filter(v => v.category === category && v.id !== currentId).slice(0, 4);
+            
+            const grid = document.getElementById('relatedGrid');
+            
+            if (related.length === 0) {
+                grid.innerHTML = '<p style="color: var(--secondary);">Tidak ada video serupa</p>';
+                return;
+            }
+            
+            grid.innerHTML = related.map(video => `
+                <div class="related-card" onclick="location.href='player.html?id=${video.id}'">
+                    <div class="related-thumb">
+                        <img src="${video.thumbnailUrl}" alt="${video.title}">
+                        <div class="play-overlay"><i class="fas fa-play"></i></div>
+                    </div>
+                    <div class="related-info">
+                        <h4>${video.title}</h4>
+                        <span class="cat-badge">${video.category}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
