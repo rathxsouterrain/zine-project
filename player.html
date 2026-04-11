@@ -102,8 +102,8 @@
             -webkit-text-fill-color: transparent;
         }
 
-        /* CUSTOM VIDEO PLAYER */
-        .player-container {
+        /* PLAYER CONTAINER */
+        .player-wrapper {
             flex: 1;
             background: #000;
             border-radius: 24px;
@@ -113,154 +113,79 @@
             box-shadow: 0 25px 80px rgba(0,0,0,0.8);
         }
 
-        video {
+        .player-iframe {
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            border: none;
         }
 
-        /* Custom Controls */
-        .video-controls {
+        /* CUSTOM CONTROLS OVERLAY */
+        .player-controls {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-            padding: 30px 20px 20px;
+            padding: 20px;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
             opacity: 0;
             transition: opacity 0.3s ease;
+            pointer-events: none;
         }
-        .player-container:hover .video-controls,
-        .player-container.paused .video-controls {
+        .player-wrapper:hover .player-controls {
             opacity: 1;
+            pointer-events: all;
         }
 
-        .progress-bar {
-            width: 100%;
-            height: 4px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 2px;
-            cursor: pointer;
-            margin-bottom: 15px;
-            position: relative;
-        }
-        .progress-fill {
-            height: 100%;
-            background: var(--accent);
-            border-radius: 2px;
-            width: 0%;
-            position: relative;
-        }
-        .progress-fill::after {
-            content: '';
-            position: absolute;
-            right: -6px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 12px;
-            height: 12px;
-            background: var(--accent);
-            border-radius: 50%;
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-        .progress-bar:hover .progress-fill::after {
-            opacity: 1;
-        }
-
-        .controls-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .controls-left, .controls-right {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
         .control-btn {
-            background: none;
-            border: none;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
             color: white;
-            font-size: 1.2rem;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
             cursor: pointer;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
         }
         .control-btn:hover {
-            background: rgba(255,255,255,0.1);
-        }
-        .control-btn.play-btn {
-            font-size: 1.5rem;
-        }
-
-        .time-display {
-            font-size: 0.9rem;
-            color: var(--secondary);
-            font-variant-numeric: tabular-nums;
-        }
-
-        .volume-slider {
-            width: 100px;
-            height: 4px;
             background: rgba(255,255,255,0.2);
-            border-radius: 2px;
-            cursor: pointer;
-            position: relative;
-        }
-        .volume-fill {
-            height: 100%;
-            background: white;
-            border-radius: 2px;
-            width: 70%;
+            transform: scale(1.1);
         }
 
-        /* Loading & Error */
+        /* FULLSCREEN MODE */
+        .player-wrapper.fullscreen {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            border-radius: 0;
+            z-index: 9999;
+        }
+        .player-wrapper.fullscreen .player-controls {
+            opacity: 1;
+            pointer-events: all;
+            padding: 30px;
+        }
+
+        /* Loading */
         .loading {
             position: absolute; inset: 0;
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
             color: var(--secondary);
             background: #000;
+            z-index: 10;
         }
         .loading i {
             font-size: 3rem; margin-bottom: 16px;
             animation: spin 1s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-
-        .video-error {
-            position: absolute; inset: 0;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            text-align: center; padding: 40px;
-            color: var(--secondary);
-            background: #000;
-        }
-        .video-error i { 
-            font-size: 4rem; margin-bottom: 20px; 
-            color: #ff4444; 
-        }
-        .video-error h3 {
-            color: var(--primary); margin-bottom: 12px;
-            font-size: 1.5rem;
-        }
-        .video-error p { max-width: 400px; line-height: 1.6; margin-bottom: 20px; }
-        .retry-btn {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            color: var(--primary);
-            padding: 12px 24px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .retry-btn:hover { background: var(--glass-highlight); }
 
         .video-meta-bar {
             margin-top: 24px;
@@ -278,9 +203,8 @@
         @media (max-width: 768px) {
             .main-content { padding: 20px; }
             .video-title { font-size: 1.3rem; }
-            .player-container { min-height: 250px; border-radius: 16px; }
+            .player-wrapper { min-height: 250px; border-radius: 16px; }
             .glass-nav { padding: 15px 20px; }
-            .volume-slider { display: none; }
         }
     </style>
 </head>
@@ -308,25 +232,32 @@
             <h1 class="video-title" id="videoTitle">Loading...</h1>
         </div>
 
-        <div class="player-container" id="playerContainer">
+        <div class="player-wrapper" id="playerWrapper">
             <div class="loading" id="loading">
                 <i class="fas fa-spinner"></i>
                 <span>Memuat video...</span>
+            </div>
+            <!-- Iframe akan di-insert di sini -->
+            
+            <div class="player-controls">
+                <button class="control-btn" onclick="toggleFullscreen()" title="Fullscreen (F)">
+                    <i class="fas fa-expand" id="fullscreenIcon"></i>
+                </button>
             </div>
         </div>
 
         <div class="video-meta-bar">
             <div class="meta-item">
                 <i class="fas fa-play-circle"></i>
-                <span>HTML5 Video Player</span>
-            </div>
-            <div class="meta-item">
-                <i class="fas fa-shield-alt"></i>
-                <span>Direct Stream</span>
+                <span>Google Drive Stream</span>
             </div>
             <div class="meta-item">
                 <i class="fas fa-expand"></i>
-                <span>Fullscreen Support</span>
+                <span>Fullscreen Available</span>
+            </div>
+            <div class="meta-item">
+                <i class="fas fa-keyboard"></i>
+                <span>Press F for Fullscreen</span>
             </div>
         </div>
     </main>
@@ -345,180 +276,84 @@
         document.title = `${decodeURIComponent(title)} - StreamFlow`;
 
         if (driveId && driveId.length >= 25) {
-            // Gunakan Google Drive direct link format
-            // Format: https://drive.google.com/uc?export=download&id=FILE_ID
-            // Alternatif: https://www.googleapis.com/drive/v3/files/FILE_ID?alt=media&key=API_KEY
-            // Atau menggunakan third-party proxy untuk bypass restrictions
+            const wrapper = document.getElementById('playerWrapper');
+            const loading = document.getElementById('loading');
             
-            const videoUrl = `https://drive.google.com/uc?export=download&id=${driveId}`;
+            // Buat iframe dengan Google Drive preview
+            const iframe = document.createElement('iframe');
+            iframe.className = 'player-iframe';
+            iframe.src = `https://drive.google.com/file/d/${driveId}/preview?usp=sharing`;
+            iframe.allowFullscreen = true;
+            iframe.allow = "autoplay; encrypted-media; fullscreen";
             
-            // Buat custom video player
-            const container = document.getElementById('playerContainer');
+            // Sembunyikan loading saat iframe load
+            iframe.onload = () => {
+                loading.style.display = 'none';
+            };
             
-            container.innerHTML = `
-                <video id="videoPlayer" playsinline>
-                    <source src="${videoUrl}" type="video/mp4">
-                    <source src="https://drive.google.com/file/d/${driveId}/preview" type="video/mp4">
-                    Browser tidak mendukung pemutaran video.
-                </video>
-                
-                <div class="video-controls" id="videoControls">
-                    <div class="progress-bar" id="progressBar">
-                        <div class="progress-fill" id="progressFill"></div>
-                    </div>
-                    <div class="controls-row">
-                        <div class="controls-left">
-                            <button class="control-btn play-btn" id="playBtn">
-                                <i class="fas fa-play"></i>
-                            </button>
-                            <div class="time-display">
-                                <span id="currentTime">0:00</span> / <span id="duration">0:00</span>
-                            </div>
-                        </div>
-                        <div class="controls-right">
-                            <div class="volume-slider" id="volumeSlider">
-                                <div class="volume-fill" id="volumeFill"></div>
-                            </div>
-                            <button class="control-btn" id="muteBtn">
-                                <i class="fas fa-volume-up"></i>
-                            </button>
-                            <button class="control-btn" id="fullscreenBtn">
-                                <i class="fas fa-expand"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            const video = document.getElementById('videoPlayer');
-            const playBtn = document.getElementById('playBtn');
-            const progressBar = document.getElementById('progressBar');
-            const progressFill = document.getElementById('progressFill');
-            const currentTimeEl = document.getElementById('currentTime');
-            const durationEl = document.getElementById('duration');
-            const fullscreenBtn = document.getElementById('fullscreenBtn');
-            const muteBtn = document.getElementById('muteBtn');
-            const containerEl = document.getElementById('playerContainer');
-
-            // Play/Pause
-            playBtn.addEventListener('click', () => {
-                if (video.paused) {
-                    video.play();
-                    playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                    containerEl.classList.remove('paused');
-                } else {
-                    video.pause();
-                    playBtn.innerHTML = '<i class="fas fa-play"></i>';
-                    containerEl.classList.add('paused');
-                }
-            });
-
-            video.addEventListener('click', () => playBtn.click());
-
-            // Update progress
-            video.addEventListener('timeupdate', () => {
-                const percent = (video.currentTime / video.duration) * 100;
-                progressFill.style.width = percent + '%';
-                currentTimeEl.textContent = formatTime(video.currentTime);
-            });
-
-            video.addEventListener('loadedmetadata', () => {
-                durationEl.textContent = formatTime(video.duration);
-                // Auto play
-                video.play().then(() => {
-                    playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                }).catch(() => {
-                    // Autoplay blocked
-                    containerEl.classList.add('paused');
-                });
-            });
-
-            // Seek
-            progressBar.addEventListener('click', (e) => {
-                const rect = progressBar.getBoundingClientRect();
-                const pos = (e.clientX - rect.left) / rect.width;
-                video.currentTime = pos * video.duration;
-            });
-
-            // Fullscreen
-            fullscreenBtn.addEventListener('click', () => {
-                if (!document.fullscreenElement) {
-                    if (containerEl.requestFullscreen) {
-                        containerEl.requestFullscreen();
-                    } else if (containerEl.webkitRequestFullscreen) {
-                        containerEl.webkitRequestFullscreen();
-                    }
-                    fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
-                } else {
-                    if (document.exitFullscreen) {
-                        document.exitFullscreen();
-                    } else if (document.webkitExitFullscreen) {
-                        document.webkitExitFullscreen();
-                    }
-                    fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
-                }
-            });
-
-            // Mute toggle
-            muteBtn.addEventListener('click', () => {
-                video.muted = !video.muted;
-                muteBtn.innerHTML = video.muted ? 
-                    '<i class="fas fa-volume-mute"></i>' : 
-                    '<i class="fas fa-volume-up"></i>';
-            });
-
-            // Error handling
-            video.addEventListener('error', () => {
-                showError();
-            });
-
-            // Keyboard shortcuts
-            document.addEventListener('keydown', (e) => {
-                if (e.code === 'Space') {
-                    e.preventDefault();
-                    playBtn.click();
-                } else if (e.code === 'KeyF') {
-                    fullscreenBtn.click();
-                }
-            });
-
+            // Insert sebelum loading
+            wrapper.insertBefore(iframe, loading);
+            
         } else {
-            showError();
-        }
-
-        function formatTime(seconds) {
-            if (isNaN(seconds)) return '0:00';
-            const mins = Math.floor(seconds / 60);
-            const secs = Math.floor(seconds % 60);
-            return `${mins}:${secs.toString().padStart(2, '0')}`;
-        }
-
-        function showError() {
-            document.getElementById('playerContainer').innerHTML = `
-                <div class="video-error">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <h3>Video Tidak Dapat Dimuat</h3>
-                    <p>
-                        Google Drive membatasi direct streaming.<br>
-                        Solusi: Gunakan Google Drive Preview atau hosting video lain.
-                    </p>
-                    <button class="retry-btn" onclick="useIframeFallback()">
-                        <i class="fas fa-play"></i> Gunakan Preview Mode
-                    </button>
+            document.getElementById('playerWrapper').innerHTML = `
+                <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--secondary); text-align:center; padding:40px;">
+                    <i class="fas fa-exclamation-triangle" style="font-size:4rem; margin-bottom:20px; color:#ff4444;"></i>
+                    <h3 style="color:var(--primary); margin-bottom:12px;">ID Video Tidak Valid</h3>
+                    <p>ID Google Drive tidak ditemukan atau format salah.</p>
                 </div>
             `;
         }
 
-        function useIframeFallback() {
-            const container = document.getElementById('playerContainer');
-            container.innerHTML = `
-                <iframe 
-                    src="https://drive.google.com/file/d/${driveId}/preview?usp=sharing" 
-                    allowfullscreen 
-                    style="width:100%; height:100%; border:none;">
-                </iframe>
-            `;
+        // Fullscreen function
+        function toggleFullscreen() {
+            const wrapper = document.getElementById('playerWrapper');
+            const icon = document.getElementById('fullscreenIcon');
+            
+            if (!document.fullscreenElement) {
+                // Masuk fullscreen
+                if (wrapper.requestFullscreen) {
+                    wrapper.requestFullscreen();
+                } else if (wrapper.webkitRequestFullscreen) {
+                    wrapper.webkitRequestFullscreen();
+                } else if (wrapper.msRequestFullscreen) {
+                    wrapper.msRequestFullscreen();
+                }
+                wrapper.classList.add('fullscreen');
+                icon.className = 'fas fa-compress';
+            } else {
+                // Keluar fullscreen
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+                wrapper.classList.remove('fullscreen');
+                icon.className = 'fas fa-expand';
+            }
         }
+
+        // Listen fullscreen change
+        document.addEventListener('fullscreenchange', () => {
+            const wrapper = document.getElementById('playerWrapper');
+            const icon = document.getElementById('fullscreenIcon');
+            
+            if (!document.fullscreenElement) {
+                wrapper.classList.remove('fullscreen');
+                icon.className = 'fas fa-expand';
+            }
+        });
+
+        // Keyboard shortcut
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'KeyF') {
+                e.preventDefault();
+                toggleFullscreen();
+            } else if (e.code === 'Escape' && document.fullscreenElement) {
+                document.exitFullscreen();
+            }
+        });
     </script>
 </body>
 </html>
