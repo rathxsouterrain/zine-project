@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IndoVoice AI - Text to Speech & Voice Cloning</title>
+    <title>IndoVoice AI - Text to Speech Indonesia</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -36,25 +36,12 @@
             background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
         }
         
-        .wave-animation {
-            display: flex;
-            align-items: center;
-            gap: 3px;
-            height: 30px;
-        }
-        
         .wave-bar {
             width: 4px;
             background: linear-gradient(to top, #667eea, #764ba2);
             border-radius: 2px;
             animation: wave 1s ease-in-out infinite;
         }
-        
-        .wave-bar:nth-child(1) { animation-delay: 0s; height: 20%; }
-        .wave-bar:nth-child(2) { animation-delay: 0.1s; height: 40%; }
-        .wave-bar:nth-child(3) { animation-delay: 0.2s; height: 60%; }
-        .wave-bar:nth-child(4) { animation-delay: 0.3s; height: 40%; }
-        .wave-bar:nth-child(5) { animation-delay: 0.4s; height: 20%; }
         
         @keyframes wave {
             0%, 100% { transform: scaleY(0.5); }
@@ -71,34 +58,49 @@
             100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
         
-        .slider-thumb::-webkit-slider-thumb {
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .tab-btn {
             cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-btn:hover {
+            background-color: rgba(0,0,0,0.05);
         }
         
         .tab-active {
             border-bottom: 3px solid #667eea;
             color: #667eea;
             font-weight: 600;
+            background-color: rgba(102, 126, 234, 0.1);
         }
         
-        .hidden { display: none !important; }
+        .content-section {
+            display: none;
+        }
         
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
+        .content-section.active {
+            display: block;
         }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb {
+        
+        .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .btn-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
     </style>
 </head>
@@ -116,41 +118,87 @@
         <div class="glass-panel rounded-2xl shadow-2xl overflow-hidden">
             <!-- Navigation Tabs -->
             <div class="flex border-b border-gray-200 bg-gray-50">
-                <button onclick="switchTab('tts')" id="tab-tts" class="flex-1 py-4 px-6 text-center tab-active transition-colors hover:bg-gray-100">
+                <div class="tab-btn flex-1 py-4 px-6 text-center tab-active" onclick="showTab('tts')" id="tab-tts">
                     <i class="fas fa-keyboard mr-2"></i>Text to Speech
-                </button>
-                <button onclick="switchTab('clone')" id="tab-clone" class="flex-1 py-4 px-6 text-center text-gray-600 transition-colors hover:bg-gray-100">
+                </div>
+                <div class="tab-btn flex-1 py-4 px-6 text-center text-gray-600" onclick="showTab('clone')" id="tab-clone">
                     <i class="fas fa-user-voice mr-2"></i>Clone Suara
-                </button>
-                <button onclick="switchTab('library')" id="tab-library" class="flex-1 py-4 px-6 text-center text-gray-600 transition-colors hover:bg-gray-100">
-                    <i class="fas fa-book mr-2"></i>Perpustakaan Suara
-                </button>
+                </div>
+                <div class="tab-btn flex-1 py-4 px-6 text-center text-gray-600" onclick="showTab('library')" id="tab-library">
+                    <i class="fas fa-book mr-2"></i>Perpustakaan
+                </div>
             </div>
 
             <!-- Content Area -->
             <div class="p-6 md:p-8">
                 
                 <!-- TAB 1: TEXT TO SPEECH -->
-                <div id="content-tts" class="space-y-6">
+                <div id="content-tts" class="content-section active space-y-6">
                     <!-- Voice Selection -->
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-3">Pilih Suara</label>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="voice-grid">
-                            <!-- Generated by JS -->
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="voice-card active bg-white border-2 border-indigo-500 rounded-xl p-4" onclick="selectVoice('female')" id="voice-female">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-white">
+                                        <i class="fas fa-venus"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800 text-sm">Wanita</h4>
+                                        <p class="text-xs text-gray-500">Natural</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="voice-card bg-white border-2 border-gray-200 rounded-xl p-4" onclick="selectVoice('male')" id="voice-male">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white">
+                                        <i class="fas fa-mars"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800 text-sm">Pria</h4>
+                                        <p class="text-xs text-gray-500">Natural</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="voice-card bg-white border-2 border-gray-200 rounded-xl p-4" onclick="selectVoice('child')" id="voice-child">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-teal-500 flex items-center justify-center text-white">
+                                        <i class="fas fa-child"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800 text-sm">Anak</h4>
+                                        <p class="text-xs text-gray-500">Ceria</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="voice-card bg-white border-2 border-gray-200 rounded-xl p-4" onclick="selectVoice('elder')" id="voice-elder">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-white">
+                                        <i class="fas fa-user-clock"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800 text-sm">Lansia</h4>
+                                        <p class="text-xs text-gray-500">Berpengalaman</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Text Input -->
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            Teks Bahasa Indonesia <span class="text-gray-500 font-normal">(maksimal 5000 karakter)</span>
+                            Teks Bahasa Indonesia <span class="text-gray-500 font-normal">(max 5000 karakter)</span>
                         </label>
                         <textarea id="text-input" rows="6" 
-                            class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none resize-none text-gray-700"
-                            placeholder="Masukkan teks dalam Bahasa Indonesia di sini... Contoh: Halo, selamat datang di aplikasi text to speech berbasis AI khusus untuk bahasa Indonesia."></textarea>
+                            class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none resize-none text-gray-700 text-base"
+                            placeholder="Masukkan teks dalam Bahasa Indonesia di sini... Contoh: Halo, selamat datang di aplikasi text to speech."></textarea>
                         <div class="flex justify-between mt-2 text-sm text-gray-500">
                             <span id="char-count">0 / 5000 karakter</span>
-                            <button onclick="clearText()" class="text-red-500 hover:text-red-700">
+                            <button onclick="clearText()" class="text-red-500 hover:text-red-700 font-medium">
                                 <i class="fas fa-trash-alt mr-1"></i>Hapus
                             </button>
                         </div>
@@ -161,145 +209,132 @@
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Kecepatan: <span id="speed-val">1.0x</span></label>
                             <input type="range" id="speed" min="0.5" max="2.0" step="0.1" value="1.0" 
-                                class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer slider-thumb"
-                                oninput="updateValue('speed', this.value, 'x')">
+                                class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer"
+                                oninput="document.getElementById('speed-val').textContent = this.value + 'x'">
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Nada: <span id="pitch-val">1.0</span></label>
                             <input type="range" id="pitch" min="0.5" max="2.0" step="0.1" value="1.0" 
-                                class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer slider-thumb"
-                                oninput="updateValue('pitch', this.value, '')">
+                                class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer"
+                                oninput="document.getElementById('pitch-val').textContent = this.value">
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Volume: <span id="volume-val">100%</span></label>
                             <input type="range" id="volume" min="0" max="100" step="5" value="100" 
-                                class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer slider-thumb"
-                                oninput="updateValue('volume', this.value, '%')">
+                                class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer"
+                                oninput="document.getElementById('volume-val').textContent = this.value + '%'">
                         </div>
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="flex flex-wrap gap-4">
-                        <button onclick="generateSpeech()" id="btn-generate"
-                            class="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 px-8 rounded-xl font-semibold text-lg hover:shadow-lg transform hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2">
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button onclick="generateSpeech()" id="btn-generate" class="btn-primary flex-1 py-4 px-8 rounded-xl font-semibold text-lg flex items-center justify-center gap-2 border-0">
                             <i class="fas fa-play"></i> Generate Suara
                         </button>
-                        <button onclick="downloadAudio()" id="btn-download" disabled
-                            class="flex-1 bg-gray-300 text-gray-500 py-4 px-8 rounded-xl font-semibold text-lg cursor-not-allowed flex items-center justify-center gap-2">
+                        <button onclick="downloadAudio()" id="btn-download" disabled class="flex-1 bg-gray-300 text-gray-500 py-4 px-8 rounded-xl font-semibold text-lg cursor-not-allowed flex items-center justify-center gap-2 border-0">
                             <i class="fas fa-download"></i> Download MP3
                         </button>
                     </div>
 
+                    <!-- Status -->
+                    <div id="status-message" class="hidden text-center py-3 px-4 rounded-lg"></div>
+
                     <!-- Audio Player -->
                     <div id="audio-player-container" class="hidden bg-gray-50 p-6 rounded-xl border-2 border-gray-200">
                         <div class="flex items-center gap-4 mb-4">
-                            <div class="wave-animation" id="wave-visualizer">
-                                <div class="wave-bar"></div>
-                                <div class="wave-bar"></div>
-                                <div class="wave-bar"></div>
-                                <div class="wave-bar"></div>
-                                <div class="wave-bar"></div>
+                            <div class="flex gap-1 h-8 items-center" id="wave-visualizer" style="display: none;">
+                                <div class="wave-bar" style="height: 20%; animation-delay: 0s;"></div>
+                                <div class="wave-bar" style="height: 40%; animation-delay: 0.1s;"></div>
+                                <div class="wave-bar" style="height: 60%; animation-delay: 0.2s;"></div>
+                                <div class="wave-bar" style="height: 40%; animation-delay: 0.3s;"></div>
+                                <div class="wave-bar" style="height: 20%; animation-delay: 0.4s;"></div>
                             </div>
-                            <span class="text-sm text-gray-600" id="audio-status">Siap diputar</span>
+                            <span class="text-sm text-gray-600 font-medium" id="audio-status">Siap</span>
                         </div>
-                        <audio id="audio-player" controls class="w-full"></audio>
                     </div>
                 </div>
 
                 <!-- TAB 2: VOICE CLONING -->
-                <div id="content-clone" class="hidden space-y-6">
-                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-200">
+                <div id="content-clone" class="content-section space-y-6">
+                    <div class="bg-blue-50 p-6 rounded-xl border border-blue-200">
                         <h3 class="text-lg font-semibold text-blue-900 mb-2">
                             <i class="fas fa-info-circle mr-2"></i>Petunjuk Voice Cloning
                         </h3>
                         <ul class="text-blue-800 space-y-1 text-sm list-disc list-inside">
                             <li>Rekam suara Anda selama 10-30 detik dengan jelas</li>
                             <li>Pastikan tidak ada noise latar belakang</li>
-                            <li>Bicara dengan natural, jangan terlalu cepat atau lambat</li>
-                            <li>Gunakan mikrofon berkualitas baik untuk hasil optimal</li>
+                            <li>Bicara dengan natural dalam Bahasa Indonesia</li>
                         </ul>
                     </div>
 
-                    <!-- Recording Section -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Record New -->
-                        <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-indigo-500 transition-colors bg-gray-50">
-                            <div id="record-section">
+                        <!-- Record Section -->
+                        <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center bg-gray-50">
+                            <div id="record-idle">
                                 <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center">
                                     <i class="fas fa-microphone text-3xl text-red-500"></i>
                                 </div>
-                                <h4 class="font-semibold text-gray-700 mb-2">Rekam Suara Baru</h4>
-                                <p class="text-sm text-gray-500 mb-4">Klik tombol di bawah untuk mulai merekam</p>
-                                <button onclick="startRecording()" id="btn-record"
-                                    class="bg-red-500 hover:bg-red-600 text-white py-3 px-8 rounded-full font-semibold transition-all flex items-center gap-2 mx-auto">
-                                    <i class="fas fa-circle"></i> Mulai Rekam
+                                <h4 class="font-semibold text-gray-700 mb-2">Rekam Suara</h4>
+                                <button onclick="startRecording()" class="bg-red-500 hover:bg-red-600 text-white py-3 px-8 rounded-full font-semibold transition-all border-0 cursor-pointer">
+                                    <i class="fas fa-circle mr-2"></i>Mulai Rekam
                                 </button>
                             </div>
                             
-                            <!-- Recording Active -->
-                            <div id="recording-active" class="hidden">
+                            <div id="record-active" class="hidden">
                                 <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-red-500 recording-pulse flex items-center justify-center">
                                     <i class="fas fa-microphone text-3xl text-white"></i>
                                 </div>
-                                <h4 class="font-semibold text-red-600 mb-2">Sedang Merekam...</h4>
+                                <h4 class="font-semibold text-red-600 mb-2">Merekam...</h4>
                                 <div class="text-3xl font-mono font-bold text-gray-700 mb-4" id="record-timer">00:00</div>
-                                <button onclick="stopRecording()" 
-                                    class="bg-gray-700 hover:bg-gray-800 text-white py-3 px-8 rounded-full font-semibold transition-all flex items-center gap-2 mx-auto">
-                                    <i class="fas fa-stop"></i> Berhenti
+                                <button onclick="stopRecording()" class="bg-gray-700 hover:bg-gray-800 text-white py-3 px-8 rounded-full font-semibold border-0 cursor-pointer">
+                                    <i class="fas fa-stop mr-2"></i>Berhenti
                                 </button>
                             </div>
 
-                            <!-- Recording Complete -->
-                            <div id="recording-complete" class="hidden">
+                            <div id="record-done" class="hidden">
                                 <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center">
                                     <i class="fas fa-check text-3xl text-green-500"></i>
                                 </div>
-                                <h4 class="font-semibold text-green-700 mb-2">Rekaman Selesai!</h4>
+                                <h4 class="font-semibold text-green-700 mb-2">Selesai!</h4>
                                 <audio id="recorded-audio" controls class="w-full mb-4"></audio>
                                 <div class="flex gap-2 justify-center">
-                                    <button onclick="resetRecording()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-4 rounded-lg">
+                                    <button onclick="resetRecord()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-4 rounded-lg border-0 cursor-pointer">
                                         <i class="fas fa-redo mr-1"></i>Ulangi
                                     </button>
-                                    <button onclick="saveVoiceClone()" class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-lg">
-                                        <i class="fas fa-save mr-1"></i>Simpan Suara
+                                    <button onclick="saveClone()" class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-lg border-0 cursor-pointer">
+                                        <i class="fas fa-save mr-1"></i>Simpan
                                     </button>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Upload Option -->
-                        <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-indigo-500 transition-colors bg-gray-50">
+                        <!-- Upload Section -->
+                        <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center bg-gray-50">
                             <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-blue-100 flex items-center justify-center">
                                 <i class="fas fa-cloud-upload-alt text-3xl text-blue-500"></i>
                             </div>
-                            <h4 class="font-semibold text-gray-700 mb-2">Upload File Audio</h4>
-                            <p class="text-sm text-gray-500 mb-4">Format: MP3, WAV, M4A (Max 10MB)</p>
-                            <input type="file" id="audio-upload" accept="audio/*" class="hidden" onchange="handleFileUpload(event)">
-                            <button onclick="document.getElementById('audio-upload').click()" 
-                                class="bg-blue-500 hover:bg-blue-600 text-white py-3 px-8 rounded-full font-semibold transition-all flex items-center gap-2 mx-auto">
-                                <i class="fas fa-folder-open"></i> Pilih File
+                            <h4 class="font-semibold text-gray-700 mb-2">Upload File</h4>
+                            <p class="text-xs text-gray-500 mb-4">MP3, WAV, M4A (Max 10MB)</p>
+                            <input type="file" id="audio-file" accept="audio/*" class="hidden" onchange="handleUpload(this)">
+                            <button onclick="document.getElementById('audio-file').click()" class="bg-blue-500 hover:bg-blue-600 text-white py-3 px-8 rounded-full font-semibold border-0 cursor-pointer">
+                                <i class="fas fa-folder-open mr-2"></i>Pilih File
                             </button>
-                            <div id="upload-filename" class="mt-3 text-sm text-gray-600 font-medium hidden"></div>
+                            <p id="upload-name" class="mt-3 text-sm text-gray-600 hidden"></p>
                         </div>
                     </div>
 
-                    <!-- Clone Settings -->
+                    <!-- Clone Form -->
                     <div class="bg-white border border-gray-200 rounded-xl p-6">
-                        <h4 class="font-semibold text-gray-800 mb-4">Pengaturan Model Suara</h4>
+                        <h4 class="font-semibold text-gray-800 mb-4">Detail Suara</h4>
                         <div class="space-y-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Nama Model Suara</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Nama Model</label>
                                 <input type="text" id="clone-name" placeholder="Contoh: Suara Andi" 
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi (opsional)</label>
-                                <input type="text" id="clone-desc" placeholder="Contoh: Suara pria dewasa, berbicara formal" 
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                             </div>
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Jenis Kelamin</label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Gender</label>
                                     <select id="clone-gender" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
                                         <option value="male">Pria</option>
                                         <option value="female">Wanita</option>
@@ -308,9 +343,9 @@
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Usia</label>
                                     <select id="clone-age" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
-                                        <option value="young">Muda (18-30)</option>
-                                        <option value="adult">Dewasa (30-50)</option>
-                                        <option value="senior">Senior (50+)</option>
+                                        <option value="young">Muda</option>
+                                        <option value="adult">Dewasa</option>
+                                        <option value="senior">Senior</option>
                                     </select>
                                 </div>
                             </div>
@@ -318,167 +353,95 @@
                     </div>
                 </div>
 
-                <!-- TAB 3: VOICE LIBRARY -->
-                <div id="content-library" class="hidden">
+                <!-- TAB 3: LIBRARY -->
+                <div id="content-library" class="content-section">
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-xl font-semibold text-gray-800">Suara Tersimpan</h3>
-                        <button onclick="switchTab('clone')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
-                            <i class="fas fa-plus mr-2"></i>Tambah Suara
+                        <button onclick="showTab('clone')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg border-0 cursor-pointer">
+                            <i class="fas fa-plus mr-2"></i>Tambah
                         </button>
                     </div>
 
-                    <div id="saved-voices-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        <!-- Default Voices -->
-                        <div class="voice-card active bg-white border-2 border-indigo-500 rounded-xl p-4 relative" data-voice="default-female">
-                            <div class="absolute top-2 right-2">
-                                <span class="bg-indigo-100 text-indigo-700 text-xs px-2 py-1 rounded-full font-semibold">Default</span>
-                            </div>
-                            <div class="flex items-center gap-3 mb-3">
-                                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-white text-xl">
-                                    <i class="fas fa-venus"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-semibold text-gray-800">Indonesia Wanita</h4>
-                                    <p class="text-xs text-gray-500">Suara natural wanita</p>
-                                </div>
-                            </div>
-                            <button onclick="previewVoice('default-female')" class="w-full py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium text-gray-700 transition-colors">
-                                <i class="fas fa-play mr-2"></i>Preview
-                            </button>
-                        </div>
-
-                        <div class="voice-card bg-white border-2 border-gray-200 rounded-xl p-4 relative" data-voice="default-male">
-                            <div class="absolute top-2 right-2">
-                                <span class="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full font-semibold">Default</span>
-                            </div>
-                            <div class="flex items-center gap-3 mb-3">
-                                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white text-xl">
-                                    <i class="fas fa-mars"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-semibold text-gray-800">Indonesia Pria</h4>
-                                    <p class="text-xs text-gray-500">Suara natural pria</p>
-                                </div>
-                            </div>
-                            <button onclick="previewVoice('default-male')" class="w-full py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium text-gray-700 transition-colors">
-                                <i class="fas fa-play mr-2"></i>Preview
-                            </button>
-                        </div>
+                    <div id="voices-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Default voices will be inserted here -->
                     </div>
-
-                    <!-- Empty State (Hidden by default) -->
-                    <div id="empty-state" class="hidden text-center py-12">
-                        <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
-                            <i class="fas fa-microphone-slash text-4xl text-gray-400"></i>
-                        </div>
-                        <h4 class="text-lg font-semibold text-gray-600 mb-2">Belum ada suara tersimpan</h4>
-                        <p class="text-gray-500 mb-4">Mulai dengan menambahkan suara baru</p>
-                        <button onclick="switchTab('clone')" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
-                            Clone Suara Pertama
-                        </button>
+                    
+                    <div id="empty-msg" class="hidden text-center py-12 text-gray-500">
+                        <i class="fas fa-microphone-slash text-4xl mb-3"></i>
+                        <p>Belum ada suara tersimpan</p>
                     </div>
                 </div>
 
             </div>
         </div>
-
-        <!-- Footer -->
+        
         <footer class="text-center text-white mt-8 opacity-80 text-sm">
-            <p>&copy; 2024 IndoVoice AI. Dibuat khusus untuk Bahasa Indonesia.</p>
+            <p>&copy; 2024 IndoVoice AI - Text to Speech Bahasa Indonesia</p>
         </footer>
     </div>
 
     <script>
-        // State Management
+        // Global variables
         let currentTab = 'tts';
-        let selectedVoice = 'default-female';
+        let selectedVoice = 'female';
         let mediaRecorder = null;
         let audioChunks = [];
-        let recordedBlob = null;
-        let recordingTimer = null;
-        let recordingSeconds = 0;
-        let currentAudioUrl = null;
-        let savedVoices = JSON.parse(localStorage.getItem('indovoice_clones') || '[]');
+        let recordTimer = null;
+        let recordSeconds = 0;
+        let audioBlob = null;
+        let savedVoices = JSON.parse(localStorage.getItem('indovoice_saved') || '[]');
 
         // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            initializeVoices();
+        window.onload = function() {
+            loadVoices();
             updateCharCount();
-            loadSavedVoices();
-            
-            // Text input listener
             document.getElementById('text-input').addEventListener('input', updateCharCount);
-        });
+        };
 
-        // Tab Switching
-        function switchTab(tab) {
-            currentTab = tab;
+        // Tab switching
+        function showTab(tabName) {
+            // Hide all contents
+            document.querySelectorAll('.content-section').forEach(el => {
+                el.classList.remove('active');
+            });
             
-            // Update buttons
-            ['tts', 'clone', 'library'].forEach(t => {
-                const btn = document.getElementById(`tab-${t}`);
-                const content = document.getElementById(`content-${t}`);
-                
-                if (t === tab) {
-                    btn.classList.add('tab-active');
-                    btn.classList.remove('text-gray-600');
-                    content.classList.remove('hidden');
-                } else {
-                    btn.classList.remove('tab-active');
-                    btn.classList.add('text-gray-600');
-                    content.classList.add('hidden');
-                }
+            // Remove active from tabs
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('tab-active');
+                el.classList.add('text-gray-600');
             });
+            
+            // Show selected
+            document.getElementById('content-' + tabName).classList.add('active');
+            document.getElementById('tab-' + tabName).classList.add('tab-active');
+            document.getElementById('tab-' + tabName).classList.remove('text-gray-600');
+            
+            currentTab = tabName;
+            
+            if (tabName === 'library') {
+                renderLibrary();
+            }
         }
 
-        // Initialize Voice Cards
-        function initializeVoices() {
-            const voices = [
-                { id: 'default-female', name: 'Indonesia Wanita', icon: 'fa-venus', color: 'from-pink-400 to-purple-500', desc: 'Suara natural wanita Indonesia' },
-                { id: 'default-male', name: 'Indonesia Pria', icon: 'fa-mars', color: 'from-blue-400 to-indigo-500', desc: 'Suara natural pria Indonesia' },
-                { id: 'child', name: 'Anak Indonesia', icon: 'fa-child', color: 'from-green-400 to-teal-500', desc: 'Suara anak-anak ceria' },
-                { id: 'elder', name: 'Lansia Indonesia', icon: 'fa-user-clock', color: 'from-orange-400 to-red-500', desc: 'Suara dewasa berpengalaman' }
-            ];
-
-            const grid = document.getElementById('voice-grid');
-            grid.innerHTML = voices.map(voice => `
-                <div class="voice-card bg-white border-2 ${voice.id === selectedVoice ? 'border-indigo-500 active' : 'border-gray-200'} rounded-xl p-4 relative" 
-                     onclick="selectVoice('${voice.id}')" data-voice="${voice.id}">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-br ${voice.color} flex items-center justify-center text-white">
-                            <i class="fas ${voice.icon}"></i>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <h4 class="font-semibold text-gray-800 text-sm truncate">${voice.name}</h4>
-                            <p class="text-xs text-gray-500 truncate">${voice.desc}</p>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function selectVoice(voiceId) {
-            selectedVoice = voiceId;
+        // Voice selection
+        function selectVoice(voice) {
+            selectedVoice = voice;
+            
+            // Reset all cards
             document.querySelectorAll('.voice-card').forEach(card => {
-                if (card.dataset.voice === voiceId) {
-                    card.classList.add('border-indigo-500', 'active');
-                    card.classList.remove('border-gray-200');
-                } else {
-                    card.classList.remove('border-indigo-500', 'active');
-                    card.classList.add('border-gray-200');
-                }
+                card.classList.remove('active', 'border-indigo-500');
+                card.classList.add('border-gray-200');
             });
+            
+            // Activate selected
+            document.getElementById('voice-' + voice).classList.add('active', 'border-indigo-500');
+            document.getElementById('voice-' + voice).classList.remove('border-gray-200');
         }
 
-        // Text Input Functions
+        // Character count
         function updateCharCount() {
             const text = document.getElementById('text-input').value;
-            const count = text.length;
-            document.getElementById('char-count').textContent = `${count} / 5000 karakter`;
-            
-            if (count > 5000) {
-                document.getElementById('text-input').value = text.substring(0, 5000);
-            }
+            document.getElementById('char-count').textContent = text.length + ' / 5000 karakter';
         }
 
         function clearText() {
@@ -486,816 +449,308 @@
             updateCharCount();
         }
 
-        function updateValue(type, value, suffix) {
-            document.getElementById(`${type}-val`).textContent = value + suffix;
-        }
-
-        // Speech Generation (Web Speech API)
+        // Generate Speech
         function generateSpeech() {
             const text = document.getElementById('text-input').value.trim();
             
             if (!text) {
-                alert('Silakan masukkan teks terlebih dahulu!');
+                showStatus('Silakan masukkan teks terlebih dahulu!', 'error');
                 return;
             }
 
             const btn = document.getElementById('btn-generate');
-            const originalContent = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+            const originalHTML = btn.innerHTML;
+            
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Memproses...';
             btn.disabled = true;
-
-            // Cancel any ongoing speech
+            
+            // Cancel previous
             window.speechSynthesis.cancel();
 
             const utterance = new SpeechSynthesisUtterance(text);
             
-            // Get Indonesian voice
-            const voices = window.speechSynthesis.getVoices();
-            const idVoice = voices.find(v => v.lang.includes('id')) || voices[0];
-            utterance.voice = idVoice;
+            // Get voices
+            let voices = window.speechSynthesis.getVoices();
+            let idVoice = voices.find(v => v.lang.includes('id')) || 
+                          voices.find(v => v.lang.includes('ms')) ||
+                          voices[0];
+            
+            if (idVoice) {
+                utterance.voice = idVoice;
+            }
             
             // Apply settings
             utterance.rate = parseFloat(document.getElementById('speed').value);
             utterance.pitch = parseFloat(document.getElementById('pitch').value);
             utterance.volume = parseInt(document.getElementById('volume').value) / 100;
 
-            utterance.onstart = () => {
+            // Adjust pitch based on voice type
+            if (selectedVoice === 'female') utterance.pitch = 1.2;
+            else if (selectedVoice === 'male') utterance.pitch = 0.9;
+            else if (selectedVoice === 'child') utterance.pitch = 1.5;
+            else if (selectedVoice === 'elder') utterance.pitch = 0.8;
+
+            utterance.onstart = function() {
                 document.getElementById('audio-player-container').classList.remove('hidden');
                 document.getElementById('wave-visualizer').style.display = 'flex';
-                document.getElementById('audio-status').textContent = 'Sedang memutar...';
+                document.getElementById('audio-status').textContent = 'Memutar...';
+                showStatus('Sedang memutar audio...', 'success');
             };
 
-            utterance.onend = () => {
-                btn.innerHTML = originalContent;
+            utterance.onend = function() {
+                btn.innerHTML = originalHTML;
                 btn.disabled = false;
                 document.getElementById('wave-visualizer').style.display = 'none';
                 document.getElementById('audio-status').textContent = 'Selesai';
-                document.getElementById('btn-download').disabled = false;
-                document.getElementById('btn-download').classList.remove('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
-                document.getElementById('btn-download').classList.add('bg-green-600', 'text-white', 'hover:bg-green-700');
+                
+                // Enable download button (simulated)
+                const dlBtn = document.getElementById('btn-download');
+                dlBtn.disabled = false;
+                dlBtn.classList.remove('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
+                dlBtn.classList.add('bg-green-600', 'text-white', 'hover:bg-green-700', 'cursor-pointer');
             };
 
-            utterance.onerror = (e) => {
+            utterance.onerror = function(e) {
                 console.error('Speech error:', e);
-                btn.innerHTML = originalContent;
+                btn.innerHTML = originalHTML;
                 btn.disabled = false;
-                alert('Terjadi kesalahan saat generate suara. Silakan coba lagi.');
+                showStatus('Error: ' + e.error, 'error');
             };
 
             window.speechSynthesis.speak(utterance);
         }
 
-        function downloadAudio() {
-            // Note: Web Speech API doesn't support direct MP3 download
-            // This is a simulation showing how the UI would work
-            alert('Fitur download memerlukan backend server untuk konversi ke MP3.\n\nDalam implementasi penuh, audio akan dikonversi menggunakan:\n- Google Cloud Text-to-Speech API\n- Amazon Polly\n- atau ElevenLabs API\n\nyang semuanya mendukung export MP3/WAV.');
-        }
-
-        // Voice Cloning Functions
-        async function startRecording() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorder = new MediaRecorder(stream);
-                audioChunks = [];
-
-                mediaRecorder.ondataavailable = (event) => {
-                    audioChunks.push(event.data);
-                };
-
-                mediaRecorder.onstop = () => {
-                    recordedBlob = new Blob(audioChunks, { type: 'audio/wav' });
-                    const audioUrl = URL.createObjectURL(recordedBlob);
-                    
-                    document.getElementById('recorded-audio').src = audioUrl;
-                    document.getElementById('recording-active').classList.add('hidden');
-                    document.getElementById('recording-complete').classList.remove('hidden');
-                };
-
-                mediaRecorder.start();
-                
-                // UI Updates
-                document.getElementById('record-section').classList.add('hidden');
-                document.getElementById('recording-active').classList.remove('hidden');
-                
-                // Timer
-                recordingSeconds = 0;
-                updateTimer();
-                recordingTimer = setInterval(() => {
-                    recordingSeconds++;
-                    updateTimer();
-                }, 1000);
-
-            } catch (err) {
-                console.error('Error accessing microphone:', err);
-                alert('Tidak dapat mengakses mikrofon. Pastikan Anda memberikan izin akses.');
-            }
-        }
-
-        function updateTimer() {
-            const mins = Math.floor(recordingSeconds / 60).toString().padStart(2, '0');
-            const secs = (recordingSeconds % 60).toString().padStart(2, '0');
-            document.getElementById('record-timer').textContent = `${mins}:${secs}`;
-        }
-
-        function stopRecording() {
-            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-                mediaRecorder.stop();
-                mediaRecorder.stream.getTracks().forEach(track => track.stop());
-                clearInterval(recordingTimer);
-            }
-        }
-
-        function resetRecording() {
-            recordedBlob = null;
-            document.getElementById('recording-complete').classList.add('hidden');
-            document.getElementById('record-section').classList.remove('hidden');
-            document.getElementById('record-timer').textContent = '00:00';
-        }
-
-        function handleFileUpload(event) {
-            const file = event.target.files[0];
-            if (file) {
-                if (file.size > 10 * 1024 * 1024) {
-                    alert('File terlalu besar. Maksimal 10MB.');
-                    return;
-                }
-                
-                document.getElementById('upload-filename').textContent = `Terpilih: ${file.name}`;
-                document.getElementById('upload-filename').classList.remove('hidden');
-                
-                // Simulate processing
-                recordedBlob = file;
-                const audioUrl = URL.createObjectURL(file);
-                document.getElementById('recorded-audio').src = audioUrl;
-                
-                // Show complete section
-                document.getElementById('record-section').classList.add('hidden');
-                document.getElementById('recording-active').classList.add('hidden');
-                document.getElementById('recording-complete').classList.remove('hidden');
-            }
-        }
-
-        function saveVoiceClone() {
-            const name = document.getElementById('clone-name').value.trim();
-            const desc = document.getElementById('clone-desc').value.trim();
-            const gender = document.getElementById('clone-gender').value;
-            const age = document.getElementById('clone-age').value;
-
-            if (!name) {
-                alert('Silakan beri nama untuk model suara ini!');
-                return;
-            }
-
-            if (!recordedBlob) {
-                alert('Silakan rekam atau upload audio terlebih dahulu!');
-                return;
-            }
-
-            // Create voice object
-            const newVoice = {
-                id: 'custom-' + Date.now(),
-                name: name,
-                description: desc || 'Suara kustom',
-                gender: gender,
-                age: age,
-                createdAt: new Date().toISOString(),
-                // In real implementation, this would upload to server
-                // Here we store reference to blob
-                blobUrl: URL.createObjectURL(recordedBlob)
-            };
-
-            savedVoices.push(newVoice);
-            localStorage.setItem('indovoice_clones', JSON.stringify(savedVoices));
-
-            alert(`Suara "${name}" berhasil disimpan!`);
+        function showStatus(msg, type) {
+            const status = document.getElementById('status-message');
+            status.textContent = msg;
+            status.classList.remove('hidden', 'bg-green-100', 'text-green-700', 'bg-red-100', 'text-red-700');
             
-            // Reset form
-            document.getElementById('clone-name').value = '';
-            document.getElementById('clone-desc').value = '';
-            resetRecording();
-            
-            // Refresh library
-            loadSavedVoices();
-            switchTab('library');
-        }
-
-        function loadSavedVoices() {
-            const container = document.getElementById('saved-voices-list');
-            const defaultCards = container.querySelectorAll('[data-voice^="default"]');
-            
-            // Remove old custom voices
-            container.querySelectorAll('[data-voice^="custom"]').-500 focus:outline-none resize-none text-gray-700"
-                            placeholder="Masukkan teks dalam Bahasa Indonesia di sini... Contoh: Halo, selamat datang di aplikasi text to speech berbasis AI khusus untuk bahasa Indonesia."></textarea>
-                        <div class="flex justify-between mt-2 text-sm text-gray-500">
-                            <span id="char-count">0 / 5000 karakter</span>
-                            <button onclick="clearText()" class="text-red-500 hover:text-red-700">
-                                <i class="fas fa-trash-alt mr-1"></i>Hapus
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Settings -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bg-gray-50 p-4 rounded-xl">
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Kecepatan: <span id="speed-val">1.0x</span></label>
-                            <input type="range" id="speed" min="0.5" max="2.0" step="0.1" value="1.0" 
-                                class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer slider-thumb"
-                                oninput="updateValue('speed', this.value, 'x')">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Nada: <span id="pitch-val">1.0</span></label>
-                            <input type="range" id="pitch" min="0.5" max="2.0" step="0.1" value="1.0" 
-                                class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer slider-thumb"
-                                oninput="updateValue('pitch', this.value, '')">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Volume: <span id="volume-val">100%</span></label>
-                            <input type="range" id="volume" min="0" max="100" step="5" value="100" 
-                                class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer slider-thumb"
-                                oninput="updateValue('volume', this.value, '%')">
-                        </div>
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div class="flex flex-wrap gap-4">
-                        <button onclick="generateSpeech()" id="btn-generate"
-                            class="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 px-8 rounded-xl font-semibold text-lg hover:shadow-lg transform hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2">
-                            <i class="fas fa-play"></i> Generate Suara
-                        </button>
-                        <button onclick="downloadAudio()" id="btn-download" disabled
-                            class="flex-1 bg-gray-300 text-gray-500 py-4 px-8 rounded-xl font-semibold text-lg cursor-not-allowed flex items-center justify-center gap-2">
-                            <i class="fas fa-download"></i> Download MP3
-                        </button>
-                    </div>
-
-                    <!-- Audio Player -->
-                    <div id="audio-player-container" class="hidden bg-gray-50 p-6 rounded-xl border-2 border-gray-200">
-                        <div class="flex items-center gap-4 mb-4">
-                            <div class="wave-animation" id="wave-visualizer">
-                                <div class="wave-bar"></div>
-                                <div class="wave-bar"></div>
-                                <div class="wave-bar"></div>
-                                <div class="wave-bar"></div>
-                                <div class="wave-bar"></div>
-                            </div>
-                            <span class="text-sm text-gray-600" id="audio-status">Siap diputar</span>
-                        </div>
-                        <audio id="audio-player" controls class="w-full"></audio>
-                    </div>
-                </div>
-
-                <!-- TAB 2: VOICE CLONING -->
-                <div id="content-clone" class="hidden space-y-6">
-                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-200">
-                        <h3 class="text-lg font-semibold text-blue-900 mb-2">
-                            <i class="fas fa-info-circle mr-2"></i>Petunjuk Voice Cloning
-                        </h3>
-                        <ul class="text-blue-800 space-y-1 text-sm list-disc list-inside">
-                            <li>Rekam suara Anda selama 10-30 detik dengan jelas</li>
-                            <li>Pastikan tidak ada noise latar belakang</li>
-                            <li>Bicara dengan natural, jangan terlalu cepat atau lambat</li>
-                            <li>Gunakan mikrofon berkualitas baik untuk hasil optimal</li>
-                        </ul>
-                    </div>
-
-                    <!-- Recording Section -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Record New -->
-                        <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-indigo-500 transition-colors bg-gray-50">
-                            <div id="record-section">
-                                <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center">
-                                    <i class="fas fa-microphone text-3xl text-red-500"></i>
-                                </div>
-                                <h4 class="font-semibold text-gray-700 mb-2">Rekam Suara Baru</h4>
-                                <p class="text-sm text-gray-500 mb-4">Klik tombol di bawah untuk mulai merekam</p>
-                                <button onclick="startRecording()" id="btn-record"
-                                    class="bg-red-500 hover:bg-red-600 text-white py-3 px-8 rounded-full font-semibold transition-all flex items-center gap-2 mx-auto">
-                                    <i class="fas fa-circle"></i> Mulai Rekam
-                                </button>
-                            </div>
-                            
-                            <!-- Recording Active -->
-                            <div id="recording-active" class="hidden">
-                                <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-red-500 recording-pulse flex items-center justify-center">
-                                    <i class="fas fa-microphone text-3xl text-white"></i>
-                                </div>
-                                <h4 class="font-semibold text-red-600 mb-2">Sedang Merekam...</h4>
-                                <div class="text-3xl font-mono font-bold text-gray-700 mb-4" id="record-timer">00:00</div>
-                                <button onclick="stopRecording()" 
-                                    class="bg-gray-700 hover:bg-gray-800 text-white py-3 px-8 rounded-full font-semibold transition-all flex items-center gap-2 mx-auto">
-                                    <i class="fas fa-stop"></i> Berhenti
-                                </button>
-                            </div>
-
-                            <!-- Recording Complete -->
-                            <div id="recording-complete" class="hidden">
-                                <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center">
-                                    <i class="fas fa-check text-3xl text-green-500"></i>
-                                </div>
-                                <h4 class="font-semibold text-green-700 mb-2">Rekaman Selesai!</h4>
-                                <audio id="recorded-audio" controls class="w-full mb-4"></audio>
-                                <div class="flex gap-2 justify-center">
-                                    <button onclick="resetRecording()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-4 rounded-lg">
-                                        <i class="fas fa-redo mr-1"></i>Ulangi
-                                    </button>
-                                    <button onclick="saveVoiceClone()" class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-lg">
-                                        <i class="fas fa-save mr-1"></i>Simpan Suara
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Upload Option -->
-                        <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-indigo-500 transition-colors bg-gray-50">
-                            <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-blue-100 flex items-center justify-center">
-                                <i class="fas fa-cloud-upload-alt text-3xl text-blue-500"></i>
-                            </div>
-                            <h4 class="font-semibold text-gray-700 mb-2">Upload File Audio</h4>
-                            <p class="text-sm text-gray-500 mb-4">Format: MP3, WAV, M4A (Max 10MB)</p>
-                            <input type="file" id="audio-upload" accept="audio/*" class="hidden" onchange="handleFileUpload(event)">
-                            <button onclick="document.getElementById('audio-upload').click()" 
-                                class="bg-blue-500 hover:bg-blue-600 text-white py-3 px-8 rounded-full font-semibold transition-all flex items-center gap-2 mx-auto">
-                                <i class="fas fa-folder-open"></i> Pilih File
-                            </button>
-                            <div id="upload-filename" class="mt-3 text-sm text-gray-600 font-medium hidden"></div>
-                        </div>
-                    </div>
-
-                    <!-- Clone Settings -->
-                    <div class="bg-white border border-gray-200 rounded-xl p-6">
-                        <h4 class="font-semibold text-gray-800 mb-4">Pengaturan Model Suara</h4>
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Nama Model Suara</label>
-                                <input type="text" id="clone-name" placeholder="Contoh: Suara Andi" 
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi (opsional)</label>
-                                <input type="text" id="clone-desc" placeholder="Contoh: Suara pria dewasa, berbicara formal" 
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
-                            </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Jenis Kelamin</label>
-                                    <select id="clone-gender" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
-                                        <option value="male">Pria</option>
-                                        <option value="female">Wanita</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Usia</label>
-                                    <select id="clone-age" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
-                                        <option value="young">Muda (18-30)</option>
-                                        <option value="adult">Dewasa (30-50)</option>
-                                        <option value="senior">Senior (50+)</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- TAB 3: VOICE LIBRARY -->
-                <div id="content-library" class="hidden">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-xl font-semibold text-gray-800">Suara Tersimpan</h3>
-                        <button onclick="switchTab('clone')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
-                            <i class="fas fa-plus mr-2"></i>Tambah Suara
-                        </button>
-                    </div>
-
-                    <div id="saved-voices-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        <!-- Default Voices -->
-                        <div class="voice-card active bg-white border-2 border-indigo-500 rounded-xl p-4 relative" data-voice="default-female">
-                            <div class="absolute top-2 right-2">
-                                <span class="bg-indigo-100 text-indigo-700 text-xs px-2 py-1 rounded-full font-semibold">Default</span>
-                            </div>
-                            <div class="flex items-center gap-3 mb-3">
-                                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-white text-xl">
-                                    <i class="fas fa-venus"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-semibold text-gray-800">Indonesia Wanita</h4>
-                                    <p class="text-xs text-gray-500">Suara natural wanita</p>
-                                </div>
-                            </div>
-                            <button onclick="previewVoice('default-female')" class="w-full py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium text-gray-700 transition-colors">
-                                <i class="fas fa-play mr-2"></i>Preview
-                            </button>
-                        </div>
-
-                        <div class="voice-card bg-white border-2 border-gray-200 rounded-xl p-4 relative" data-voice="default-male">
-                            <div class="absolute top-2 right-2">
-                                <span class="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full font-semibold">Default</span>
-                            </div>
-                            <div class="flex items-center gap-3 mb-3">
-                                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white text-xl">
-                                    <i class="fas fa-mars"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-semibold text-gray-800">Indonesia Pria</h4>
-                                    <p class="text-xs text-gray-500">Suara natural pria</p>
-                                </div>
-                            </div>
-                            <button onclick="previewVoice('default-male')" class="w-full py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium text-gray-700 transition-colors">
-                                <i class="fas fa-play mr-2"></i>Preview
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Empty State (Hidden by default) -->
-                    <div id="empty-state" class="hidden text-center py-12">
-                        <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
-                            <i class="fas fa-microphone-slash text-4xl text-gray-400"></i>
-                        </div>
-                        <h4 class="text-lg font-semibold text-gray-600 mb-2">Belum ada suara tersimpan</h4>
-                        <p class="text-gray-500 mb-4">Mulai dengan menambahkan suara baru</p>
-                        <button onclick="switchTab('clone')" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
-                            Clone Suara Pertama
-                        </button>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <footer class="text-center text-white mt-8 opacity-80 text-sm">
-            <p>&copy; 2024 IndoVoice AI. Dibuat khusus untuk Bahasa Indonesia.</p>
-        </footer>
-    </div>
-
-    <script>
-        // State Management
-        let currentTab = 'tts';
-        let selectedVoice = 'default-female';
-        let mediaRecorder = null;
-        let audioChunks = [];
-        let recordedBlob = null;
-        let recordingTimer = null;
-        let recordingSeconds = 0;
-        let currentAudioUrl = null;
-        let savedVoices = JSON.parse(localStorage.getItem('indovoice_clones') || '[]');
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            initializeVoices();
-            updateCharCount();
-            loadSavedVoices();
-            
-            // Text input listener
-            document.getElementById('text-input').addEventListener('input', updateCharCount);
-        });
-
-        // Tab Switching
-        function switchTab(tab) {
-            currentTab = tab;
-            
-            // Update buttons
-            ['tts', 'clone', 'library'].forEach(t => {
-                const btn = document.getElementById(`tab-${t}`);
-                const content = document.getElementById(`content-${t}`);
-                
-                if (t === tab) {
-                    btn.classList.add('tab-active');
-                    btn.classList.remove('text-gray-600');
-                    content.classList.remove('hidden');
-                } else {
-                    btn.classList.remove('tab-active');
-                    btn.classList.add('text-gray-600');
-                    content.classList.add('hidden');
-                }
-            });
-        }
-
-        // Initialize Voice Cards
-        function initializeVoices() {
-            const voices = [
-                { id: 'default-female', name: 'Indonesia Wanita', icon: 'fa-venus', color: 'from-pink-400 to-purple-500', desc: 'Suara natural wanita Indonesia' },
-                { id: 'default-male', name: 'Indonesia Pria', icon: 'fa-mars', color: 'from-blue-400 to-indigo-500', desc: 'Suara natural pria Indonesia' },
-                { id: 'child', name: 'Anak Indonesia', icon: 'fa-child', color: 'from-green-400 to-teal-500', desc: 'Suara anak-anak ceria' },
-                { id: 'elder', name: 'Lansia Indonesia', icon: 'fa-user-clock', color: 'from-orange-400 to-red-500', desc: 'Suara dewasa berpengalaman' }
-            ];
-
-            const grid = document.getElementById('voice-grid');
-            grid.innerHTML = voices.map(voice => `
-                <div class="voice-card bg-white border-2 ${voice.id === selectedVoice ? 'border-indigo-500 active' : 'border-gray-200'} rounded-xl p-4 relative" 
-                     onclick="selectVoice('${voice.id}')" data-voice="${voice.id}">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-br ${voice.color} flex items-center justify-center text-white">
-                            <i class="fas ${voice.icon}"></i>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <h4 class="font-semibold text-gray-800 text-sm truncate">${voice.name}</h4>
-                            <p class="text-xs text-gray-500 truncate">${voice.desc}</p>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function selectVoice(voiceId) {
-            selectedVoice = voiceId;
-            document.querySelectorAll('.voice-card').forEach(card => {
-                if (card.dataset.voice === voiceId) {
-                    card.classList.add('border-indigo-500', 'active');
-                    card.classList.remove('border-gray-200');
-                } else {
-                    card.classList.remove('border-indigo-500', 'active');
-                    card.classList.add('border-gray-200');
-                }
-            });
-        }
-
-        // Text Input Functions
-        function updateCharCount() {
-            const text = document.getElementById('text-input').value;
-            const count = text.length;
-            document.getElementById('char-count').textContent = `${count} / 5000 karakter`;
-            
-            if (count > 5000) {
-                document.getElementById('text-input').value = text.substring(0, 5000);
-            }
-        }
-
-        function clearText() {
-            document.getElementById('text-input').value = '';
-            updateCharCount();
-        }
-
-        function updateValue(type, value, suffix) {
-            document.getElementById(`${type}-val`).textContent = value + suffix;
-        }
-
-        // Speech Generation (Web Speech API)
-        function generateSpeech() {
-            const text = document.getElementById('text-input').value.trim();
-            
-            if (!text) {
-                alert('Silakan masukkan teks terlebih dahulu!');
-                return;
-            }
-
-            const btn = document.getElementById('btn-generate');
-            const originalContent = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
-            btn.disabled = true;
-
-            // Cancel any ongoing speech
-            window.speechSynthesis.cancel();
-
-            const utterance = new SpeechSynthesisUtterance(text);
-            
-            // Get Indonesian voice
-            const voices = window.speechSynthesis.getVoices();
-            const idVoice = voices.find(v => v.lang.includes('id')) || voices[0];
-            utterance.voice = idVoice;
-            
-            // Apply settings
-            utterance.rate = parseFloat(document.getElementById('speed').value);
-            utterance.pitch = parseFloat(document.getElementById('pitch').value);
-            utterance.volume = parseInt(document.getElementById('volume').value) / 100;
-
-            utterance.onstart = () => {
-                document.getElementById('audio-player-container').classList.remove('hidden');
-                document.getElementById('wave-visualizer').style.display = 'flex';
-                document.getElementById('audio-status').textContent = 'Sedang memutar...';
-            };
-
-            utterance.onend = () => {
-                btn.innerHTML = originalContent;
-                btn.disabled = false;
-                document.getElementById('wave-visualizer').style.display = 'none';
-                document.getElementById('audio-status').textContent = 'Selesai';
-                document.getElementById('btn-download').disabled = false;
-                document.getElementById('btn-download').classList.remove('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
-                document.getElementById('btn-download').classList.add('bg-green-600', 'text-white', 'hover:bg-green-700');
-            };
-
-            utterance.onerror = (e) => {
-                console.error('Speech error:', e);
-                btn.innerHTML = originalContent;
-                btn.disabled = false;
-                alert('Terjadi kesalahan saat generate suara. Silakan coba lagi.');
-            };
-
-            window.speechSynthesis.speak(utterance);
-        }
-
-        function downloadAudio() {
-            // Note: Web Speech API doesn't support direct MP3 download
-            // This is a simulation showing how the UI would work
-            alert('Fitur download memerlukan backend server untuk konversi ke MP3.\n\nDalam implementasi penuh, audio akan dikonversi menggunakan:\n- Google Cloud Text-to-Speech API\n- Amazon Polly\n- atau ElevenLabs API\n\nyang semuanya mendukung export MP3/WAV.');
-        }
-
-        // Voice Cloning Functions
-        async function startRecording() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorder = new MediaRecorder(stream);
-                audioChunks = [];
-
-                mediaRecorder.ondataavailable = (event) => {
-                    audioChunks.push(event.data);
-                };
-
-                mediaRecorder.onstop = () => {
-                    recordedBlob = new Blob(audioChunks, { type: 'audio/wav' });
-                    const audioUrl = URL.createObjectURL(recordedBlob);
-                    
-                    document.getElementById('recorded-audio').src = audioUrl;
-                    document.getElementById('recording-active').classList.add('hidden');
-                    document.getElementById('recording-complete').classList.remove('hidden');
-                };
-
-                mediaRecorder.start();
-                
-                // UI Updates
-                document.getElementById('record-section').classList.add('hidden');
-                document.getElementById('recording-active').classList.remove('hidden');
-                
-                // Timer
-                recordingSeconds = 0;
-                updateTimer();
-                recordingTimer = setInterval(() => {
-                    recordingSeconds++;
-                    updateTimer();
-                }, 1000);
-
-            } catch (err) {
-                console.error('Error accessing microphone:', err);
-                alert('Tidak dapat mengakses mikrofon. Pastikan Anda memberikan izin akses.');
-            }
-        }
-
-        function updateTimer() {
-            const mins = Math.floor(recordingSeconds / 60).toString().padStart(2, '0');
-            const secs = (recordingSeconds % 60).toString().padStart(2, '0');
-            document.getElementById('record-timer').textContent = `${mins}:${secs}`;
-        }
-
-        function stopRecording() {
-            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-                mediaRecorder.stop();
-                mediaRecorder.stream.getTracks().forEach(track => track.stop());
-                clearInterval(recordingTimer);
-            }
-        }
-
-        function resetRecording() {
-            recordedBlob = null;
-            document.getElementById('recording-complete').classList.add('hidden');
-            document.getElementById('record-section').classList.remove('hidden');
-            document.getElementById('record-timer').textContent = '00:00';
-        }
-
-        function handleFileUpload(event) {
-            const file = event.target.files[0];
-            if (file) {
-                if (file.size > 10 * 1024 * 1024) {
-                    alert('File terlalu besar. Maksimal 10MB.');
-                    return;
-                }
-                
-                document.getElementById('upload-filename').textContent = `Terpilih: ${file.name}`;
-                document.getElementById('upload-filename').classList.remove('hidden');
-                
-                // Simulate processing
-                recordedBlob = file;
-                const audioUrl = URL.createObjectURL(file);
-                document.getElementById('recorded-audio').src = audioUrl;
-                
-                // Show complete section
-                document.getElementById('record-section').classList.add('hidden');
-                document.getElementById('recording-active').classList.add('hidden');
-                document.getElementById('recording-complete').classList.remove('hidden');
-            }
-        }
-
-        function saveVoiceClone() {
-            const name = document.getElementById('clone-name').value.trim();
-            const desc = document.getElementById('clone-desc').value.trim();
-            const gender = document.getElementById('clone-gender').value;
-            const age = document.getElementById('clone-age').value;
-
-            if (!name) {
-                alert('Silakan beri nama untuk model suara ini!');
-                return;
-            }
-
-            if (!recordedBlob) {
-                alert('Silakan rekam atau upload audio terlebih dahulu!');
-                return;
-            }
-
-            // Create voice object
-            const newVoice = {
-                id: 'custom-' + Date.now(),
-                name: name,
-                description: desc || 'Suara kustom',
-                gender: gender,
-                age: age,
-                createdAt: new Date().toISOString(),
-                // In real implementation, this would upload to server
-                // Here we store reference to blob
-                blobUrl: URL.createObjectURL(recordedBlob)
-            };
-
-            savedVoices.push(newVoice);
-            localStorage.setItem('indovoice_clones', JSON.stringify(savedVoices));
-
-            alert(`Suara "${name}" berhasil disimpan!`);
-            
-            // Reset form
-            document.getElementById('clone-name').value = '';
-            document.getElementById('clone-desc').value = '';
-            resetRecording();
-            
-            // Refresh library
-            loadSavedVoices();
-            switchTab('library');
-        }
-
-        function loadSavedVoices() {
-            const container = document.getElementById('saved-voices-list');
-            const defaultCards = container.querySelectorAll('[data-voice^="default"]');
-            
-            // Remove old custom voices
-            container.querySelectorAll('[data-voice^="custom"]').forEach(el => el.remove());
-
-            if (savedVoices.length === 0) {
-                document.getElementById('empty-state').classList.remove('hidden');
+            if (type === 'success') {
+                status.classList.add('bg-green-100', 'text-green-700');
             } else {
-                document.getElementById('empty-state').classList.add('hidden');
+                status.classList.add('bg-red-100', 'text-red-700');
+            }
+            
+            setTimeout(() => {
+                status.classList.add('hidden');
+            }, 3000);
+        }
+
+        function downloadAudio() {
+            alert('Fitur download memerlukan backend server untuk konversi ke MP3.\n\nUntuk implementasi penuh, gunakan API seperti:\n- Google Cloud Text-to-Speech\n- Amazon Polly\n- ElevenLabs');
+        }
+
+        // Recording functions
+        async function startRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+
+                mediaRecorder.ondataavailable = (e) => {
+                    audioChunks.push(e.data);
+                };
+
+                mediaRecorder.onstop = () => {
+                    audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                    const url = URL.createObjectURL(audioBlob);
+                    document.getElementById('recorded-audio').src = url;
+                    
+                    document.getElementById('record-active').classList.add('hidden');
+                    document.getElementById('record-done').classList.remove('hidden');
+                };
+
+                mediaRecorder.start();
                 
-                savedVoices.forEach(voice => {
-                    const card = document.createElement('div');
-                    card.className = 'voice-card bg-white border-2 border-gray-200 rounded-xl p-4 relative';
-                    card.setAttribute('data-voice', voice.id);
-                    card.innerHTML = `
+                document.getElementById('record-idle').classList.add('hidden');
+                document.getElementById('record-active').classList.remove('hidden');
+                
+                recordSeconds = 0;
+                updateRecordTimer();
+                recordTimer = setInterval(updateRecordTimer, 1000);
+                
+            } catch (err) {
+                console.error('Mic error:', err);
+                alert('Error mengakses mikrofon: ' + err.message);
+            }
+        }
+
+        function updateRecordTimer() {
+            const mins = Math.floor(recordSeconds / 60).toString().padStart(2, '0');
+            const secs = (recordSeconds % 60).toString().padStart(2, '0');
+            document.getElementById('record-timer').textContent = mins + ':' + secs;
+            recordSeconds++;
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+                mediaRecorder.stream.getTracks().forEach(track => track.stop());
+                clearInterval(recordTimer);
+            }
+        }
+
+        function resetRecord() {
+            audioBlob = null;
+            document.getElementById('record-done').classList.add('hidden');
+            document.getElementById('record-idle').classList.remove('hidden');
+            document.getElementById('record-timer').textContent = '00:00';
+        }
+
+        function handleUpload(input) {
+            const file = input.files[0];
+            if (file) {
+                if (file.size > 10 * 1024 * 1024) {
+                    alert('File terlalu besar! Maksimal 10MB.');
+                    return;
+                }
+                
+                document.getElementById('upload-name').textContent = 'File: ' + file.name;
+                document.getElementById('upload-name').classList.remove('hidden');
+                
+                audioBlob = file;
+                const url = URL.createObjectURL(file);
+                document.getElementById('recorded-audio').src = url;
+                
+                document.getElementById('record-idle').classList.add('hidden');
+                document.getElementById('record-active').classList.add('hidden');
+                document.getElementById('record-done').classList.remove('hidden');
+            }
+        }
+
+        function saveClone() {
+            const name = document.getElementById('clone-name').value.trim();
+            
+            if (!name) {
+                alert('Silakan masukkan nama model suara!');
+                return;
+            }
+            
+            if (!audioBlob) {
+                alert('Silakan rekam atau upload audio terlebih dahulu!');
+                return;
+            }
+
+            const newVoice = {
+                id: Date.now().toString(),
+                name: name,
+                gender: document.getElementById('clone-gender').value,
+                age: document.getElementById('clone-age').value,
+                date: new Date().toLocaleDateString('id-ID'),
+                blobUrl: URL.createObjectURL(audioBlob)
+            };
+
+            savedVoices.push(newVoice);
+            localStorage.setItem('indovoice_saved', JSON.stringify(savedVoices));
+            
+            alert('Suara berhasil disimpan!');
+            
+            // Reset
+            document.getElementById('clone-name').value = '';
+            resetRecord();
+            showTab('library');
+        }
+
+        // Library functions
+        function loadVoices() {
+            renderLibrary();
+        }
+
+        function renderLibrary() {
+            const container = document.getElementById('voices-list');
+            const emptyMsg = document.getElementById('empty-msg');
+            
+            // Default voices
+            let html = `
+                <div class="bg-white border-2 border-indigo-500 rounded-xl p-4 relative">
+                    <span class="absolute top-2 right-2 bg-indigo-100 text-indigo-700 text-xs px-2 py-1 rounded-full font-bold">DEFAULT</span>
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-white">
+                            <i class="fas fa-venus"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800">Wanita Indonesia</h4>
+                            <p class="text-xs text-gray-500">Suara default</p>
+                        </div>
+                    </div>
+                    <button onclick="previewDefault('female')" class="w-full py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium cursor-pointer border-0">
+                        <i class="fas fa-play mr-2"></i>Preview
+                    </button>
+                </div>
+                
+                <div class="bg-white border-2 border-gray-200 rounded-xl p-4 relative">
+                    <span class="absolute top-2 right-2 bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full font-bold">DEFAULT</span>
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white">
+                            <i class="fas fa-mars"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800">Pria Indonesia</h4>
+                            <p class="text-xs text-gray-500">Suara default</p>
+                        </div>
+                    </div>
+                    <button onclick="previewDefault('male')" class="w-full py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium cursor-pointer border-0">
+                        <i class="fas fa-play mr-2"></i>Preview
+                    </button>
+                </div>
+            `;
+            
+            // Custom voices
+            savedVoices.forEach(voice => {
+                html += `
+                    <div class="bg-white border-2 border-gray-200 rounded-xl p-4 relative">
                         <div class="absolute top-2 right-2 flex gap-2">
-                            <span class="bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded-full font-semibold">Custom</span>
-                            <button onclick="deleteVoice('${voice.id}')" class="text-red-400 hover:text-red-600">
-                                <i class="fas fa-times"></i>
+                            <span class="bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded-full font-bold">CUSTOM</span>
+                            <button onclick="deleteVoice('${voice.id}')" class="text-red-400 hover:text-red-600 cursor-pointer border-0 bg-transparent">
+                                <i class="fas fa-trash"></i>
                             </button>
                         </div>
                         <div class="flex items-center gap-3 mb-3">
-                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center text-white text-xl">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center text-white">
                                 <i class="fas fa-user"></i>
                             </div>
                             <div>
                                 <h4 class="font-semibold text-gray-800">${voice.name}</h4>
-                                <p class="text-xs text-gray-500">${voice.description}</p>
+                                <p class="text-xs text-gray-500">${voice.gender === 'male' ? 'Pria' : 'Wanita'} • ${voice.age}</p>
                             </div>
                         </div>
-                        <button onclick="previewCustomVoice('${voice.id}')" class="w-full py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium text-gray-700 transition-colors">
+                        <button onclick="playCustom('${voice.id}')" class="w-full py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium cursor-pointer border-0">
                             <i class="fas fa-play mr-2"></i>Preview
                         </button>
-                    `;
-                    container.appendChild(card);
-                });
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            
+            if (savedVoices.length === 0 && emptyMsg) {
+                emptyMsg.classList.add('hidden');
             }
         }
 
-        function deleteVoice(voiceId) {
-            if (confirm('Apakah Anda yakin ingin menghapus suara ini?')) {
-                savedVoices = savedVoices.filter(v => v.id !== voiceId);
-                localStorage.setItem('indovoice_clones', JSON.stringify(savedVoices));
-                loadSavedVoices();
-            }
+        function previewDefault(type) {
+            const text = "Halo, ini adalah contoh suara dari IndoVoice AI.";
+            const u = new SpeechSynthesisUtterance(text);
+            u.pitch = type === 'female' ? 1.2 : 0.9;
+            u.rate = 1.0;
+            window.speechSynthesis.speak(u);
         }
 
-        function previewVoice(voiceId) {
-            const text = "Halo, ini adalah contoh suara dari IndoVoice AI. Saya dapat membaca teks dalam Bahasa Indonesia dengan natural.";
-            
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(text);
-            const voices = window.speechSynthesis.getVoices();
-            const idVoice = voices.find(v => v.lang.includes('id')) || voices[0];
-            utterance.voice = idVoice;
-            
-            // Adjust pitch based on voice type
-            if (voiceId === 'default-female') utterance.pitch = 1.2;
-            else if (voiceId === 'default-male') utterance.pitch = 0.9;
-            else if (voiceId === 'child') utterance.pitch = 1.5;
-            else if (voiceId === 'elder') utterance.pitch = 0.8;
-            
-            window.speechSynthesis.speak(utterance);
-        }
-
-        function previewCustomVoice(voiceId) {
-            const voice = savedVoices.find(v => v.id === voiceId);
+        function playCustom(id) {
+            const voice = savedVoices.find(v => v.id === id);
             if (voice && voice.blobUrl) {
                 const audio = new Audio(voice.blobUrl);
                 audio.play();
             }
         }
 
-        // Load voices when available
-        window.speechSynthesis.onvoiceschanged = () => {
-            console.log('Voices loaded');
-        };
+        function deleteVoice(id) {
+            if (confirm('Hapus suara ini?')) {
+                savedVoices = savedVoices.filter(v => v.id !== id);
+                localStorage.setItem('indovoice_saved', JSON.stringify(savedVoices));
+                renderLibrary();
+            }
+        }
     </script>
 </body>
 </html>
